@@ -19,8 +19,13 @@ include_directories(${PROJECT_NAME} PRIVATE
         ${CMAKE_SOURCE_DIR}/include
 )
 
+file(GLOB_RECURSE PROJECT_SOURCE
+    ${CMAKE_SOURCE_DIR}/src/*.c
+    ${CMAKE_SOURCE_DIR}/src/**/*.c
+)
+
 add_executable(${PROJECT_NAME}
-    "${CMAKE_SOURCE_DIR}/src/main.c"
+    ${PROJECT_SOURCE}
 )
 
 target_link_libraries(${PROJECT_NAME}
