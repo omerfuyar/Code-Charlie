@@ -1,5 +1,7 @@
 #include "Util/ArrayList.h"
 #include <stdio.h>
+// todo make better error checks
+
 typedef struct ArrayList
 {
     void *data;
@@ -10,10 +12,6 @@ typedef struct ArrayList
 
 ArrayList *ArrayList_Create(size_t sizeOfItem, size_t initialCapacity)
 {
-    // todo make better error checks
-
-    printf("%d", sizeof(ArrayList));
-
     assert(initialCapacity > 0);
     assert(sizeOfItem > 0);
 
@@ -72,7 +70,7 @@ void ArrayList_Set(ArrayList *list, size_t index, const void *item)
     assert(list != NULL);
     assert(index < list->size);
 
-    char *targetLocation = (char *)(list->data) + index * list->sizeOfItem;
+    void *targetLocation = ArrayList_Get(list, index);
 
     memcpy(targetLocation, item, list->sizeOfItem);
 }
@@ -98,7 +96,7 @@ void ArrayList_RemoveAtIndex(ArrayList *list, size_t index)
     assert(list != NULL);
     assert(index < list->size);
 
-    char *targetLocation = (char *)(list->data) + index * list->sizeOfItem;
+    char *targetLocation = ArrayList_Get(list, index);
 
     size_t bytesToMove = (list->size - index - 1) * list->sizeOfItem;
 
@@ -128,7 +126,9 @@ long long ArrayList_IndexOf(ArrayList *list, const void *item)
 
     for (size_t i = 0; i < list->size; i++)
     {
-        if ((char *)(item) == (char *)(list->data) + i * list->sizeOfItem)
+        char *currentItem = ArrayList_Get(list, i);
+
+        if (memcmp(currentItem, item, list->sizeOfItem) == 0)
         {
             return i;
         }
