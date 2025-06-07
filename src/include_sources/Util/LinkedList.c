@@ -1,4 +1,10 @@
 #include "Util/LinkedList.h"
+
+#include <stddef.h>
+#include <assert.h>
+#include <stdlib.h>
+#include <string.h>
+
 // todo make better error checks
 
 /// @brief A node in the linked list.

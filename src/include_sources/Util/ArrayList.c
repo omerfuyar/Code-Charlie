@@ -1,9 +1,14 @@
 #include "Util/ArrayList.h"
-#include <stdio.h>
+
+#include <stddef.h>
+#include <assert.h>
+#include <stdlib.h>
+#include <string.h>
+
 // todo make better error checks
 
 typedef struct ArrayList
-{
+{ 
     void *data;
     size_t capacity;
     size_t size;

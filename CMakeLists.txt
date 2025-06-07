@@ -2,7 +2,7 @@
 # CMAKE_SOURCE_DIR : The directory where the top-level CMakeLists.txt file is located
 # CMAKE_CURRENT_SOURCE_DIR : The directory of the current CMakeLists.txt file
 
-cmake_minimum_required(VERSION 3.31)
+cmake_minimum_required(VERSION 3.1)
 
 project(Code-Charlie C)
 
