@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.1)
 ## 
 project(Code-Charlie C)
 
-set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_STANDARD 23)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS OFF)
 
@@ -28,6 +28,7 @@ add_executable(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME}
+    gpiod
     # kernel32.lib
     # user32.lib
     # gdi32.lib

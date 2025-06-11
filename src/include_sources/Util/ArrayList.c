@@ -8,7 +8,7 @@
 // todo make better error checks
 
 typedef struct ArrayList
-{ 
+{
     void *data;
     size_t capacity;
     size_t size;

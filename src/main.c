@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "Util.h"
+#include "Modules/TFTManager.h"
 
 typedef struct TestType
 {
@@ -10,17 +11,9 @@ typedef struct TestType
 
 int main()
 {
-    ArrayList *myList = ArrayList_Create(sizeof(TestType *), 10);
+    printf("test%d", 31);
 
-    TestType dataO;
-    TestType *data = &dataO;
-    data->qwe = "asd";
-    data->asd = 'q';
-    ArrayList_Add(myList, data);
-
-    printf("test char : %c\n", (*(TestType *)ArrayList_Get(myList, 0)).asd);
-    (*(TestType *)ArrayList_Get(myList, 0)).asd = 'w';
-    printf("test char : %c\n", (*(TestType *)ArrayList_Get(myList, 0)).asd);
+    TFTDisplay_Create(21; 18; 22);
 
     while (1)
     {
