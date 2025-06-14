@@ -13,7 +13,7 @@ int main()
 {
     printf("test%d", 31);
 
-    TFTDisplay_Create(21; 18; 22);
+    TFTDisplay_Create(21, 18, 22);
 
     while (1)
     {

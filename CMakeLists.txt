@@ -2,8 +2,8 @@
 # CMAKE_SOURCE_DIR : The directory where the top-level CMakeLists.txt file is located
 # CMAKE_CURRENT_SOURCE_DIR : The directory of the current CMakeLists.txt file
 
-cmake_minimum_required(VERSION 3.1)
-## 
+cmake_minimum_required(VERSION 4.0)
+
 project(Code-Charlie C)
 
 set(CMAKE_C_STANDARD 23)
@@ -29,14 +29,4 @@ add_executable(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
     gpiod
-    # kernel32.lib
-    # user32.lib
-    # gdi32.lib
-    # winspool.lib
-    # shell32.lib
-    # ole32.lib
-    # oleaut32.lib
-    # uuid.lib
-    # comdlg32.lib
-    # advapi32.lib
 )
