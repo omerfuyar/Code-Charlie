@@ -1,4 +1,4 @@
-#include "Modules/TFTManager.h"
+/* #include "Modules/TFTManager.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -45,3 +45,4 @@ TFTDisplay* TFTDisplay_Create(int DC_PIN, int CS_PIN, int RST_PIN)
     display->RSTLine = gpiod_chip_get_line(display->GPIOChip, RST_PIN);
     gpiod_line_request_output(display->RSTLine, "display_rst", 0);
 }
+ */
