@@ -1,4 +1,4 @@
-#include "Modules/TFTManager.h"
+/* #include "Modules/TFTManager.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -109,3 +109,4 @@ TFTDisplay *TFTDisplay_Create(int DC_PIN, int CS_PIN, int RST_PIN)
 
     return display;
 }
+ */
