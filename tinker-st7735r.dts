@@ -1,0 +1,42 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+    compatible = "rockchip,rk3288"; // Tinker Board S uses RK3288
+
+    fragment@0 {
+        /* IMPORTANT: Change &spi0 to the SPI bus you are using (e.g., &spi1 if using SPI1) */
+        target = <&spi0>;
+
+        __overlay__ {
+            status = "okay"; // Enables the SPI bus if it wasn't already
+
+            st7735r_display: display@0 { // @0 usually means Chip Select 0
+                compatible = "sitronix,st7735r";
+                reg = <0>; /* SPI Chip Select number (usually 0) */
+
+                /* IMPORTANT: Replace <&gpioX Y GPIO_ACTIVE_LOW> with actual GPIOs */
+                /* You need to find the GPIO controller (e.g., &gpio0, &gpio1) and pin number (Y) */
+                /* for your Tinker Board S connections. */
+                reset-gpios = <&gpio1 18 GPIO_ACTIVE_LOW>;  /* EXAMPLE: GPIO1_C2 - CHANGE THIS! */
+                dc-gpios    = <&gpio1 19 GPIO_ACTIVE_LOW>;  /* EXAMPLE: GPIO1_C3 - CHANGE THIS! */
+
+                /* Optional: Backlight control GPIO, if your display has it and you've wired it */
+                /* led-gpios = <&gpioZ W GPIO_ACTIVE_HIGH>; */ /* EXAMPLE - CHANGE THIS! */
+
+                spi-max-frequency = <32000000>; /* Max SPI speed in Hz (e.g., 16MHz=16000000, 32MHz=32000000) */
+                rotation = <90>;                /* Display rotation (0, 90, 180, 270) */
+                bgr;                            /* Add this line if your display has BGR color order, remove if RGB */
+                fps = <30>;                     /* Target frames per second */
+                buswidth = <8>;                 /* SPI bus width (usually 8 for these displays) */
+
+                /* You might need to specify your panel model if it's a specific variant, e.g.: */
+                /* model = "redtab"; */
+                /* Common models: "128x160", "128x128", "redtab", "blacktab", "greentab", "ips" */
+                /* If unsure, try without 'model' first, driver might auto-detect or use a generic one. */
+
+                debug = <0>; /* Set to 1, 2, or 3 for more driver debug output in dmesg */
+            };
+        };
+    };
+};

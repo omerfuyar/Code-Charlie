@@ -1,4 +1,4 @@
-/* #include "Modules/TFTManager.h"
+#include "Modules/TFTManager.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -51,6 +51,7 @@ TFTDisplay *TFTDisplay_Create(int DC_PIN, int CS_PIN, int RST_PIN)
         return NULL;
     }
 
+    // Variables for multiple usage
     struct gpiod_line_config *line_config = gpiod_line_config_new();       //! do not forget to free
     struct gpiod_request_config *req_config = gpiod_request_config_new();  //! do not forget to free
     struct gpiod_line_settings *line_settings = gpiod_line_settings_new(); //! do not forget to free
@@ -109,4 +110,3 @@ TFTDisplay *TFTDisplay_Create(int DC_PIN, int CS_PIN, int RST_PIN)
 
     return display;
 }
- */
