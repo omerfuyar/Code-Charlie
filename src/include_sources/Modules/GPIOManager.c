@@ -26,11 +26,9 @@ GPIOChip *GPIOChip_Create(const char *chipPath)
     DebugAssert(chip != NULL, "Memory allocation failed.");
 
     chip->chipPath = chipPath;
-	perror("hola");
 
     chip->chipHandle = gpiod_chip_open(chip->chipPath);
-	perror("hola2");
-    if (chip->chipHandle != NULL)
+    if (chip->chipHandle == NULL)
     {
 	perror("hola");
         DebugWarning("Failed to open GPIO chip handle, error in gpiod_chip_open function with parameter : chip path '%s'. Returning NULL.", chip->chipPath);
@@ -60,7 +58,7 @@ GPIOPin *GPIOPin_Consume(GPIOChip *chip, unsigned char index, const char *consum
     pin->lineIndex = index;
 
     pin->lineHandle = gpiod_chip_get_line(chip->chipHandle, pin->lineIndex);
-    if (pin->lineHandle != NULL)
+    if (pin->lineHandle == NULL)
     {
         DebugWarning("Failed to get GPIO line handle, error in gpiod_chip_get_line function with parameters : chip handle '%p', line index '%d'. Returning NULL.", chip->chipHandle, pin->lineIndex);
         free(pin);
