@@ -1,9 +1,7 @@
+#include "CodeCharlieGlobal.h"
 #include "Modules/GPIOManager.h"
 
-#include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <assert.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <linux/spi/spidev.h>
@@ -11,98 +9,105 @@
 
 typedef struct GPIOPin
 {
-    unsigned char indexInChip;
-    struct gpiod_line_request *lineRequest;
+    unsigned char lineIndex;
+    struct gpiod_line *lineHandle;
     const char *consumerName;
 } GPIOPin;
 
 typedef struct GPIOChip
 {
-    struct gpio_chip *chip;
+    struct gpiod_chip *chipHandle;
     const char *chipPath;
 } GPIOChip;
 
-TFTDisplay *TFTDisplay_Create(int DC_PIN, int CS_PIN, int RST_PIN)
+GPIOChip *GPIOChip_Create(const char *chipPath)
 {
-    TFTDisplay *display = malloc(sizeof(TFTDisplay));
-    assert(display != NULL);
+    GPIOChip *chip = (GPIOChip *)malloc(sizeof(GPIOChip));
+    DebugAssert(chip != NULL, "Memory allocation failed.");
 
-    display->SPIPath = DEFAULT_SPI_PATH;
-    display->SPISpeed = DEFAULT_SPI_SPEED;
+    chip->chipPath = chipPath;
 
-    display->SPIHandle = open(display->SPIPath, O_RDWR); //! do not forget to close
-    if (display->SPIHandle < 0)
+    chip->chipHandle = gpiod_chip_open(chip->chipPath);
+    if (chip->chipHandle != NULL)
     {
-        perror("Failed to open SPI device, error in open function. Returning NULL.");
-        free(display);
+        DebugWarning("Failed to open GPIO chip handle, error in gpiod_chip_open function. Returning NULL.");
+        free(chip);
         return NULL;
     }
 
-    display->GPIOChip = gpiod_chip_open(display->SPIPath); //! do not forget to close
-    if (!display->GPIOChip)
+    return chip;
+}
+
+void GPIOChip_Destroy(GPIOChip *chip)
+{
+    DebugAssert(chip != NULL, "Null pointer passed as parameter.");
+
+    gpiod_chip_close(chip->chipHandle);
+    free(chip);
+}
+
+GPIOPin *GPIOPin_Consume(GPIOChip *chip, unsigned char index, const char *consumer, bool isOutput, DigitalValue initialValue)
+{
+    DebugAssert(chip != NULL, "Null pointer passed as parameter.");
+
+    GPIOPin *pin = (GPIOPin *)malloc(sizeof(GPIOPin));
+    DebugAssert(pin != NULL, "Memory allocation failed.");
+
+    pin->consumerName = consumer;
+    pin->lineIndex = index;
+
+    pin->lineHandle = gpiod_chip_get_line(chip->chipHandle, pin->lineIndex);
+    if (pin->lineHandle != NULL)
     {
-        perror("Failed to open GPIO chip, error in gpiod_chip_open function. Returning NULL.");
-        close(display->SPIHandle);
-        free(display);
+        DebugWarning("Failed to get GPIO line handle, error in gpiod_chip_get_line function. Returning NULL.");
+        free(pin);
         return NULL;
     }
 
-    // Variables for multiple usage
-    struct gpiod_line_config *line_config = gpiod_line_config_new();       //! do not forget to free
-    struct gpiod_request_config *req_config = gpiod_request_config_new();  //! do not forget to free
-    struct gpiod_line_settings *line_settings = gpiod_line_settings_new(); //! do not forget to free
-    gpiod_line_settings_set_direction(line_settings, GPIOD_LINE_DIRECTION_OUTPUT);
-    gpiod_line_settings_set_output_value(line_settings, GPIOD_LINE_VALUE_INACTIVE);
-
-    // Request the DC line
-    gpiod_request_config_set_consumer(req_config, "display_dc");
-    gpiod_line_config_add_line_settings(line_config, &DC_PIN, 1, line_settings);
-    display->DCLine = gpiod_chip_request_lines(display->GPIOChip, req_config, line_config);
-    if (!display->DCLine)
+    int lineRequestReturn = isOutput ? gpiod_line_request_output(pin->lineHandle, pin->consumerName, initialValue) : gpiod_line_request_input(pin->lineHandle, pin->consumerName);
+    if (lineRequestReturn != 0)
     {
-        perror("Failed to request DC line");
-        gpiod_chip_close(display->GPIOChip);
-        close(display->SPIHandle);
-        free(display);
+        DebugWarning("Failed to request line, error in gpiod_line_request_(input / output) function. Returning NULL.");
+        gpiod_line_release(pin->lineHandle);
+        free(pin);
         return NULL;
     }
 
-    gpiod_line_config_reset(line_config);
+    return pin;
+}
 
-    // Request the CS line
-    gpiod_request_config_set_consumer(req_config, "display_cs");
-    gpiod_line_config_add_line_settings(line_config, &CS_PIN, 1, line_settings);
-    display->CSLine = gpiod_chip_request_lines(display->GPIOChip, req_config, line_config);
-    if (!display->CSLine)
+void GPIOPin_Release(GPIOPin *pin)
+{
+    DebugAssert(pin != NULL, "Null pointer passed as parameter.");
+
+    gpiod_line_release(pin->lineHandle);
+    free(pin);
+}
+
+int GPIOPin_SetValue(GPIOPin *pin, DigitalValue value)
+{
+    DebugAssert(pin != NULL, "Null pointer passed as parameter.");
+
+    int lineValueSetReturn = gpiod_line_set_value(pin->lineHandle, value);
+    if (lineValueSetReturn != 0)
     {
-        perror("Failed to request CS line");
-        gpiod_line_request_release(display->DCLine);
-        gpiod_chip_close(display->GPIOChip);
-        close(display->SPIHandle);
-        free(display);
-        return NULL;
+        DebugWarning("Failed to set value for output, error in gpiod_line_set_value function. Returning -1.");
+        return -1;
     }
 
-    gpiod_line_config_reset(line_config);
+    return 0;
+}
 
-    // Request the RST line
-    gpiod_request_config_set_consumer(req_config, "display_rst");
-    gpiod_line_config_add_line_settings(line_config, &RST_PIN, 1, line_settings);
-    display->RSTLine = gpiod_chip_request_lines(display->GPIOChip, req_config, line_config);
-    if (!display->RSTLine)
+DigitalValue GPIOPin_GetValue(GPIOPin *pin)
+{
+    DebugAssert(pin != NULL, "Null pointer passed as parameter.");
+
+    DigitalValue lineValueSetReturn = (DigitalValue)gpiod_line_get_value(pin->lineHandle);
+    if (lineValueSetReturn == KOLPA)
     {
-        perror("Failed to request RST line");
-        gpiod_line_request_release(display->CSLine);
-        gpiod_line_request_release(display->DCLine);
-        gpiod_chip_close(display->GPIOChip);
-        close(display->SPIHandle);
-        free(display);
-        return NULL;
+        DebugWarning("Failed to get value from input, error in gpiod_line_get_value function. Returning -1.");
+        return KOLPA;
     }
 
-    gpiod_line_settings_free(line_settings);
-    gpiod_line_config_free(line_config);
-    gpiod_request_config_free(req_config);
-
-    return display;
+    return lineValueSetReturn;
 }

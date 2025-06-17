@@ -1,11 +1,8 @@
+#include "CodeCharlieGlobal.h"
 #include "Util/ArrayList.h"
 
-#include <stddef.h>
-#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
-
-// todo make better error checks
 
 typedef struct ArrayList
 {
@@ -17,26 +14,21 @@ typedef struct ArrayList
 
 ArrayList *ArrayList_Create(size_t sizeOfItem, size_t initialCapacity)
 {
-    assert(initialCapacity > 0);
-    assert(sizeOfItem > 0);
-
     ArrayList *list = malloc(sizeof(ArrayList));
-
-    assert(list != NULL);
+    DebugAssert(list != NULL, "Memory allocation failed.");
 
     list->capacity = initialCapacity;
     list->size = 0;
     list->sizeOfItem = sizeOfItem;
     list->data = malloc(initialCapacity * sizeOfItem);
-
-    assert(list->data != NULL);
+    DebugAssert(list->data != NULL, "Memory allocation failed.");
 
     return list;
 }
 
 void ArrayList_Destroy(ArrayList *list)
 {
-    assert(list != NULL);
+    DebugAssert(list != NULL, "Null pointer passed as parameter.");
 
     free(list->data);
     list->data = NULL;
@@ -47,11 +39,10 @@ void ArrayList_Destroy(ArrayList *list)
 
 void ArrayList_Resize(ArrayList *list, size_t newCapacity)
 {
-    assert(list != NULL);
-    assert(newCapacity > 0);
+    DebugAssert(list != NULL, "Null pointer passed as parameter.");
 
     void *newData = realloc(list->data, newCapacity * list->sizeOfItem);
-    assert(newData != NULL);
+    DebugAssert(newData != NULL, "Memory allocation failed.");
 
     list->data = newData;
     list->capacity = newCapacity;
@@ -64,16 +55,16 @@ void ArrayList_Resize(ArrayList *list, size_t newCapacity)
 
 void *ArrayList_Get(ArrayList *list, size_t index)
 {
-    assert(list != NULL);
-    assert(index < list->size);
+    DebugAssert(list != NULL, "Null pointer passed as parameter.");
+    DebugAssert(index < list->size, "Index out of range. List size : %du, index : %du", list->size, index);
 
     return (char *)(list->data) + index * list->sizeOfItem;
 }
 
 void ArrayList_Set(ArrayList *list, size_t index, const void *item)
 {
-    assert(list != NULL);
-    assert(index < list->size);
+    DebugAssert(list != NULL, "Null pointer passed as parameter.");
+    DebugAssert(index < list->size, "Index out of range. List size : %du, index : %du", list->size, index);
 
     void *targetLocation = ArrayList_Get(list, index);
 
@@ -82,7 +73,7 @@ void ArrayList_Set(ArrayList *list, size_t index, const void *item)
 
 void ArrayList_Add(ArrayList *list, const void *item)
 {
-    assert(list != NULL);
+    DebugAssert(list != NULL, "Null pointer passed as parameter.");
 
     if (list->size >= list->capacity)
     {
@@ -98,8 +89,8 @@ void ArrayList_Add(ArrayList *list, const void *item)
 
 void ArrayList_RemoveAtIndex(ArrayList *list, size_t index)
 {
-    assert(list != NULL);
-    assert(index < list->size);
+    DebugAssert(list != NULL, "Null pointer passed as parameter.");
+    DebugAssert(index < list->size, "Index out of range. List size : %du, index : %du", list->size, index);
 
     char *targetLocation = ArrayList_Get(list, index);
 
@@ -115,19 +106,21 @@ void ArrayList_RemoveAtIndex(ArrayList *list, size_t index)
 
 void ArrayList_RemoveItem(ArrayList *list, const void *item)
 {
-    assert(list != NULL);
+    DebugAssert(list != NULL, "Null pointer passed as parameter.");
 
     ArrayList_RemoveAtIndex(list, ArrayList_IndexOf(list, item));
 }
 
 void ArrayList_Clear(ArrayList *list)
 {
+    DebugAssert(list != NULL, "Null pointer passed as parameter.");
+
     list->size = 0;
 }
 
 long long ArrayList_IndexOf(ArrayList *list, const void *item)
 {
-    assert(list != NULL);
+    DebugAssert(list != NULL, "Null pointer passed as parameter.");
 
     for (size_t i = 0; i < list->size; i++)
     {
@@ -144,10 +137,14 @@ long long ArrayList_IndexOf(ArrayList *list, const void *item)
 
 size_t ArrayList_GetSize(ArrayList *list)
 {
+    DebugAssert(list != NULL, "Null pointer passed as parameter.");
+
     return list->size;
 }
 
 size_t ArrayList_GetCapacity(ArrayList *list)
 {
+    DebugAssert(list != NULL, "Null pointer passed as parameter.");
+
     return list->capacity;
 }

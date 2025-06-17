@@ -1,5 +1,7 @@
 #pragma once
 
+#include "CodeCharlieGlobal.h"
+
 // Returns the factorial of the number
 int Factorial(int n);
 

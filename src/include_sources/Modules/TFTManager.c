@@ -2,12 +2,11 @@
  * DO NOT USE
  */
 
+#include "CodeCharlieGlobal.h"
 #include "Modules/TFTManager.h"
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <assert.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <linux/spi/spidev.h>
@@ -34,6 +33,7 @@ TFTDisplay *TFTDisplay_Create(int DC_PIN, int CS_PIN, int RST_PIN)
 {
     TFTDisplay *display = malloc(sizeof(TFTDisplay));
     assert(display != NULL);
+    /*
 
     display->SPIPath = DEFAULT_SPI_PATH;
     display->SPISpeed = DEFAULT_SPI_SPEED;
@@ -111,6 +111,8 @@ TFTDisplay *TFTDisplay_Create(int DC_PIN, int CS_PIN, int RST_PIN)
     gpiod_line_settings_free(line_settings);
     gpiod_line_config_free(line_config);
     gpiod_request_config_free(req_config);
+
+    */
 
     return display;
 }

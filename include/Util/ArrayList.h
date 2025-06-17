@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stddef.h>
+#include "CodeCharlieGlobal.h"
 
 // The resize multiplier used when the ArrayList size reached to the capacity when adding new item
 #define ARRAY_LIST_RESIZE_MULTIPLIER 2

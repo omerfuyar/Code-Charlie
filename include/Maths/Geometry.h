@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stdbool.h>
+#include "CodeCharlieGlobal.h"
 
 // Returns true if the value is between min and max values, inclusive
 bool Between(float value, float min, float max);

@@ -1,9 +1,7 @@
+#include "CodeCharlieGlobal.h"
 #include "Maths/Statistics.h"
 
-#include <assert.h>
-#include <stdio.h>
-
-float Average(float *values, int count)
+float Average(float *values, unsigned int count)
 {
     float sum = 0.0f;
 
@@ -15,11 +13,9 @@ float Average(float *values, int count)
     return sum / (float)count;
 }
 
-float Median(float *values, int count)
+float Median(float *values, unsigned int count)
 {
-    assert(count > 0);
-
-    if (count == 1)
+    if (count == 1 || count == 0)
     {
         return *values;
     }

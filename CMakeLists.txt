@@ -2,7 +2,7 @@
 # CMAKE_SOURCE_DIR : The directory where the top-level CMakeLists.txt file is located
 # CMAKE_CURRENT_SOURCE_DIR : The directory of the current CMakeLists.txt file
 
-cmake_minimum_required(VERSION 4.0)
+cmake_minimum_required(VERSION 3.25)
 
 project(Code-Charlie C)
 
@@ -13,6 +13,8 @@ set(CMAKE_C_EXTENSIONS OFF)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/arc)
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g")
 
 include_directories(${PROJECT_NAME} 
     ${CMAKE_SOURCE_DIR}/include
@@ -29,4 +31,5 @@ add_executable(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
     gpiod
+    m
 )

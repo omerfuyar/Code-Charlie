@@ -1,5 +1,7 @@
 #pragma once
 
+#include "CodeCharlieGlobal.h"
+
 // Returns the logarithm of the value to the base
 float Log(float value, float base);
 

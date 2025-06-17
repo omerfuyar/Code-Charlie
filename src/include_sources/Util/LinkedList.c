@@ -1,7 +1,6 @@
+#include "CodeCharlieGlobal.h"
 #include "Util/LinkedList.h"
 
-#include <stddef.h>
-#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -21,7 +20,7 @@ typedef struct LinkedList
     size_t sizeOfItem;
 } LinkedList;
 
-#pragma region LinkedListNode Functions
+#pragma region LinkedListNode
 
 /// @brief Creator function for LinkedListNode. Uses memcpy to copy the data.
 /// @param sizeOfData Size of the data to be stored in the node.
@@ -30,10 +29,10 @@ typedef struct LinkedList
 LinkedListNode *LinkedListNode_Create(size_t sizeOfData, const void *data)
 {
     LinkedListNode *node = malloc(sizeof(LinkedListNode));
-    assert(node != NULL);
+    DebugAssert(node != NULL, "Memory allocation failed for node.");
 
     node->data = malloc(sizeOfData);
-    assert(node->data != NULL);
+    DebugAssert(node->data != NULL, "Memory allocation failed for node data.");
 
     memcpy(node->data, data, sizeOfData);
 
@@ -46,10 +45,12 @@ LinkedListNode *LinkedListNode_Create(size_t sizeOfData, const void *data)
 /// @param node Pointer to the LinkedListNode to destroy.
 void LinkedListNode_Destroy(LinkedListNode *node)
 {
-    assert(node != NULL);
-    assert(node->data != NULL);
+    DebugAssert(node != NULL, "Null pointer passed as parameter.");
 
-    free(node->data);
+    if (node->data != NULL)
+    {
+        free(node->data);
+    }
     node->data = NULL;
     node->next = NULL;
 
@@ -61,7 +62,7 @@ void LinkedListNode_Destroy(LinkedListNode *node)
 /// @param node Pointer to the head node of the linked list to destroy.
 void LinkedListNode_DestroyAll(LinkedListNode *node)
 {
-    assert(node != NULL);
+    DebugAssert(node != NULL, "Null pointer passed as parameter.");
 
     if (node->next != NULL)
     {
@@ -76,8 +77,8 @@ void LinkedListNode_DestroyAll(LinkedListNode *node)
 /// @param nextNode Next node to connect.
 void LinkedListNode_Connect(LinkedListNode *node, LinkedListNode *nextNode)
 {
-    assert(node != NULL);
-    assert(nextNode != NULL);
+    DebugAssert(node != NULL, "Null pointer passed as parameter for node.");
+    DebugAssert(nextNode != NULL, "Null pointer passed as parameter for next node.");
 
     node->next = nextNode;
 }
@@ -124,11 +125,8 @@ long long LinkedListNode_GetIndexIfMatch(LinkedListNode *node, size_t sizeOfItem
 
 LinkedList *LinkedList_Create(size_t sizeOfItem)
 {
-    assert(sizeOfItem > 0);
-
     LinkedList *list = malloc(sizeof(LinkedList));
-
-    assert(list != NULL);
+    DebugAssert(list != NULL, "Memory allocation failed.");
 
     list->size = 0;
     list->sizeOfItem = sizeOfItem;
@@ -138,7 +136,7 @@ LinkedList *LinkedList_Create(size_t sizeOfItem)
 
 void LinkedList_Destroy(LinkedList *list)
 {
-    assert(list != NULL);
+    DebugAssert(list != NULL, "Null pointer passed as parameter.");
 
     if (list->head != NULL)
     {
@@ -151,8 +149,8 @@ void LinkedList_Destroy(LinkedList *list)
 
 void *LinkedList_Get(LinkedList *list, size_t index)
 {
-    assert(list != NULL);
-    assert(index < list->size);
+    DebugAssert(list != NULL, "Null pointer passed as parameter.");
+    DebugAssert(index < list->size, "Index out of range. List size : %du, index : %du", list->size, index);
 
     LinkedListNode *currentNode = list->head;
 
@@ -166,13 +164,16 @@ void *LinkedList_Get(LinkedList *list, size_t index)
 
 void LinkedList_Set(LinkedList *list, size_t index, const void *item)
 {
-    assert(list != NULL);
-    assert(index < list->size);
+    DebugAssert(list != NULL, "Null pointer passed as parameter.");
+    DebugAssert(index < list->size, "Index out of range. List size : %du, index : %du", list->size, index);
+
+    LinkedListNode *nodeToSet = LinkedList_Get(list, index);
+    memcpy(nodeToSet->data, item, list->sizeOfItem);
 }
 
 void LinkedList_Add(LinkedList *list, const void *item)
 {
-    assert(list != NULL);
+    DebugAssert(list != NULL, "Null pointer passed as parameter.");
 
     LinkedListNode *newNode = LinkedListNode_Create(list->sizeOfItem, item);
 
@@ -190,8 +191,8 @@ void LinkedList_Add(LinkedList *list, const void *item)
 
 void LinkedList_RemoveAtIndex(LinkedList *list, size_t index)
 {
-    assert(list != NULL);
-    assert(index < list->size);
+    DebugAssert(list != NULL, "Null pointer passed as parameter.");
+    DebugAssert(index < list->size, "Index out of range. List size : %du, index : %du", list->size, index);
 
     if (index == 0)
     {
@@ -210,29 +211,29 @@ void LinkedList_RemoveAtIndex(LinkedList *list, size_t index)
 
 void LinkedList_RemoveItem(LinkedList *list, const void *item)
 {
-    assert(list != NULL);
+    DebugAssert(list != NULL, "Null pointer passed as parameter.");
 
     LinkedList_RemoveAtIndex(list, LinkedList_IndexOf(list, item));
 }
 
 void LinkedList_Clear(LinkedList *list)
 {
-    assert(list != NULL);
+    DebugAssert(list != NULL, "Null pointer passed as parameter.");
 
     LinkedListNode_DestroyAll(list->head);
 }
 
 long long LinkedList_IndexOf(LinkedList *list, const void *item)
 {
-    assert(list != NULL);
-    assert(list->head != NULL);
+    DebugAssert(list != NULL, "Null pointer passed as parameter.");
+    DebugAssert(list->head != NULL, "Head of the list is null.");
 
     return LinkedListNode_GetIndexIfMatch(list->head, list->sizeOfItem, item, 0);
 }
 
 size_t LinkedList_GetSize(LinkedList *list)
 {
-    assert(list != NULL);
+    DebugAssert(list != NULL, "Null pointer passed as parameter.");
 
     return list->size;
 }

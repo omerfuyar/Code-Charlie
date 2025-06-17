@@ -1,5 +1,5 @@
+#include "CodeCharlieGlobal.h"
 #include "Maths/Trigonometry.h"
-#include "Maths/Constants.h"
 
 #include <math.h>
 

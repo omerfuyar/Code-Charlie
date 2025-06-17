@@ -1,36 +1,19 @@
-#include <stdio.h>
-#include "Util.h"
-#include "Modules/TFTManager.h"
-#include "Maths/Statistics.h"
-
-typedef struct TestType
-{
-    int test1;
-    char asd;
-    char *qwe;
-} TestType;
+#include "CodeCharlieGlobal.h"
+#include "Modules/GPIOManager.h"
 
 int main()
 {
-    printf("test%d\n", 31);
-    float asd[] = {
-        1,
-        213,
-        434,
-        31,
-        12,
-        5,
-        34,
-        1,
-        2,
-    };
-
-    printf("\n%f", Median(asd, 9));
-
-    TFTDisplay_Create(21, 18, 22);
+    DebugInfo("Start");
+    GPIOChip *myChip = GPIOChip_Create("/dev/gpiochip8");
+    GPIOPin *myPin = GPIOPin_Consume(myChip, 9, "Servo Signal", true, LOW);
+    DebugInfo("Pin and chip creation %d", 31);
 
     while (1)
     {
+        GPIOPin_SetValue(myPin, HIGH);
+        sleep(1);
+        GPIOPin_SetValue(myPin, LOW);
+        sleep(1);
     }
 
     return 0;
