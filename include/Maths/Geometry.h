@@ -2,9 +2,6 @@
 
 #include "CodeCharlieGlobal.h"
 
-// Returns true if the value is between min and max values, inclusive
-bool Between(float value, float min, float max);
-
 // Returns the perimeter of a circle given its radius
 float PerimeterOfCircle(float radius);
 

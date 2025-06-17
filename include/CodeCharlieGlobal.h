@@ -14,6 +14,9 @@
 #define DEBUG_ERROR_ENABLED 1
 #define DEBUG_ASSERT_ENABLED 1
 
+#define DEBUG_TERMINATE_ON_ERROR 0
+#define DEBUG_TERMINATE_ON_ASSERT 1
+
 #if DEBUG_INFO_ENABLED != 0 || DEBUG_WARNING_ENABLED != 0 || DEBUG_ERROR_ENABLED != 0 || DEBUG_ASSERT_ENABLED != 0
 static void PrintTimeFormatted(bool isError, const char *format)
 {
@@ -28,42 +31,59 @@ static void PrintTimeFormatted(bool isError, const char *format)
 #if DEBUG_INFO_ENABLED == 0
 #define DebugInfo(format, ...)
 #else
-#define DebugInfo(format, ...)                               \
-    PrintTimeFormatted(false, "[%H:%M:%S]");                 \
-    fprintf(stdout, " : [INFO] : [%s:%d:%s] : " format "\n", \
-            __FILE__, __LINE__, __func__, ##__VA_ARGS__);
+#define DebugInfo(format, ...)                                              \
+    do                                                                      \
+    {                                                                       \
+        PrintTimeFormatted(false, "[%H:%M:%S]");                            \
+        fprintf(stdout, " : \e[92m[INFO]\e[0m : [%s:%d:%s] : " format "\n", \
+                __FILE__, __LINE__, __func__, ##__VA_ARGS__);               \
+    } while (0)
 #endif
 
 #if DEBUG_WARNING_ENABLED == 0
 #define DebugWarning(format, ...)
 #else
-#define DebugWarning(format, ...)                               \
-    PrintTimeFormatted(false, "[%H:%M:%S]");                    \
-    fprintf(stdout, " : [WARNING] : [%s:%d:%s] : " format "\n", \
-            __FILE__, __LINE__, __func__, ##__VA_ARGS__);
+#define DebugWarning(format, ...)                                              \
+    do                                                                         \
+    {                                                                          \
+        PrintTimeFormatted(true, "[%H:%M:%S]");                                \
+        fprintf(stderr, " : \e[93m[WARNING]\e[0m : [%s:%d:%s] : " format "\n", \
+                __FILE__, __LINE__, __func__, ##__VA_ARGS__);                  \
+        perror("\e[93m[perror note]\e[0m ");                                   \
+    } while (0)
 #endif
 
 #if DEBUG_ERROR_ENABLED == 0
 #define DebugError(format, ...)
 #else
-#define DebugError(format, ...)                               \
-    PrintTimeFormatted(true, "[%H:%M:%S]");                   \
-    fprintf(stderr, " : [ERROR] : [%s:%d:%s] : " format "\n", \
-            __FILE__, __LINE__, __func__, ##__VA_ARGS__);     \
-    _exit(EXIT_FAILURE);
+#define DebugError(format, ...)                                              \
+    do                                                                       \
+    {                                                                        \
+        PrintTimeFormatted(true, "[%H:%M:%S]");                              \
+        fprintf(stderr, " : \e[91m[ERROR]\e[0m : [%s:%d:%s] : " format "\n", \
+                __FILE__, __LINE__, __func__, ##__VA_ARGS__);                \
+        perror("\e[91m[perror note]\e[0m ");                                 \
+        if (DEBUG_TERMINATE_ON_ERROR != 0)                                   \
+            _exit(EXIT_FAILURE);                                             \
+    } while (0)
 #endif
 
 #if DEBUG_ASSERT_ENABLED == 0
 #define DebugAssert(condition, format, ...)
 #else
-#define DebugAssert(condition, format, ...)                                   \
-    if (!(condition))                                                         \
-    {                                                                         \
-        PrintTimeFormatted(true, "[%H:%M:%S]");                               \
-        fprintf(stderr, " : [ASSERTION FAILURE] : [%s:%d:%s] : " format "\n", \
-                __FILE__, __LINE__, __func__, ##__VA_ARGS__);                 \
-        _exit(EXIT_FAILURE);                                                  \
-    }
+#define DebugAssert(condition, format, ...)                                                  \
+    do                                                                                       \
+    {                                                                                        \
+        if (!(condition))                                                                    \
+        {                                                                                    \
+            PrintTimeFormatted(true, "[%H:%M:%S]");                                          \
+            fprintf(stderr, " : \e[95m[ASSERTION FAILURE]\e[0m : [%s:%d:%s] : " format "\n", \
+                    __FILE__, __LINE__, __func__, ##__VA_ARGS__);                            \
+            perror("\e[95m[perror note]\e[0m ");                                             \
+            if (DEBUG_TERMINATE_ON_ASSERT != 0)                                              \
+                _exit(EXIT_FAILURE);                                                         \
+        }                                                                                    \
+    } while (0)
 #endif
 
 // The value of Pi

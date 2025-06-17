@@ -20,9 +20,9 @@ int main()
 
     while (1)
     {
-        GPIOPin_SetValue(myPin, HIGH);
+        GPIOPin_WriteValue(myPin, HIGH);
         sleep(1);
-        GPIOPin_SetValue(myPin, LOW);
+        GPIOPin_WriteValue(myPin, LOW);
         sleep(1);
     }
 
