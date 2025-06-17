@@ -13,6 +13,7 @@ typedef enum GPIODigitalValue
     HIGH = 1    // A high digital value (1).
 } GPIODigitalValue;
 
+/// @brief Represents the bias type for GPIO input pins.
 typedef enum GPIOInputBiasType
 {
     DISABLED = (1UL << (3)),  // The pin stays in a floating, high-impedance state when not connected to anything.
@@ -20,6 +21,7 @@ typedef enum GPIOInputBiasType
     PULL_UP = (1UL << (5))    // The pin reads HIGH when the input is not connected or connected to ground and reads LOW when it is vcc.
 } GPIOInputBiasType;
 
+/// @brief Represents the event trigger type for GPIO input pins.
 typedef enum GPIOInputEventType
 {
     RISING_EDGE = 1,   // Triggers when the pin transitions from LOW to HIGH.
@@ -27,6 +29,7 @@ typedef enum GPIOInputEventType
     BOTH_EDGES = 1 | 2 // Triggers on both transitions, LOW to HIGH and HIGH to LOW.
 } GPIOInputEventType;
 
+/// @brief Represents the output type for GPIO pins.
 typedef enum GPIOOutputType
 {
     OPEN_DRAIN = (1UL << (0)),  // Pin can actively write LOW, but when it is HIGH, it goes into a high-impedance state. Requires an external pull-up resistor to achieve a physical HIGH. Allows multiple outputs to be connected to the same line.
@@ -35,16 +38,23 @@ typedef enum GPIOOutputType
 } GPIOOutputType;
 
 /// @brief Represents a GPIO pin.
+/// @brief Represents a GPIO pin.
 typedef struct GPIOPin GPIOPin;
 
+/// @brief Represents a GPIO chip.
 /// @brief Represents a GPIO chip.
 typedef struct GPIOChip GPIOChip;
 
 /// @brief Creates a GPIO chip instance.
 /// @param chipPath The file path to the GPIO chip (e.g., "/dev/gpiochip0").
 /// @return A pointer to the created GPIOChip instance, or NULL if creation fails.
+/// @brief Creates a GPIO chip instance.
+/// @param chipPath The file path to the GPIO chip (e.g., "/dev/gpiochip0").
+/// @return A pointer to the created GPIOChip instance, or NULL if creation fails.
 GPIOChip *GPIOChip_Create(const char *chipPath);
 
+/// @brief Destroys a GPIO chip instance and releases its resources.
+/// @param chip The GPIOChip instance to destroy.
 /// @brief Destroys a GPIO chip instance and releases its resources.
 /// @param chip The GPIOChip instance to destroy.
 void GPIOChip_Destroy(GPIOChip *chip);
@@ -76,6 +86,8 @@ GPIOPin *GPIOPin_ConsumeAsInput(GPIOChip *chip, unsigned char index, const char 
 /// @return A pointer to the created GPIOPin instance, or NULL if consumption fails.
 GPIOPin *GPIOPin_ConsumeAsOutput(GPIOChip *chip, unsigned char index, const char *consumer, GPIOOutputType outputType, GPIODigitalValue initialValue);
 
+/// @brief Releases a GPIO pin and frees its resources.
+/// @param pin The GPIOPin instance to release.
 /// @brief Releases a GPIO pin and frees its resources.
 /// @param pin The GPIOPin instance to release.
 void GPIOPin_Release(GPIOPin *pin);

@@ -13,8 +13,8 @@ int main()
     // GPIO path : /sys/class/gpio/gpio257
     // SPI path : /dev/spidev2
 
-    GPIOChip *myChip = GPIOChip_Create("/dev/gpiochip8");
-    // GPIOChip *myChip = GPIOChip_Create("/sys/class/gpio/gpio257");
+    // GPIOChip *myChip = GPIOChip_Create("/dev/gpiochip8");
+    GPIOChip *myChip = GPIOChip_Create("/sys/class/gpio/gpio257");
     GPIOPin *myPin = GPIOPin_ConsumeAsOutput(myChip, 9, "Servo Signal", ACTIVE_LOW, LOW);
 
     while (1)
