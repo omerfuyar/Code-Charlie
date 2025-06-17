@@ -3,6 +3,8 @@
 
 -Project is Linux exclusive because there is most likely no SBCs running other than linux.
 
+-And it's probably not compatible with distributions other than debian based ones.
+
 -C standard for this projects is 23.
 
 # Project Structure
@@ -13,4 +15,7 @@
 ---Debugging macros for debug usage.
 --And shouldn't include any custom build files.
 -For debugging, there is info, warning and error debugs for debug build.--Debug build configuration can be made from global header.
--stdint types used in necessary places.
+
+# The App
+-First of all, I don't know what I'm doing in this project honestly. Just trying out some hardware and software ideas that I can't do in windows and regular pcs. The process will show us whats going to happen. I hope you good days, evenings and nights.
+-The app must be run with sudo to make gpio interface work.
