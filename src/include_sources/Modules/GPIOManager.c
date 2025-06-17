@@ -31,12 +31,10 @@ GPIOChip *GPIOChip_Create(const char *chipPath)
     if (chip->chipHandle == NULL)
     {
         DebugError("Failed to open GPIO chip handle, error in gpiod_chip_open function with parameter : chip path '%s'. Returning NULL.", chip->chipPath);
-        DebugError("Failed to open GPIO chip handle, error in gpiod_chip_open function with parameter : chip path '%s'. Returning NULL.", chip->chipPath);
         free(chip);
         return NULL;
     }
 
-    DebugInfo("GPIO chip created successfully with path '%s'.", chip->chipPath);
     DebugInfo("GPIO chip created successfully with path '%s'.", chip->chipPath);
     return chip;
 }
@@ -47,12 +45,6 @@ void GPIOChip_Destroy(GPIOChip *chip)
 
     gpiod_chip_close(chip->chipHandle);
     free(chip);
-
-    chip->chipHandle = NULL;
-    chip->chipPath = NULL;
-    chip = NULL;
-
-    DebugInfo("GPIO chip destroyed successfully with path '%s'.", chip->chipPath);
 
     chip->chipHandle = NULL;
     chip->chipPath = NULL;
@@ -106,7 +98,6 @@ GPIOPin *GPIOPin_ConsumeAsOutput(GPIOChip *chip, unsigned char index, const char
     if (pin->lineHandle == NULL)
     {
         DebugError("Failed to get GPIO line handle, error in gpiod_chip_get_line function with parameters : chip handle '%p', line index '%d'. Returning NULL.", chip->chipHandle, pin->lineIndex);
-        DebugError("Failed to get GPIO line handle, error in gpiod_chip_get_line function with parameters : chip handle '%p', line index '%d'. Returning NULL.", chip->chipHandle, pin->lineIndex);
         free(pin);
         return NULL;
     }
@@ -137,13 +128,6 @@ void GPIOPin_Release(GPIOPin *pin)
     pin = NULL;
 
     DebugInfo("GPIO pin released successfully with index '%d', consumer name '%s'.", pin->lineIndex, pin->consumerName);
-
-    pin->lineHandle = NULL;
-    pin->consumerName = NULL;
-    pin->lineIndex = 0;
-    pin = NULL;
-
-    DebugInfo("GPIO pin released successfully with index '%d', consumer name '%s'.", pin->lineIndex, pin->consumerName);
 }
 
 int GPIOPin_WriteValue(GPIOPin *pin, GPIODigitalValue value)
@@ -151,14 +135,12 @@ int GPIOPin_WriteValue(GPIOPin *pin, GPIODigitalValue value)
     DebugAssert(pin != NULL, "Null pointer passed as parameter.");
 
     int lineValueSetReturn = gpiod_line_set_value(pin->lineHandle, (int)value);
-    int lineValueSetReturn = gpiod_line_set_value(pin->lineHandle, (int)value);
     if (lineValueSetReturn != 0)
     {
         DebugWarning("Failed to set value for output, error in gpiod_line_set_value function with parameters : line handle '%p', value '%d'. Returning -1.", pin->lineHandle, value);
         return -1;
     }
 
-    DebugInfo("GPIO pin value written successfully with index '%d', consumer name '%s', value '%d'.", pin->lineIndex, pin->consumerName, value);
     DebugInfo("GPIO pin value written successfully with index '%d', consumer name '%s', value '%d'.", pin->lineIndex, pin->consumerName, value);
     return 0;
 }
@@ -174,7 +156,6 @@ GPIODigitalValue GPIOPin_ReadValue(GPIOPin *pin)
         return KOLPA;
     }
 
-    DebugInfo("GPIO pin value read successfully with index '%d', consumer name '%s', value '%d'.", pin->lineIndex, pin->consumerName, lineValueSetReturn);
     DebugInfo("GPIO pin value read successfully with index '%d', consumer name '%s', value '%d'.", pin->lineIndex, pin->consumerName, lineValueSetReturn);
     return lineValueSetReturn;
 }
