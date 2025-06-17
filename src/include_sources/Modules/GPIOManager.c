@@ -26,10 +26,13 @@ GPIOChip *GPIOChip_Create(const char *chipPath)
     DebugAssert(chip != NULL, "Memory allocation failed.");
 
     chip->chipPath = chipPath;
+	perror("hola");
 
     chip->chipHandle = gpiod_chip_open(chip->chipPath);
+	perror("hola2");
     if (chip->chipHandle != NULL)
     {
+	perror("hola");
         DebugWarning("Failed to open GPIO chip handle, error in gpiod_chip_open function with parameter : chip path '%s'. Returning NULL.", chip->chipPath);
         free(chip);
         return NULL;
