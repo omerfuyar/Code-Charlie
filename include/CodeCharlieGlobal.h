@@ -40,6 +40,7 @@ static void PrintTimeFormatted(bool isError, const char *format)
 #else
 #define DebugWarning(format, ...)                               \
     PrintTimeFormatted(false, "[%H:%M:%S]");                    \
+    perror("herhangi ");                                        \
     fprintf(stdout, " : [WARNING] : [%s:%d:%s] : " format "\n", \
             __FILE__, __LINE__, __func__, ##__VA_ARGS__);
 #endif
@@ -49,6 +50,7 @@ static void PrintTimeFormatted(bool isError, const char *format)
 #else
 #define DebugError(format, ...)                               \
     PrintTimeFormatted(true, "[%H:%M:%S]");                   \
+    perror(format);                                           \
     fprintf(stderr, " : [ERROR] : [%s:%d:%s] : " format "\n", \
             __FILE__, __LINE__, __func__, ##__VA_ARGS__);     \
     _exit(EXIT_FAILURE);
@@ -61,6 +63,7 @@ static void PrintTimeFormatted(bool isError, const char *format)
     if (!(condition))                                                         \
     {                                                                         \
         PrintTimeFormatted(true, "[%H:%M:%S]");                               \
+        perror(format);                                                       \
         fprintf(stderr, " : [ASSERTION FAILURE] : [%s:%d:%s] : " format "\n", \
                 __FILE__, __LINE__, __func__, ##__VA_ARGS__);                 \
         _exit(EXIT_FAILURE);                                                  \
