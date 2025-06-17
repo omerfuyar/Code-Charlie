@@ -3,7 +3,7 @@
 
 int main()
 {
-    DebugInfo("Start");
+    DebugInfo("Main Started");
 
     // pin : 19
     // chip : 8
@@ -15,14 +15,13 @@ int main()
 
     GPIOChip *myChip = GPIOChip_Create("/dev/gpiochip8");
     // GPIOChip *myChip = GPIOChip_Create("/sys/class/gpio/gpio257");
-    GPIOPin *myPin = GPIOPin_Consume(myChip, 9, "Servo Signal", true, LOW);
-    DebugInfo("Pin and chip creation %d", 31);
+    GPIOPin *myPin = GPIOPin_ConsumeAsOutput(myChip, 9, "Servo Signal", ACTIVE_LOW, LOW);
 
     while (1)
     {
-        GPIOPin_SetValue(myPin, HIGH);
+        GPIOPin_WriteValue(myPin, HIGH);
         sleep(1);
-        GPIOPin_SetValue(myPin, LOW);
+        GPIOPin_WriteValue(myPin, LOW);
         sleep(1);
     }
 
