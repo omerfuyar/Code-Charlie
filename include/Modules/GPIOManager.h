@@ -35,16 +35,23 @@ typedef enum GPIOOutputType
 } GPIOOutputType;
 
 /// @brief Represents a GPIO pin.
+/// @brief Represents a GPIO pin.
 typedef struct GPIOPin GPIOPin;
 
+/// @brief Represents a GPIO chip.
 /// @brief Represents a GPIO chip.
 typedef struct GPIOChip GPIOChip;
 
 /// @brief Creates a GPIO chip instance.
 /// @param chipPath The file path to the GPIO chip (e.g., "/dev/gpiochip0").
 /// @return A pointer to the created GPIOChip instance, or NULL if creation fails.
+/// @brief Creates a GPIO chip instance.
+/// @param chipPath The file path to the GPIO chip (e.g., "/dev/gpiochip0").
+/// @return A pointer to the created GPIOChip instance, or NULL if creation fails.
 GPIOChip *GPIOChip_Create(const char *chipPath);
 
+/// @brief Destroys a GPIO chip instance and releases its resources.
+/// @param chip The GPIOChip instance to destroy.
 /// @brief Destroys a GPIO chip instance and releases its resources.
 /// @param chip The GPIOChip instance to destroy.
 void GPIOChip_Destroy(GPIOChip *chip);
@@ -76,6 +83,8 @@ GPIOPin *GPIOPin_ConsumeAsInput(GPIOChip *chip, unsigned char index, const char 
 /// @return A pointer to the created GPIOPin instance, or NULL if consumption fails.
 GPIOPin *GPIOPin_ConsumeAsOutput(GPIOChip *chip, unsigned char index, const char *consumer, GPIOOutputType outputType, GPIODigitalValue initialValue);
 
+/// @brief Releases a GPIO pin and frees its resources.
+/// @param pin The GPIOPin instance to release.
 /// @brief Releases a GPIO pin and frees its resources.
 /// @param pin The GPIOPin instance to release.
 void GPIOPin_Release(GPIOPin *pin);
