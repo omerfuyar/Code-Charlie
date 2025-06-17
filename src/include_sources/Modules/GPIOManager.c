@@ -30,7 +30,7 @@ GPIOChip *GPIOChip_Create(const char *chipPath)
     chip->chipHandle = gpiod_chip_open(chip->chipPath);
     if (chip->chipHandle != NULL)
     {
-        DebugWarning("Failed to open GPIO chip handle, error in gpiod_chip_open function. Returning NULL.");
+        DebugWarning("Failed to open GPIO chip handle, error in gpiod_chip_open function with parameter : chip path '%s'. Returning NULL.", chip->chipPath);
         free(chip);
         return NULL;
     }
@@ -59,7 +59,7 @@ GPIOPin *GPIOPin_Consume(GPIOChip *chip, unsigned char index, const char *consum
     pin->lineHandle = gpiod_chip_get_line(chip->chipHandle, pin->lineIndex);
     if (pin->lineHandle != NULL)
     {
-        DebugWarning("Failed to get GPIO line handle, error in gpiod_chip_get_line function. Returning NULL.");
+        DebugWarning("Failed to get GPIO line handle, error in gpiod_chip_get_line function with parameters : chip handle '%p', line index '%d'. Returning NULL.", chip->chipHandle, pin->lineIndex);
         free(pin);
         return NULL;
     }
@@ -67,7 +67,7 @@ GPIOPin *GPIOPin_Consume(GPIOChip *chip, unsigned char index, const char *consum
     int lineRequestReturn = isOutput ? gpiod_line_request_output(pin->lineHandle, pin->consumerName, initialValue) : gpiod_line_request_input(pin->lineHandle, pin->consumerName);
     if (lineRequestReturn != 0)
     {
-        DebugWarning("Failed to request line, error in gpiod_line_request_(input / output) function. Returning NULL.");
+        DebugWarning("Failed to request line, error in gpiod_line_request_%s function with parameters : line handle '%p', consumer name '%s', initial value '%d'. Returning NULL.", isOutput ? "output" : "input", pin->lineHandle, pin->consumerName, initialValue);
         gpiod_line_release(pin->lineHandle);
         free(pin);
         return NULL;
@@ -91,7 +91,7 @@ int GPIOPin_SetValue(GPIOPin *pin, DigitalValue value)
     int lineValueSetReturn = gpiod_line_set_value(pin->lineHandle, value);
     if (lineValueSetReturn != 0)
     {
-        DebugWarning("Failed to set value for output, error in gpiod_line_set_value function. Returning -1.");
+        DebugWarning("Failed to set value for output, error in gpiod_line_set_value function with parameters : line handle '%p', value '%d'. Returning -1.", pin->lineHandle, value);
         return -1;
     }
 
@@ -105,7 +105,7 @@ DigitalValue GPIOPin_GetValue(GPIOPin *pin)
     DigitalValue lineValueSetReturn = (DigitalValue)gpiod_line_get_value(pin->lineHandle);
     if (lineValueSetReturn == KOLPA)
     {
-        DebugWarning("Failed to get value from input, error in gpiod_line_get_value function. Returning -1.");
+        DebugWarning("Failed to get value from input, error in gpiod_line_get_value function with parameter : line handle '%p'. Returning -1.", pin->lineHandle);
         return KOLPA;
     }
 
