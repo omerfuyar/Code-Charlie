@@ -8,7 +8,7 @@
 -C standard for this projects is 23.
 
 # Project Structure
--Every single file, rather its .h or .c, will include the header "CodeCharlieGlobal.h".
+-Every single file, rather its .h or .c, will include the header "BaseGlobal.h".
 --This file includes:
 ---Most basic headers for direct use like stdbool, stddef, limits etc.
 ---Necessary headers for debugging like assert, stdio.
