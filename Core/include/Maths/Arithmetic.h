@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BaseGlobal.h"
+#include "Core.h"
 
 // Returns the minimum of two floats
 float Min(float a, float b);

@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#pragma region Source Only
+
 typedef struct ArrayList
 {
     void *data;
@@ -10,6 +12,8 @@ typedef struct ArrayList
     size_t size;
     size_t sizeOfItem;
 } ArrayList;
+
+#pragma endregion
 
 ArrayList *ArrayList_Create(size_t sizeOfItem, size_t initialCapacity)
 {
@@ -76,6 +80,7 @@ void ArrayList_Add(ArrayList *list, const void *item)
 
     if (list->size >= list->capacity)
     {
+        DebugWarning("ArrayList is full. Resizing it from %du to %du.", list->capacity, list->capacity * ARRAY_LIST_RESIZE_MULTIPLIER);
         ArrayList_Resize(list, list->capacity * ARRAY_LIST_RESIZE_MULTIPLIER);
     }
 
@@ -110,6 +115,22 @@ void ArrayList_RemoveItem(ArrayList *list, const void *item)
     ArrayList_RemoveAtIndex(list, ArrayList_IndexOf(list, item));
 }
 
+void *ArrayList_Pop(ArrayList *list)
+{
+    DebugAssert(list != NULL, "Null pointer passed as parameter.");
+
+    if (list->size == 0)
+    {
+        DebugWarning("ArrayList is empty. Cannot pop an item. Returning NULL.");
+        return NULL;
+    }
+
+    void *item = ArrayList_Get(list, list->size - 1);
+    ArrayList_RemoveAtIndex(list, list->size - 1);
+
+    return item;
+}
+
 void ArrayList_Clear(ArrayList *list)
 {
     DebugAssert(list != NULL, "Null pointer passed as parameter.");
@@ -131,6 +152,7 @@ long long ArrayList_IndexOf(ArrayList *list, const void *item)
         }
     }
 
+    DebugWarning("Item not found in ArrayList. Returning -1.");
     return -1;
 }
 

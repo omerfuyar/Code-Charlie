@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BaseGlobal.h"
+#include "Core.h"
 
 #include "Maths/Algebra.h"
 #include "Maths/Arithmetic.h"

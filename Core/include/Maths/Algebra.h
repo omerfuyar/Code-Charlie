@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BaseGlobal.h"
+#include "Core.h"
 
 // Returns the logarithm of the value to the base
 float Log(float value, float base);

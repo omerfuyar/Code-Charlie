@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BaseGlobal.h"
+#include "Core.h"
 
 // The resize multiplier used when the ArrayList size reached to the capacity when adding new item
 #define ARRAY_LIST_RESIZE_MULTIPLIER 2
@@ -51,6 +51,11 @@ void ArrayList_RemoveAtIndex(ArrayList *list, size_t index);
 /// @param item Item to find and remove.
 /// @return The removed item. NULL if the item is absent in the list.
 void ArrayList_RemoveItem(ArrayList *list, const void *item);
+
+/// @brief Pop function for ArrayList. Removes the last item in the list and returns it.
+/// @param list ArrayList to pop item from.
+/// @return The popped item. NULL if the list is empty.
+void *ArrayList_Pop(ArrayList *list);
 
 /// @brief Clear function for ArrayList. Sets all the data unusable and size to 0. Capacity remains the same.
 /// @param list ArrayList to clear.

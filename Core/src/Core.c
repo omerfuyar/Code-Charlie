@@ -1,10 +1,20 @@
 #include "Core.h"
 
-// 20 Milliseconds, 50 loops per second by default
-time_t targetSleepNanoseconds = 20000000L;
+#include <ncurses.h>
 
-void Core_Run(Core_Start start, Core_StartLate lateStart, Core_Update update, Core_UpdateLate lateUpdate, Core_Stop stop)
+// 20 Milliseconds, 50 loops per second by default
+time_t TARGET_SLEEP_NANOSECONDS = 20000000L;
+
+void Core_Run(Core_Start start, Core_StartLate lateStart, Core_Update update, Core_UpdateLate lateUpdate)
 {
+    initscr();             // ncurses initialize screen
+    noecho();              // ncurses echo disable, no writing while getting input
+    start_color();         // ncurses start the color functionality
+    cbreak();              // ncurses disable line buffering but take CTRL^C commands
+    keypad(stdscr, true);  // ncurses enable keys like arrow and function
+    nodelay(stdscr, true); // ncurses disable blocking on getch()
+    // timeout(TARGET_SLEEP_NANOSECONDS * 1000000);
+
     start();
 
     lateStart();
@@ -22,9 +32,11 @@ void Core_Run(Core_Start start, Core_StartLate lateStart, Core_Update update, Co
 
         lateUpdate();
 
+        refresh(); // ncurses buffer swap
+
         clock_gettime(CLOCK_MONOTONIC, &loopLatestTime);
 
-        sleepNanoseconds = targetSleepNanoseconds - ((loopLatestTime.tv_sec - loopStartTime.tv_sec) * 1000000000L + (loopLatestTime.tv_nsec - loopStartTime.tv_nsec));
+        sleepNanoseconds = TARGET_SLEEP_NANOSECONDS - ((loopLatestTime.tv_sec - loopStartTime.tv_sec) * 1000000000L + (loopLatestTime.tv_nsec - loopStartTime.tv_nsec));
 
         if (sleepNanoseconds > 0)
         {
@@ -33,11 +45,17 @@ void Core_Run(Core_Start start, Core_StartLate lateStart, Core_Update update, Co
             nanosleep(&loopSleepTime, NULL);
         }
     }
+}
 
-    stop(EXIT_SUCCESS);
+void Core_Stop(int exitCode)
+{
+    endwin(); // ncurses terminate
+
+    _exit(exitCode); // program
 }
 
 void Core_SetTargetLoopPerSecond(unsigned int tlps)
 {
-    targetSleepNanoseconds = (1.0 / (tlps == 0 ? 1 : tlps)) * 1000000000.0;
+    TARGET_SLEEP_NANOSECONDS = (1.0 / (tlps == 0 ? 1 : tlps)) * 1000000000.0;
+    timeout(TARGET_SLEEP_NANOSECONDS * 1000000);
 }

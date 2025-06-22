@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BaseGlobal.h"
+#include "Core.h"
 
 /// @brief Initializes the application and sets up necessary resources.
 /// This function is called at the start of the application lifecycle.

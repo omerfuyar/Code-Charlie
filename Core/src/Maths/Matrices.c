@@ -1,7 +1,6 @@
 #include "Maths/Matrices.h"
 
 #include <math.h>
-#include <string.h>
 
 #pragma region Matrix2
 

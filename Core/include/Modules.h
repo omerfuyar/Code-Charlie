@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BaseGlobal.h"
+#include "Core.h"
 
 #include "Modules/GPIOManager.h"
 #include "Modules/InputManager.h"

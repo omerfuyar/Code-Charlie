@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BaseGlobal.h"
+#include "Core.h"
 
 // todo add support to different pin settings for input, output and active levels. for now, only digital output and output.
 // todo add event support for input pins (rising, falling, both edges).

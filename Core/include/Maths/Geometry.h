@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BaseGlobal.h"
+#include "Core.h"
 
 // Returns the perimeter of a circle given its radius
 float PerimeterOfCircle(float radius);

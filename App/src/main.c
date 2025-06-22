@@ -13,7 +13,13 @@ int main()
     // GPIOChip *myChip = GPIOChip_Create("/dev/gpiochip8");
     // GPIOPin *myPin = GPIOPin_ConsumeAsOutput(myChip, 9, "Servo Signal", ACTIVE_LOW, LOW);
 
-    Core_Run(App_Start, App_StartLate, App_Update, App_UpdateLate, App_Stop);
+    // DebugInfo("Starting application...");
+    // DebugWarning("This is a warning message, please check the application logs for more details.");
+    // DebugError("This is an error message, please check the application logs for more details.");
+    // DebugAssert(true, "This is an assertion message, please check the application logs for more details.");
+    // DebugAssert(false, "This assertion should fail, please check the application logs for more details.");
+
+    Core_Run(App_Start, App_StartLate, App_Update, App_UpdateLate);
 
     return 0;
 }

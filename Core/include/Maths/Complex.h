@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BaseGlobal.h"
+#include "Core.h"
 
 /// @brief Represents a complex number with real and imaginary parts.
 typedef struct Complex

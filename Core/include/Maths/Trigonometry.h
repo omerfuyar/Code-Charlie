@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BaseGlobal.h"
+#include "Core.h"
 
 // Converts the radian value to degree
 float Rad2Deg(float radian);

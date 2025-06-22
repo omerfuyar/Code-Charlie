@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BaseGlobal.h"
+#include "Core.h"
 
 // Returns the average of the values in the array. Array must be contiguous.
 float Average(float *values, unsigned int count);

@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-// todo make better error checks
+#pragma region Source Only
 
 /// @brief A node in the linked list.
 typedef struct LinkedListNode
@@ -18,8 +18,6 @@ typedef struct LinkedList
     size_t size;
     size_t sizeOfItem;
 } LinkedList;
-
-#pragma region LinkedListNode
 
 /// @brief Creator function for LinkedListNode. Uses memcpy to copy the data.
 /// @param sizeOfData Size of the data to be stored in the node.
