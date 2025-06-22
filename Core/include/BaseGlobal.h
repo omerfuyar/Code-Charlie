@@ -12,94 +12,103 @@
 #include <stdbool.h>
 #include <assert.h>
 
-#define DEBUG_INFO_ENABLED 1
-#define DEBUG_WARNING_ENABLED 1
-#define DEBUG_ERROR_ENABLED 1
-#define DEBUG_ASSERT_ENABLED 1
+#define DEBUG_INFO_ENABLED true
+#define DEBUG_WARNING_ENABLED true
+#define DEBUG_ERROR_ENABLED true
+#define DEBUG_ASSERT_ENABLED true
 
-#define DEBUG_TERMINATE_ON_ERROR 0
-#define DEBUG_TERMINATE_ON_ASSERT 1
+#define DEBUG_TERMINATE_ON_ERROR false
+#define DEBUG_TERMINATE_ON_ASSERT true
 
-#define TERMINAL_COLOR_BRIGHT_GREEN "\e[92m"
-#define TERMINAL_COLOR_BRIGHT_YELLOW "\e[93m"
-#define TERMINAL_COLOR_BRIGHT_RED "\e[91m"
-#define TERMINAL_COLOR_BRIGHT_MAGENTA "\e[95m"
-#define TERMINAL_COLOR_RESET "\e[0m"
+#define DEBUG_PERROR_NOTE_ENABLED false
 
-#define DEBUG_COLOR_INFO TERMINAL_COLOR_BRIGHT_GREEN
-#define DEBUG_COLOR_WARNING TERMINAL_COLOR_BRIGHT_YELLOW
-#define DEBUG_COLOR_ERROR TERMINAL_COLOR_BRIGHT_RED
-#define DEBUG_COLOR_ASSERT TERMINAL_COLOR_BRIGHT_MAGENTA
+#define DEBUG_TERMINAL_COLOR_DEFAULT "\e[0m"
+#define DEBUG_TERMINAL_COLOR_BLACK "\e[30m"
+#define DEBUG_TERMINAL_COLOR_RED "\e[31m"
+#define DEBUG_TERMINAL_COLOR_GREEN "\e[32m"
+#define DEBUG_TERMINAL_COLOR_YELLOW "\e[33m"
+#define DEBUG_TERMINAL_COLOR_BLUE "\e[34m"
+#define DEBUG_TERMINAL_COLOR_MAGENTA "\e[35m"
+#define DEBUG_TERMINAL_COLOR_CYAN "\e[36m"
+#define DEBUG_TERMINAL_COLOR_WHITE "\e[37m"
+#define DEBUG_TERMINAL_COLOR_ORANGE "\e[38;5;208m"
+#define DEBUG_TERMINAL_COLOR_BRIGHT_BLACK "\e[90m"
+#define DEBUG_TERMINAL_COLOR_BRIGHT_RED "\e[91m"
+#define DEBUG_TERMINAL_COLOR_BRIGHT_GREEN "\e[92m"
+#define DEBUG_TERMINAL_COLOR_BRIGHT_YELLOW "\e[93m"
+#define DEBUG_TERMINAL_COLOR_BRIGHT_RED "\e[91m"
+#define DEBUG_TERMINAL_COLOR_BRIGHT_MAGENTA "\e[95m"
+#define DEBUG_TERMINAL_COLOR_BRIGHT_BLUE "\e[94m"
+#define DEBUG_TERMINAL_COLOR_BRIGHT_CYAN "\e[96m"
+#define DEBUG_TERMINAL_COLOR_BRIGHT_WHITE "\e[97m"
+#define DEBUG_TERMINAL_COLOR_BRIGHT_BLACK "\e[90m"
+#define DEBUG_TERMINAL_COLOR_BRIGHT_ORANGE "\e[38;5;208m"
+
+#define DEBUG_COLOR_RESET DEBUG_TERMINAL_COLOR_DEFAULT
+#define DEBUG_COLOR_INFO DEBUG_TERMINAL_COLOR_GREEN
+#define DEBUG_COLOR_WARNING DEBUG_TERMINAL_COLOR_YELLOW
+#define DEBUG_COLOR_ERROR DEBUG_TERMINAL_COLOR_RED
+#define DEBUG_COLOR_ASSERT DEBUG_TERMINAL_COLOR_MAGENTA
 
 #define DEBUG_TIME_FORMAT "%H:%M:%S"
 
-#if DEBUG_INFO_ENABLED != 0 || DEBUG_WARNING_ENABLED != 0 || DEBUG_ERROR_ENABLED != 0 || DEBUG_ASSERT_ENABLED != 0
-static inline void PrintTimeFormatted(bool isError, const char *format)
-{
-    struct timespec timer;
-    char buffer[16];
-    timespec_get(&timer, TIME_UTC);
-    strftime(buffer, sizeof(buffer), format, localtime(&timer.tv_sec));
-    fprintf(isError ? stderr : stdout, "[%s:%d]", buffer, timer.tv_nsec / 1000000);
-}
+#if DEBUG_INFO_ENABLED != false || DEBUG_WARNING_ENABLED != false || DEBUG_ERROR_ENABLED != false || DEBUG_ASSERT_ENABLED != false
+#define DebugLog(isError, header, format, ...)                                                     \
+    FILE *debugFile = fopen("debug.log", "a");                                                     \
+    struct timespec timer;                                                                         \
+    char buffer[16];                                                                               \
+    timespec_get(&timer, TIME_UTC);                                                                \
+    strftime(buffer, sizeof(buffer), DEBUG_TIME_FORMAT, localtime(&timer.tv_sec));                 \
+    fprintf(debugFile, "[%s:%03d] : [%s] : [%s:%d:%s] : " format "\n",                             \
+            buffer, timer.tv_nsec / 1000000, header, __FILE__, __LINE__, __func__, ##__VA_ARGS__); \
+    fclose(debugFile);
 #endif
 
-#if DEBUG_INFO_ENABLED == 0
+#if DEBUG_INFO_ENABLED == false
 #define DebugInfo(format, ...)
 #else
-#define DebugInfo(format, ...)                                                                               \
-    do                                                                                                       \
-    {                                                                                                        \
-        PrintTimeFormatted(false, DEBUG_TIME_FORMAT);                                                        \
-        fprintf(stdout, " : " DEBUG_COLOR_INFO "[INFO]" TERMINAL_COLOR_RESET " : [%s:%d:%s] : " format "\n", \
-                __FILE__, __LINE__, __func__, ##__VA_ARGS__);                                                \
-    } while (0)
+#define DebugInfo(format, ...)                          \
+    do                                                  \
+    {                                                   \
+        DebugLog(false, "INFO", format, ##__VA_ARGS__); \
+    } while (false)
 #endif
 
-#if DEBUG_WARNING_ENABLED == 0
+#if DEBUG_WARNING_ENABLED == false
 #define DebugWarning(format, ...)
 #else
-#define DebugWarning(format, ...)                                                                                  \
-    do                                                                                                             \
-    {                                                                                                              \
-        PrintTimeFormatted(true, DEBUG_TIME_FORMAT);                                                               \
-        fprintf(stderr, " : " DEBUG_COLOR_WARNING "[WARNING]" TERMINAL_COLOR_RESET " : [%s:%d:%s] : " format "\n", \
-                __FILE__, __LINE__, __func__, ##__VA_ARGS__);                                                      \
-        perror(DEBUG_COLOR_WARNING "[perror note]" TERMINAL_COLOR_RESET " ");                                      \
-    } while (0)
+#define DebugWarning(format, ...)                         \
+    do                                                    \
+    {                                                     \
+        DebugLog(true, "WARNING", format, ##__VA_ARGS__); \
+    } while (false)
 #endif
 
-#if DEBUG_ERROR_ENABLED == 0
+#if DEBUG_ERROR_ENABLED == false
 #define DebugError(format, ...)
 #else
-#define DebugError(format, ...)                                                                                \
-    do                                                                                                         \
-    {                                                                                                          \
-        PrintTimeFormatted(true, DEBUG_TIME_FORMAT);                                                           \
-        fprintf(stderr, " : " DEBUG_COLOR_ERROR "[ERROR]" TERMINAL_COLOR_RESET " : [%s:%d:%s] : " format "\n", \
-                __FILE__, __LINE__, __func__, ##__VA_ARGS__);                                                  \
-        perror(DEBUG_COLOR_ERROR "[perror note]" TERMINAL_COLOR_RESET " ");                                    \
-        if (DEBUG_TERMINATE_ON_ERROR != 0)                                                                     \
-            _exit(EXIT_FAILURE);                                                                               \
-    } while (0)
+#define DebugError(format, ...)                         \
+    do                                                  \
+    {                                                   \
+        DebugLog(true, "ERROR", format, ##__VA_ARGS__); \
+        if (DEBUG_TERMINATE_ON_ERROR != false)          \
+            _exit(EXIT_FAILURE);                        \
+    } while (false)
 #endif
 
-#if DEBUG_ASSERT_ENABLED == 0
+#if DEBUG_ASSERT_ENABLED == false
 #define DebugAssert(condition, format, ...)
 #else
-#define DebugAssert(condition, format, ...)                                                                                     \
-    do                                                                                                                          \
-    {                                                                                                                           \
-        if (!(condition))                                                                                                       \
-        {                                                                                                                       \
-            PrintTimeFormatted(true, DEBUG_TIME_FORMAT);                                                                        \
-            fprintf(stderr, " : " DEBUG_COLOR_ASSERT "[ASSERTION FAILURE]" TERMINAL_COLOR_RESET " : [%s:%d:%s] : " format "\n", \
-                    __FILE__, __LINE__, __func__, ##__VA_ARGS__);                                                               \
-            perror(DEBUG_COLOR_ASSERT "[perror note]" TERMINAL_COLOR_RESET " ");                                                \
-            if (DEBUG_TERMINATE_ON_ASSERT != 0)                                                                                 \
-                _exit(EXIT_FAILURE);                                                                                            \
-        }                                                                                                                       \
-    } while (0)
+#define DebugAssert(condition, format, ...)                             \
+    do                                                                  \
+    {                                                                   \
+        if (!(condition))                                               \
+        {                                                               \
+            DebugLog(true, "ASSERTION FAILURE", format, ##__VA_ARGS__); \
+            if (DEBUG_TERMINATE_ON_ASSERT != false)                     \
+                _exit(EXIT_FAILURE);                                    \
+        }                                                               \
+    } while (false)
 #endif
 
 // The value of Pi
@@ -108,7 +117,7 @@ static inline void PrintTimeFormatted(bool isError, const char *format)
 // The value of Euler's number
 #define E 2.71828183
 
-// The square root of 2
+// The square root of 2_
 #define SQRT2 1.41421356
 
 // The square root of 3

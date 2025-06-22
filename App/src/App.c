@@ -1,4 +1,6 @@
 #include "App.h"
+#include "Modules/InputManager.h"
+#include "ncurses.h"
 
 void App_Start()
 {

@@ -12,10 +12,10 @@ typedef struct GPIOPin
     int lineIndex;
     const char *consumerName;
 
-    GPIOInputBiasType biasType;
-    GPIOInputEventType eventType;
+    GPIOInputBiasType inputBiasType;
+    GPIOInputEventType inputEventType;
     GPIOOutputType outputType;
-    GPIOLineDirection direction;
+    GPIOLineDirection lineDirection;
 } GPIOPin;
 
 typedef struct GPIOChip
@@ -66,10 +66,10 @@ GPIOPin *GPIOPin_ConsumeAsInput(GPIOChip *chip, unsigned char index, const char 
 
     pin->consumerName = consumer;
     pin->lineIndex = index;
-    pin->biasType = biasType;
-    pin->eventType = eventType;
+    pin->inputBiasType = biasType;
+    pin->inputEventType = eventType;
     pin->outputType = KOLPA_OUTPUT;
-    pin->direction = INPUT;
+    pin->lineDirection = INPUT;
 
     pin->lineHandle = gpiod_chip_get_line(chip->chipHandle, pin->lineIndex);
     if (pin->lineHandle == NULL)
@@ -101,10 +101,10 @@ GPIOPin *GPIOPin_ConsumeAsOutput(GPIOChip *chip, unsigned char index, const char
 
     pin->consumerName = consumer;
     pin->lineIndex = index;
-    pin->biasType = KOLPA_BIAS;
-    pin->eventType = KOLPA_EVENT;
+    pin->inputBiasType = KOLPA_BIAS;
+    pin->inputEventType = KOLPA_EVENT;
     pin->outputType = outputType;
-    pin->direction = OUTPUT;
+    pin->lineDirection = OUTPUT;
 
     pin->lineHandle = gpiod_chip_get_line(chip->chipHandle, pin->lineIndex);
     if (pin->lineHandle == NULL)
@@ -146,6 +146,11 @@ int GPIOPin_WriteValue(GPIOPin *pin, GPIODigitalValue value)
 {
     DebugAssert(pin != NULL, "Null pointer passed as parameter.");
 
+    if (pin->lineDirection != OUTPUT)
+    {
+        DebugError("Pin to write value to must be created as output.");
+    }
+
     int lineValueSetReturn = gpiod_line_set_value(pin->lineHandle, (int)value);
     if (lineValueSetReturn != 0)
     {
@@ -160,6 +165,11 @@ int GPIOPin_WriteValue(GPIOPin *pin, GPIODigitalValue value)
 GPIODigitalValue GPIOPin_ReadValue(GPIOPin *pin)
 {
     DebugAssert(pin != NULL, "Null pointer passed as parameter.");
+
+    if (pin->lineDirection != INPUT)
+    {
+        DebugError("Pin to read value from must be created as input.");
+    }
 
     GPIODigitalValue lineValueSetReturn = (GPIODigitalValue)gpiod_line_get_value(pin->lineHandle);
     if (lineValueSetReturn == KOLPA)
