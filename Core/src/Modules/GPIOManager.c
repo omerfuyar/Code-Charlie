@@ -1,6 +1,5 @@
 #include "Modules/GPIOManager.h"
 
-#include <stdlib.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <linux/spi/spidev.h>

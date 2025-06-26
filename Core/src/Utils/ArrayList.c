@@ -1,8 +1,5 @@
 #include "Utils/ArrayList.h"
 
-#include <stdlib.h>
-#include <string.h>
-
 #pragma region Source Only
 
 typedef struct ArrayList

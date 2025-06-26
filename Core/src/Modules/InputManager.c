@@ -1,5 +1,4 @@
 #include "Modules/InputManager.h"
-#include "Utils/ArrayList.h"
 
 #include <ncurses.h>
 
