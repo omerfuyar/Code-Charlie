@@ -2,6 +2,8 @@
 
 #include <ncurses.h>
 
+#include <ncurses.h>
+
 // 20 Milliseconds, 50 loops per second by default
 time_t TARGET_SLEEP_NANOSECONDS = 20000000L;
 
@@ -34,6 +36,8 @@ void Core_Run(Core_Start start, Core_StartLate lateStart, Core_Update update, Co
 
         refresh(); // ncurses buffer swap
 
+        refresh(); // ncurses buffer swap
+
         clock_gettime(CLOCK_MONOTONIC, &loopLatestTime);
 
         sleepNanoseconds = TARGET_SLEEP_NANOSECONDS - ((loopLatestTime.tv_sec - loopStartTime.tv_sec) * 1000000000L + (loopLatestTime.tv_nsec - loopStartTime.tv_nsec));
@@ -50,7 +54,13 @@ void Core_Run(Core_Start start, Core_StartLate lateStart, Core_Update update, Co
 void Core_Stop(int exitCode)
 {
     endwin(); // ncurses terminate
+}
 
+void Core_Stop(int exitCode)
+{
+    endwin(); // ncurses terminate
+
+    _exit(exitCode); // program
     _exit(exitCode); // program
 }
 
