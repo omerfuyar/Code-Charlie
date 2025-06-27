@@ -2,6 +2,8 @@
 
 #include <ncurses.h>
 
+// todo add cross platform support
+
 #pragma region Source Only
 
 typedef struct InputKey
@@ -24,156 +26,156 @@ typedef struct InputKey
 #define INPUT_KEY_FUNCTION_OFFSET 265
 
 InputKey INPUT_KEYS_STANDARD[INPUT_KEY_STANDARD_SIZE] = {
-    {Key_NULL, Released, false, INPUT_KEY_DELAY_INIT},             // 0
-    {Key_NULL, Released, false, INPUT_KEY_DELAY_INIT},             // 1
-    {Key_NULL, Released, false, INPUT_KEY_DELAY_INIT},             // 2
-    {Key_NULL, Released, false, INPUT_KEY_DELAY_INIT},             // 3
-    {Key_NULL, Released, false, INPUT_KEY_DELAY_INIT},             // 4
-    {Key_NULL, Released, false, INPUT_KEY_DELAY_INIT},             // 5
-    {Key_NULL, Released, false, INPUT_KEY_DELAY_INIT},             // 6
-    {Key_NULL, Released, false, INPUT_KEY_DELAY_INIT},             // 7
-    {Key_Tab, Released, false, INPUT_KEY_DELAY_INIT},              // 8
-    {Key_Enter, Released, false, INPUT_KEY_DELAY_INIT},            // 9
-    {Key_NULL, Released, false, INPUT_KEY_DELAY_INIT},             // 10
-    {Key_NULL, Released, false, INPUT_KEY_DELAY_INIT},             // 11
-    {Key_NULL, Released, false, INPUT_KEY_DELAY_INIT},             // 12
-    {Key_NULL, Released, false, INPUT_KEY_DELAY_INIT},             // 13
-    {Key_NULL, Released, false, INPUT_KEY_DELAY_INIT},             // 14
-    {Key_NULL, Released, false, INPUT_KEY_DELAY_INIT},             // 15
-    {Key_NULL, Released, false, INPUT_KEY_DELAY_INIT},             // 16
-    {Key_NULL, Released, false, INPUT_KEY_DELAY_INIT},             // 17
-    {Key_NULL, Released, false, INPUT_KEY_DELAY_INIT},             // 18
-    {Key_NULL, Released, false, INPUT_KEY_DELAY_INIT},             // 19
-    {Key_NULL, Released, false, INPUT_KEY_DELAY_INIT},             // 20
-    {Key_NULL, Released, false, INPUT_KEY_DELAY_INIT},             // 21
-    {Key_NULL, Released, false, INPUT_KEY_DELAY_INIT},             // 22
-    {Key_NULL, Released, false, INPUT_KEY_DELAY_INIT},             // 23
-    {Key_NULL, Released, false, INPUT_KEY_DELAY_INIT},             // 24
-    {Key_NULL, Released, false, INPUT_KEY_DELAY_INIT},             // 25
-    {Key_NULL, Released, false, INPUT_KEY_DELAY_INIT},             // 26
-    {Key_Escape, Released, false, INPUT_KEY_DELAY_INIT},           // 27
-    {Key_NULL, Released, false, INPUT_KEY_DELAY_INIT},             // 28
-    {Key_NULL, Released, false, INPUT_KEY_DELAY_INIT},             // 29
-    {Key_NULL, Released, false, INPUT_KEY_DELAY_INIT},             // 30
-    {Key_NULL, Released, false, INPUT_KEY_DELAY_INIT},             // 31
-    {Key_Space, Released, false, INPUT_KEY_DELAY_INIT},            // 32
-    {Key_Exclamation, Released, false, INPUT_KEY_DELAY_INIT},      // 33
-    {Key_QuoteDouble, Released, false, INPUT_KEY_DELAY_INIT},      // 34
-    {Key_Hash, Released, false, INPUT_KEY_DELAY_INIT},             // 35
-    {Key_Dollar, Released, false, INPUT_KEY_DELAY_INIT},           // 36
-    {Key_Percent, Released, false, INPUT_KEY_DELAY_INIT},          // 37
-    {Key_Ampersand, Released, false, INPUT_KEY_DELAY_INIT},        // 38
-    {Key_Quote, Released, false, INPUT_KEY_DELAY_INIT},            // 39
-    {Key_LeftParenthesis, Released, false, INPUT_KEY_DELAY_INIT},  // 40
-    {Key_RightParenthesis, Released, false, INPUT_KEY_DELAY_INIT}, // 41
-    {Key_Asterisk, Released, false, INPUT_KEY_DELAY_INIT},         // 42
-    {Key_Plus, Released, false, INPUT_KEY_DELAY_INIT},             // 43
-    {Key_Comma, Released, false, INPUT_KEY_DELAY_INIT},            // 44
-    {Key_Minus, Released, false, INPUT_KEY_DELAY_INIT},            // 45
-    {Key_Period, Released, false, INPUT_KEY_DELAY_INIT},           // 46
-    {Key_Slash, Released, false, INPUT_KEY_DELAY_INIT},            // 47
-    {Key_0, Released, false, INPUT_KEY_DELAY_INIT},                // 48
-    {Key_1, Released, false, INPUT_KEY_DELAY_INIT},                // 49
-    {Key_2, Released, false, INPUT_KEY_DELAY_INIT},                // 50
-    {Key_3, Released, false, INPUT_KEY_DELAY_INIT},                // 51
-    {Key_4, Released, false, INPUT_KEY_DELAY_INIT},                // 52
-    {Key_5, Released, false, INPUT_KEY_DELAY_INIT},                // 53
-    {Key_6, Released, false, INPUT_KEY_DELAY_INIT},                // 54
-    {Key_7, Released, false, INPUT_KEY_DELAY_INIT},                // 55
-    {Key_8, Released, false, INPUT_KEY_DELAY_INIT},                // 56
-    {Key_9, Released, false, INPUT_KEY_DELAY_INIT},                // 57
-    {Key_Colon, Released, false, INPUT_KEY_DELAY_INIT},            // 58
-    {Key_Semicolon, Released, false, INPUT_KEY_DELAY_INIT},        // 59
-    {Key_LessThan, Released, false, INPUT_KEY_DELAY_INIT},         // 60
-    {Key_Equal, Released, false, INPUT_KEY_DELAY_INIT},            // 61
-    {Key_GreaterThan, Released, false, INPUT_KEY_DELAY_INIT},      // 62
-    {Key_Question, Released, false, INPUT_KEY_DELAY_INIT},         // 63
-    {Key_At, Released, false, INPUT_KEY_DELAY_INIT},               // 64
-    {Key_A, Released, false, INPUT_KEY_DELAY_INIT},                // 65
-    {Key_B, Released, false, INPUT_KEY_DELAY_INIT},                // 66
-    {Key_C, Released, false, INPUT_KEY_DELAY_INIT},                // 67
-    {Key_D, Released, false, INPUT_KEY_DELAY_INIT},                // 68
-    {Key_E, Released, false, INPUT_KEY_DELAY_INIT},                // 69
-    {Key_F, Released, false, INPUT_KEY_DELAY_INIT},                // 70
-    {Key_G, Released, false, INPUT_KEY_DELAY_INIT},                // 71
-    {Key_H, Released, false, INPUT_KEY_DELAY_INIT},                // 72
-    {Key_I, Released, false, INPUT_KEY_DELAY_INIT},                // 73
-    {Key_J, Released, false, INPUT_KEY_DELAY_INIT},                // 74
-    {Key_K, Released, false, INPUT_KEY_DELAY_INIT},                // 75
-    {Key_L, Released, false, INPUT_KEY_DELAY_INIT},                // 76
-    {Key_M, Released, false, INPUT_KEY_DELAY_INIT},                // 77
-    {Key_N, Released, false, INPUT_KEY_DELAY_INIT},                // 78
-    {Key_O, Released, false, INPUT_KEY_DELAY_INIT},                // 79
-    {Key_P, Released, false, INPUT_KEY_DELAY_INIT},                // 80
-    {Key_Q, Released, false, INPUT_KEY_DELAY_INIT},                // 81
-    {Key_R, Released, false, INPUT_KEY_DELAY_INIT},                // 82
-    {Key_S, Released, false, INPUT_KEY_DELAY_INIT},                // 83
-    {Key_T, Released, false, INPUT_KEY_DELAY_INIT},                // 84
-    {Key_U, Released, false, INPUT_KEY_DELAY_INIT},                // 85
-    {Key_V, Released, false, INPUT_KEY_DELAY_INIT},                // 86
-    {Key_W, Released, false, INPUT_KEY_DELAY_INIT},                // 87
-    {Key_X, Released, false, INPUT_KEY_DELAY_INIT},                // 88
-    {Key_Y, Released, false, INPUT_KEY_DELAY_INIT},                // 89
-    {Key_Z, Released, false, INPUT_KEY_DELAY_INIT},                // 90
-    {Key_BracketLeft, Released, false, INPUT_KEY_DELAY_INIT},      // 91
-    {Key_Backslash, Released, false, INPUT_KEY_DELAY_INIT},        // 92
-    {Key_BracketRight, Released, false, INPUT_KEY_DELAY_INIT},     // 93
-    {Key_Caret, Released, false, INPUT_KEY_DELAY_INIT},            // 94
-    {Key_Underscore, Released, false, INPUT_KEY_DELAY_INIT},       // 95
-    {Key_GraveAccent, Released, false, INPUT_KEY_DELAY_INIT},      // 96
-    {Key_a, Released, false, INPUT_KEY_DELAY_INIT},                // 97
-    {Key_b, Released, false, INPUT_KEY_DELAY_INIT},                // 98
-    {Key_c, Released, false, INPUT_KEY_DELAY_INIT},                // 99
-    {Key_d, Released, false, INPUT_KEY_DELAY_INIT},                // 100
-    {Key_e, Released, false, INPUT_KEY_DELAY_INIT},                // 101
-    {Key_f, Released, false, INPUT_KEY_DELAY_INIT},                // 102
-    {Key_g, Released, false, INPUT_KEY_DELAY_INIT},                // 103
-    {Key_h, Released, false, INPUT_KEY_DELAY_INIT},                // 104
-    {Key_i, Released, false, INPUT_KEY_DELAY_INIT},                // 105
-    {Key_j, Released, false, INPUT_KEY_DELAY_INIT},                // 106
-    {Key_k, Released, false, INPUT_KEY_DELAY_INIT},                // 107
-    {Key_l, Released, false, INPUT_KEY_DELAY_INIT},                // 108
-    {Key_m, Released, false, INPUT_KEY_DELAY_INIT},                // 109
-    {Key_n, Released, false, INPUT_KEY_DELAY_INIT},                // 110
-    {Key_o, Released, false, INPUT_KEY_DELAY_INIT},                // 111
-    {Key_p, Released, false, INPUT_KEY_DELAY_INIT},                // 112
-    {Key_q, Released, false, INPUT_KEY_DELAY_INIT},                // 113
-    {Key_r, Released, false, INPUT_KEY_DELAY_INIT},                // 114
-    {Key_s, Released, false, INPUT_KEY_DELAY_INIT},                // 115
-    {Key_t, Released, false, INPUT_KEY_DELAY_INIT},                // 116
-    {Key_u, Released, false, INPUT_KEY_DELAY_INIT},                // 117
-    {Key_v, Released, false, INPUT_KEY_DELAY_INIT},                // 118
-    {Key_w, Released, false, INPUT_KEY_DELAY_INIT},                // 119
-    {Key_x, Released, false, INPUT_KEY_DELAY_INIT},                // 120
-    {Key_y, Released, false, INPUT_KEY_DELAY_INIT},                // 121
-    {Key_z, Released, false, INPUT_KEY_DELAY_INIT},                // 122
-    {Key_LeftBrace, Released, false, INPUT_KEY_DELAY_INIT},        // 123
-    {Key_VerticalBar, Released, false, INPUT_KEY_DELAY_INIT},      // 124
-    {Key_RightBrace, Released, false, INPUT_KEY_DELAY_INIT},       // 125
-    {Key_Tilde, Released, false, INPUT_KEY_DELAY_INIT},            // 126
-    {Key_Delete, Released, false, INPUT_KEY_DELAY_INIT},           // 127
+    {InputKeyCode_NULL, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},             // 0
+    {InputKeyCode_NULL, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},             // 1
+    {InputKeyCode_NULL, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},             // 2
+    {InputKeyCode_NULL, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},             // 3
+    {InputKeyCode_NULL, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},             // 4
+    {InputKeyCode_NULL, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},             // 5
+    {InputKeyCode_NULL, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},             // 6
+    {InputKeyCode_NULL, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},             // 7
+    {InputKeyCode_Tab, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},              // 8
+    {InputKeyCode_Enter, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},            // 9
+    {InputKeyCode_NULL, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},             // 10
+    {InputKeyCode_NULL, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},             // 11
+    {InputKeyCode_NULL, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},             // 12
+    {InputKeyCode_NULL, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},             // 13
+    {InputKeyCode_NULL, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},             // 14
+    {InputKeyCode_NULL, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},             // 15
+    {InputKeyCode_NULL, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},             // 16
+    {InputKeyCode_NULL, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},             // 17
+    {InputKeyCode_NULL, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},             // 18
+    {InputKeyCode_NULL, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},             // 19
+    {InputKeyCode_NULL, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},             // 20
+    {InputKeyCode_NULL, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},             // 21
+    {InputKeyCode_NULL, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},             // 22
+    {InputKeyCode_NULL, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},             // 23
+    {InputKeyCode_NULL, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},             // 24
+    {InputKeyCode_NULL, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},             // 25
+    {InputKeyCode_NULL, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},             // 26
+    {InputKeyCode_Escape, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},           // 27
+    {InputKeyCode_NULL, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},             // 28
+    {InputKeyCode_NULL, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},             // 29
+    {InputKeyCode_NULL, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},             // 30
+    {InputKeyCode_NULL, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},             // 31
+    {InputKeyCode_Space, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},            // 32
+    {InputKeyCode_Exclamation, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},      // 33
+    {InputKeyCode_QuoteDouble, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},      // 34
+    {InputKeyCode_Hash, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},             // 35
+    {InputKeyCode_Dollar, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},           // 36
+    {InputKeyCode_Percent, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},          // 37
+    {InputKeyCode_Ampersand, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},        // 38
+    {InputKeyCode_Quote, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},            // 39
+    {InputKeyCode_LeftParenthesis, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},  // 40
+    {InputKeyCode_RightParenthesis, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT}, // 41
+    {InputKeyCode_Asterisk, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},         // 42
+    {InputKeyCode_Plus, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},             // 43
+    {InputKeyCode_Comma, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},            // 44
+    {InputKeyCode_Minus, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},            // 45
+    {InputKeyCode_Period, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},           // 46
+    {InputKeyCode_Slash, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},            // 47
+    {InputKeyCode_0, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 48
+    {InputKeyCode_1, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 49
+    {InputKeyCode_2, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 50
+    {InputKeyCode_3, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 51
+    {InputKeyCode_4, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 52
+    {InputKeyCode_5, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 53
+    {InputKeyCode_6, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 54
+    {InputKeyCode_7, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 55
+    {InputKeyCode_8, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 56
+    {InputKeyCode_9, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 57
+    {InputKeyCode_Colon, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},            // 58
+    {InputKeyCode_Semicolon, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},        // 59
+    {InputKeyCode_LessThan, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},         // 60
+    {InputKeyCode_Equal, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},            // 61
+    {InputKeyCode_GreaterThan, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},      // 62
+    {InputKeyCode_Question, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},         // 63
+    {InputKeyCode_At, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},               // 64
+    {InputKeyCode_A, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 65
+    {InputKeyCode_B, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 66
+    {InputKeyCode_C, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 67
+    {InputKeyCode_D, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 68
+    {InputKeyCode_E, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 69
+    {InputKeyCode_F, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 70
+    {InputKeyCode_G, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 71
+    {InputKeyCode_H, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 72
+    {InputKeyCode_I, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 73
+    {InputKeyCode_J, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 74
+    {InputKeyCode_K, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 75
+    {InputKeyCode_L, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 76
+    {InputKeyCode_M, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 77
+    {InputKeyCode_N, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 78
+    {InputKeyCode_O, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 79
+    {InputKeyCode_P, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 80
+    {InputKeyCode_Q, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 81
+    {InputKeyCode_R, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 82
+    {InputKeyCode_S, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 83
+    {InputKeyCode_T, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 84
+    {InputKeyCode_U, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 85
+    {InputKeyCode_V, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 86
+    {InputKeyCode_W, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 87
+    {InputKeyCode_X, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 88
+    {InputKeyCode_Y, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 89
+    {InputKeyCode_Z, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 90
+    {InputKeyCode_BracketLeft, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},      // 91
+    {InputKeyCode_Backslash, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},        // 92
+    {InputKeyCode_BracketRight, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},     // 93
+    {InputKeyCode_Caret, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},            // 94
+    {InputKeyCode_Underscore, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},       // 95
+    {InputKeyCode_GraveAccent, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},      // 96
+    {InputKeyCode_a, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 97
+    {InputKeyCode_b, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 98
+    {InputKeyCode_c, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 99
+    {InputKeyCode_d, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 100
+    {InputKeyCode_e, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 101
+    {InputKeyCode_f, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 102
+    {InputKeyCode_g, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 103
+    {InputKeyCode_h, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 104
+    {InputKeyCode_i, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 105
+    {InputKeyCode_j, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 106
+    {InputKeyCode_k, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 107
+    {InputKeyCode_l, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 108
+    {InputKeyCode_m, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 109
+    {InputKeyCode_n, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 110
+    {InputKeyCode_o, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 111
+    {InputKeyCode_p, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 112
+    {InputKeyCode_q, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 113
+    {InputKeyCode_r, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 114
+    {InputKeyCode_s, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 115
+    {InputKeyCode_t, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 116
+    {InputKeyCode_u, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 117
+    {InputKeyCode_v, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 118
+    {InputKeyCode_w, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 119
+    {InputKeyCode_x, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 120
+    {InputKeyCode_y, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 121
+    {InputKeyCode_z, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},                // 122
+    {InputKeyCode_LeftBrace, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},        // 123
+    {InputKeyCode_VerticalBar, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},      // 124
+    {InputKeyCode_RightBrace, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},       // 125
+    {InputKeyCode_Tilde, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},            // 126
+    {InputKeyCode_Delete, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},           // 127
 };
 
 InputKey INPUT_KEYS_ARROW[INPUT_KEY_ARROW_SIZE] = {
-    {Key_ArrowDown, Released, false, INPUT_KEY_DELAY_INIT}, // 0
-    {Key_ArrowUp, Released, false, INPUT_KEY_DELAY_INIT},   // 1
-    {Key_ArrowLeft, Released, false, INPUT_KEY_DELAY_INIT}, // 2
-    {Key_ArrowRight, Released, false, INPUT_KEY_DELAY_INIT} // 3
+    {InputKeyCode_ArrowDown, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT}, // 0
+    {InputKeyCode_ArrowUp, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},   // 1
+    {InputKeyCode_ArrowLeft, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT}, // 2
+    {InputKeyCode_ArrowRight, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT} // 3
 };
 
 InputKey INPUT_KEYS_FUNCTION[INPUT_KEY_FUNCTION_SIZE] = {
-    {Key_F1, Released, false, INPUT_KEY_DELAY_INIT},  // 0
-    {Key_F2, Released, false, INPUT_KEY_DELAY_INIT},  // 1
-    {Key_F3, Released, false, INPUT_KEY_DELAY_INIT},  // 2
-    {Key_F4, Released, false, INPUT_KEY_DELAY_INIT},  // 3
-    {Key_F5, Released, false, INPUT_KEY_DELAY_INIT},  // 4
-    {Key_F6, Released, false, INPUT_KEY_DELAY_INIT},  // 5
-    {Key_F7, Released, false, INPUT_KEY_DELAY_INIT},  // 6
-    {Key_F8, Released, false, INPUT_KEY_DELAY_INIT},  // 7
-    {Key_F9, Released, false, INPUT_KEY_DELAY_INIT},  // 8
-    {Key_F10, Released, false, INPUT_KEY_DELAY_INIT}, // 9
-    {Key_F11, Released, false, INPUT_KEY_DELAY_INIT}, // 10
-    {Key_F12, Released, false, INPUT_KEY_DELAY_INIT}  // 11
+    {InputKeyCode_F1, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},  // 0
+    {InputKeyCode_F2, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},  // 1
+    {InputKeyCode_F3, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},  // 2
+    {InputKeyCode_F4, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},  // 3
+    {InputKeyCode_F5, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},  // 4
+    {InputKeyCode_F6, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},  // 5
+    {InputKeyCode_F7, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},  // 6
+    {InputKeyCode_F8, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},  // 7
+    {InputKeyCode_F9, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT},  // 8
+    {InputKeyCode_F10, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT}, // 9
+    {InputKeyCode_F11, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT}, // 10
+    {InputKeyCode_F12, InputKeyState_Released, false, INPUT_KEY_DELAY_INIT}  // 11
 };
 
 /// @brief Resets the key state based on its current state and whether it is pressed this frame
@@ -187,7 +189,7 @@ void InputKey_Reset(InputKey *key)
 /// @param key Key to update.
 void InputKey_Update(InputKey *key)
 {
-    bool wasPressed = (key->keyState == Down || key->keyState == Pressed);
+    bool wasPressed = (key->keyState == InputKeyState_Down || key->keyState == InputKeyState_Pressed);
 
     if (key->isDownThisFrame) // The key is physically low
     {
@@ -195,11 +197,11 @@ void InputKey_Update(InputKey *key)
 
         if (!wasPressed)
         {
-            key->keyState = Down;
+            key->keyState = InputKeyState_Down;
         }
-        else if (key->keyState == Down)
+        else if (key->keyState == InputKeyState_Down)
         {
-            key->keyState = Pressed;
+            key->keyState = InputKeyState_Pressed;
         }
     }
     else // The key is physically high
@@ -208,11 +210,11 @@ void InputKey_Update(InputKey *key)
 
         if (wasPressed)
         {
-            key->keyState = Up;
+            key->keyState = InputKeyState_Up;
         }
-        else if (key->keyState == Up)
+        else if (key->keyState == InputKeyState_Up)
         {
-            key->keyState = Released;
+            key->keyState = InputKeyState_Released;
         }
     }
 }
@@ -302,5 +304,5 @@ InputKeyState InputManager_GetKeyState(InputKeyCode keyToGet)
         return INPUT_KEYS_FUNCTION[keyToGet - INPUT_KEY_FUNCTION_OFFSET].keyState;
     }
 
-    return Released;
+    return InputKeyState_Released;
 }

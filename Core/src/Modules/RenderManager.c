@@ -2,6 +2,8 @@
 
 #include <ncurses.h>
 
+// todo add cross platform support
+
 //! Source only code should be used consciously.
 //! as it is not meant to be used outside of this file,
 //! there is no error checking, and it is not part of the app side.

@@ -1,17 +1,28 @@
 #pragma once
 
+#if defined(_WIN32)
+#define PLATFORM_WINDOWS 1
+#elif defined(__linux__)
+#define PLATFORM_LINUX 1
+#elif defined(__APPLE__) && defined(__MACH__)
+#define PLATFORM_MACOS 1
+#else
+#error "Unsupported platform."
+#endif
+
+#ifdef PLATFORM_LINUX
 #define _POSIX_C_SOURCE 200809L
-// todo make cross platform, add windows
+#include <unistd.h>
+#endif
+
 #include <stdio.h>
 #include <time.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
-#include <unistd.h>
 #include <limits.h>
 #include <stdbool.h>
-#include <assert.h>
 
 #pragma region Constants
 

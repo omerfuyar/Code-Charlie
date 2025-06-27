@@ -2,6 +2,8 @@
 
 #include "Core.h"
 
+#pragma region typedefs
+
 /// @brief Represents a point in time or interval with seconds and nanoseconds precision.
 typedef struct TimePoint
 {
@@ -17,6 +19,8 @@ typedef struct Timer
     TimePoint endTime;
     bool isRunning;
 } Timer;
+
+#pragma endregion
 
 /// @brief Gets the current time point in seconds and nanoseconds.
 /// @param timePoint Time Point to update with the current time.

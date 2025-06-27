@@ -14,7 +14,7 @@ void App_StartLate()
 {
     DebugInfo("Late Start");
     window = Renderer_GetMainWindow();
-    defaultTextAttribute = RendererTextAttribute_Create(Normal, (RendererColorPair){White, Black});
+    defaultTextAttribute = RendererTextAttribute_Create(RendererTextAttributeMask_Normal, (RendererColorPair){RendererColor_White, RendererColor_Black});
 }
 
 void App_Update()
@@ -27,11 +27,11 @@ void App_Update()
         "Up",
         "Pressed"};
 
-    RendererWindow_PutStringToPosition(window, (Vector2Int){0, 1}, defaultTextAttribute, true, "z key is down %d", InputManager_GetKey(Down, Key_z));
-    RendererWindow_PutStringToPosition(window, (Vector2Int){0, 2}, defaultTextAttribute, true, "x key is pressed %d", InputManager_GetKey(Pressed, Key_x));
-    RendererWindow_PutStringToPosition(window, (Vector2Int){0, 3}, defaultTextAttribute, true, "c key is up %d", InputManager_GetKey(Up, Key_c));
-    RendererWindow_PutStringToPosition(window, (Vector2Int){0, 4}, defaultTextAttribute, true, "v key is released %d", InputManager_GetKey(Released, Key_v));
-    RendererWindow_PutStringToPosition(window, (Vector2Int){0, 5}, defaultTextAttribute, true, "a key state: %s", stateStrings[InputManager_GetKeyState(Key_a)]);
+    RendererWindow_PutStringToPosition(window, (Vector2Int){0, 1}, defaultTextAttribute, true, "z key is down %d", InputManager_GetKey(InputKeyState_Down, InputKeyCode_z));
+    RendererWindow_PutStringToPosition(window, (Vector2Int){0, 2}, defaultTextAttribute, true, "x key is pressed %d", InputManager_GetKey(InputKeyState_Pressed, InputKeyCode_x));
+    RendererWindow_PutStringToPosition(window, (Vector2Int){0, 3}, defaultTextAttribute, true, "c key is up %d", InputManager_GetKey(InputKeyState_Up, InputKeyCode_c));
+    RendererWindow_PutStringToPosition(window, (Vector2Int){0, 4}, defaultTextAttribute, true, "v key is released %d", InputManager_GetKey(InputKeyState_Released, InputKeyCode_v));
+    RendererWindow_PutStringToPosition(window, (Vector2Int){0, 5}, defaultTextAttribute, true, "a key state: %s", stateStrings[InputManager_GetKeyState(InputKeyCode_a)]);
 }
 
 void App_UpdateLate()

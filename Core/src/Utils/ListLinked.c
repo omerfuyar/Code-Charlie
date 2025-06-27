@@ -1,5 +1,7 @@
 #include "Utils/ListLinked.h"
 
+// todo add cross platform support
+
 #pragma region Source Only
 
 /// @brief A node in the linked list.
