@@ -8,44 +8,44 @@
 /// @brief Represents the digital value of a GPIO pin.
 typedef enum GPIODigitalValue
 {
-    KOLPA = -1, // An invalid or error state (-1).
-    LOW = 0,    // A low digital value (0).
-    HIGH = 1    // A high digital value (1).
+    GPIODigitalValue_KOLPA = -1, // An invalid or error state (-1).
+    GPIODigitalValue_LOW = 0,    // A low digital value (0).
+    GPIODigitalValue_HIGH = 1    // A high digital value (1).
 } GPIODigitalValue;
 
 /// @brief Represents the direction of a GPIO line.
 typedef enum GPIOLineDirection
 {
-    INPUT = (1UL << (0)),  // The pin is configured as an input.
-    OUTPUT = (1UL << (1)), // The pin is configured as an output.
-    EVENT = (1UL << (2))   // The pin is configured to generate events (e.g., interrupts).
+    GPIOLineDirection_INPUT = (1UL << (0)),  // The pin is configured as an input.
+    GPIOLineDirection_OUTPUT = (1UL << (1)), // The pin is configured as an output.
+    GPIOLineDirection_EVENT = (1UL << (2))   // The pin is configured to generate events (e.g., interrupts).
 } GPIOLineDirection;
 
 /// @brief Represents the bias type for GPIO input pins.
 typedef enum GPIOInputBiasType
 {
-    KOLPA_BIAS = -1,          // An invalid or error state (-1).
-    DISABLED = (1UL << (3)),  // The pin stays in a floating, high-impedance state when not connected to anything.
-    PULL_DOWN = (1UL << (4)), // The pin reads HIGH when the input is vcc and reads LOW when it is not connected or connected to ground.
-    PULL_UP = (1UL << (5))    // The pin reads HIGH when the input is not connected or connected to ground and reads LOW when it is vcc.
+    GPIOInputBiasType_KOLPA = -1,               // An invalid or error state (-1).
+    GPIOInputBiasType_DISABLED = (1UL << (3)),  // The pin stays in a floating, high-impedance state when not connected to anything.
+    GPIOInputBiasType_PULL_DOWN = (1UL << (4)), // The pin reads HIGH when the input is vcc and reads LOW when it is not connected or connected to ground.
+    GPIOInputBiasType_PULL_UP = (1UL << (5))    // The pin reads HIGH when the input is not connected or connected to ground and reads LOW when it is vcc.
 } GPIOInputBiasType;
 
 /// @brief Represents the event trigger type for GPIO input pins.
 typedef enum GPIOInputEventType
 {
-    KOLPA_EVENT = -1,  // An invalid or error state (-1).
-    RISING_EDGE = 1,   // Triggers when the pin transitions from LOW to HIGH.
-    FALLING_EDGE = 2,  // Triggers when the pin transitions from HIGH to LOW.
-    BOTH_EDGES = 1 | 2 // Triggers on both transitions, LOW to HIGH and HIGH to LOW.
+    GPIOInputEventType_KOLPA = -1,        // An invalid or error state (-1).
+    GPIOInputEventType_RISING_EDGE = 1,   // Triggers when the pin transitions from LOW to HIGH.
+    GPIOInputEventType_FALLING_EDGE = 2,  // Triggers when the pin transitions from HIGH to LOW.
+    GPIOInputEventType_BOTH_EDGES = 1 | 2 // Triggers on both transitions, LOW to HIGH and HIGH to LOW.
 } GPIOInputEventType;
 
 /// @brief Represents the output type for GPIO pins.
 typedef enum GPIOOutputType
 {
-    KOLPA_OUTPUT = -1,          // An invalid or error state (-1).
-    OPEN_DRAIN = (1UL << (0)),  // Pin can actively write LOW, but when it is HIGH, it goes into a high-impedance state. Requires an external pull-up resistor to achieve a physical HIGH. Allows multiple outputs to be connected to the same line.
-    OPEN_SOURCE = (1UL << (1)), // Pin can actively write HIGH, but when it is LOW, it goes into a high-impedance state. Requires an external pull-up resistor to achieve a physical LOW. Allows multiple outputs to be connected to the same line.
-    ACTIVE_LOW = (1UL << (2))   // Logical 1 writes LOW (inactive) and logical 0 writes HIGH (inactive) to the pin.
+    GPIOOutputType_KOLPA = -1,                 // An invalid or error state (-1).
+    GPIOOutputType_OPEN_DRAIN = (1UL << (0)),  // Pin can actively write LOW, but when it is HIGH, it goes into a high-impedance state. Requires an external pull-up resistor to achieve a physical HIGH. Allows multiple outputs to be connected to the same line.
+    GPIOOutputType_OPEN_SOURCE = (1UL << (1)), // Pin can actively write HIGH, but when it is LOW, it goes into a high-impedance state. Requires an external pull-up resistor to achieve a physical LOW. Allows multiple outputs to be connected to the same line.
+    GPIOOutputType_ACTIVE_LOW = (1UL << (2))   // Logical 1 writes LOW (inactive) and logical 0 writes HIGH (inactive) to the pin.
 } GPIOOutputType;
 
 /// @brief Represents a GPIO chip.

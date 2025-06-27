@@ -8,38 +8,38 @@
 /// @note Values can be combined using bitwise OR operations.
 typedef enum RendererTextAttributeMask
 {
-    Normal = (1U - 1U),               // Normal, plain text.
-    Underline = (1U << 17),           // Underlining text.
-    Blink = (1U << 19),               // Blinking text.
-    Dim = (1U << 20),                 // Half bright text.
-    Bold = (1U << 21),                // Extra bright or bold text.
-    Invis = (1U << 23),               // Invisible or blank mode.
-    Standout = (1U << 16),            // Best highlighting mode of the terminal.
-    AlternateCharSet = (1U << 22),    // Alternate character set.
-    CharText = ((1U << 8) - 1U) - 1U, // Bit-mask to extract a character.
-    Reversed = (1U << 18),            // Reverse foreground and background colors.
-    Protected = (1U << 24)            // Protected mode.
+    RendererTextAttributeMask_Normal = (1U - 1U),               // Normal, plain text.
+    RendererTextAttributeMask_Underline = (1U << 17),           // Underlining text.
+    RendererTextAttributeMask_Blink = (1U << 19),               // Blinking text.
+    RendererTextAttributeMask_Dim = (1U << 20),                 // Half bright text.
+    RendererTextAttributeMask_Bold = (1U << 21),                // Extra bright or bold text.
+    RendererTextAttributeMask_Invis = (1U << 23),               // Invisible or blank mode.
+    RendererTextAttributeMask_Standout = (1U << 16),            // Best highlighting mode of the terminal.
+    RendererTextAttributeMask_AlternateCharSet = (1U << 22),    // Alternate character set.
+    RendererTextAttributeMask_CharText = ((1U << 8) - 1U) - 1U, // Bit-mask to extract a character.
+    RendererTextAttributeMask_Reversed = (1U << 18),            // Reverse foreground and background colors.
+    RendererTextAttributeMask_Protected = (1U << 24)            // Protected mode.
 } RendererTextAttributeMask;
 
 /// @brief Representing text and background colors to be used in the terminal.
 typedef enum RendererColor
 {
-    Black = 0,
-    Red = 1,
-    Green = 2,
-    Yellow = 3,
-    Blue = 4,
-    Magenta = 5,
-    Cyan = 6,
-    White = 7
+    RendererColor_Black = 0,
+    RendererColor_Red = 1,
+    RendererColor_Green = 2,
+    RendererColor_Yellow = 3,
+    RendererColor_Blue = 4,
+    RendererColor_Magenta = 5,
+    RendererColor_Cyan = 6,
+    RendererColor_White = 7
 } RendererColor;
 
 /// @brief Represents the visibility of the cursor in the terminal.
 typedef enum RendererCursorVisibility
 {
-    Invisible = 0, // Cursor is invisible
-    Default = 1,   // Normal cursor visibility
-    Visible = 2    // Cursor is visible
+    RendererCursorVisibility_Invisible = 0, // Cursor is invisible
+    RendererCursorVisibility_Default = 1,   // Normal cursor visibility
+    RendererCursorVisibility_Visible = 2    // Cursor is visible
 } RendererCursorVisibility;
 
 /// @brief Vector representing text and background colors.
