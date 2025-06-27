@@ -4,3 +4,4 @@
 
 #include "Modules/GPIOManager.h"
 #include "Modules/InputManager.h"
+#include "Modules/RenderManager.h"

@@ -52,6 +52,12 @@ typedef struct RendererTextAttribute RendererTextAttribute;
 /// @brief Window structure for rendering text in the terminal. Wrapper for ncurses window with some additions.
 typedef struct RendererWindow RendererWindow;
 
+/// @brief Initializes the renderer module. Should not be used by app.
+void Renderer_Initialize();
+
+/// @brief Stops the renderer module. Should not be used by app.
+void Renderer_Terminate();
+
 /// @brief Changes the color of the terminal.
 /// @param color The color to change.
 /// @param colorToChangeTo The RGB values to change the color to.

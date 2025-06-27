@@ -78,6 +78,22 @@ void RendererTextAttribute_Disable(RendererTextAttribute *attribute)
 
 #pragma endregion
 
+void Renderer_Initialize()
+{
+    initscr();             // ncurses initialize screen
+    noecho();              // ncurses echo disable, no writing while getting input
+    start_color();         // ncurses start the color functionality
+    cbreak();              // ncurses disable line buffering but take CTRL^C commands
+    keypad(stdscr, true);  // ncurses enable keys like arrow and function
+    nodelay(stdscr, true); // ncurses disable blocking on getch()
+    // timeout(TARGET_SLEEP_NANOSECONDS * 1000000);
+}
+
+void Renderer_Terminate()
+{
+    endwin(); // ncurses terminate
+}
+
 void Renderer_ChangeColor(RendererColor color, Vector3Int colorToChangeTo)
 {
     DebugAssert(can_change_color(), "Your terminal doesn't have support for changing colors.");

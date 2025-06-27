@@ -219,41 +219,15 @@ void InputKey_Update(InputKey *key)
 
 #pragma endregion
 
-bool InputManager_GetKey(InputKeyState stateToCompare, InputKeyCode keyToGet)
+void Input_Initialize()
 {
-    if (keyToGet >= INPUT_KEY_STANDARD_OFFSET && keyToGet < INPUT_KEY_STANDARD_OFFSET + INPUT_KEY_STANDARD_SIZE) // standard keys, 0 offset
-    {
-        return stateToCompare == INPUT_KEYS_STANDARD[keyToGet - INPUT_KEY_STANDARD_OFFSET].keyState;
-    }
-    else if (keyToGet >= INPUT_KEY_ARROW_OFFSET && keyToGet < INPUT_KEY_ARROW_OFFSET + INPUT_KEY_ARROW_SIZE) // arrow keys, 258 offset
-    {
-        return stateToCompare == INPUT_KEYS_ARROW[keyToGet - INPUT_KEY_ARROW_OFFSET].keyState;
-    }
-    else if (keyToGet >= INPUT_KEY_FUNCTION_OFFSET && keyToGet < INPUT_KEY_FUNCTION_OFFSET + INPUT_KEY_FUNCTION_SIZE) // function keys, 265 offset
-    {
-        return stateToCompare == INPUT_KEYS_FUNCTION[keyToGet - INPUT_KEY_FUNCTION_OFFSET].keyState;
-    }
 }
 
-InputKeyState InputManager_GetKeyState(InputKeyCode keyToGet)
+void Input_Terminate()
 {
-    if (keyToGet >= INPUT_KEY_STANDARD_OFFSET && keyToGet < INPUT_KEY_STANDARD_OFFSET + INPUT_KEY_STANDARD_SIZE) // standard keys, 0 offset
-    {
-        return INPUT_KEYS_STANDARD[keyToGet - INPUT_KEY_STANDARD_OFFSET].keyState;
-    }
-    else if (keyToGet >= INPUT_KEY_ARROW_OFFSET && keyToGet < INPUT_KEY_ARROW_OFFSET + INPUT_KEY_ARROW_SIZE) // arrow keys, 258 offset
-    {
-        return INPUT_KEYS_ARROW[keyToGet - INPUT_KEY_ARROW_OFFSET].keyState;
-    }
-    else if (keyToGet >= INPUT_KEY_FUNCTION_OFFSET && keyToGet < INPUT_KEY_FUNCTION_OFFSET + INPUT_KEY_FUNCTION_SIZE) // function keys, 265 offset
-    {
-        return INPUT_KEYS_FUNCTION[keyToGet - INPUT_KEY_FUNCTION_OFFSET].keyState;
-    }
-
-    return Released;
 }
 
-void InputManager_PollInputs()
+void Input_PollInputs()
 {
     int character;
     InputKey *key;
@@ -306,4 +280,27 @@ void InputManager_PollInputs()
     {
         InputKey_Update(&INPUT_KEYS_FUNCTION[i]);
     }
+}
+
+bool InputManager_GetKey(InputKeyState stateToCompare, InputKeyCode keyToGet)
+{
+    return InputManager_GetKeyState(keyToGet) == stateToCompare;
+}
+
+InputKeyState InputManager_GetKeyState(InputKeyCode keyToGet)
+{
+    if (keyToGet >= INPUT_KEY_STANDARD_OFFSET && keyToGet < INPUT_KEY_STANDARD_OFFSET + INPUT_KEY_STANDARD_SIZE) // standard keys, 0 offset
+    {
+        return INPUT_KEYS_STANDARD[keyToGet - INPUT_KEY_STANDARD_OFFSET].keyState;
+    }
+    else if (keyToGet >= INPUT_KEY_ARROW_OFFSET && keyToGet < INPUT_KEY_ARROW_OFFSET + INPUT_KEY_ARROW_SIZE) // arrow keys, 258 offset
+    {
+        return INPUT_KEYS_ARROW[keyToGet - INPUT_KEY_ARROW_OFFSET].keyState;
+    }
+    else if (keyToGet >= INPUT_KEY_FUNCTION_OFFSET && keyToGet < INPUT_KEY_FUNCTION_OFFSET + INPUT_KEY_FUNCTION_SIZE) // function keys, 265 offset
+    {
+        return INPUT_KEYS_FUNCTION[keyToGet - INPUT_KEY_FUNCTION_OFFSET].keyState;
+    }
+
+    return Released;
 }

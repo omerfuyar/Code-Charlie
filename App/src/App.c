@@ -36,8 +36,6 @@ void App_Update()
 
 void App_UpdateLate()
 {
-    // DebugInfo("Late Update");
-    InputManager_PollInputs();
 }
 
 void App_Stop(int exitCode)

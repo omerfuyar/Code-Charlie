@@ -1,20 +1,20 @@
-#include "Utils/ArrayList.h"
+#include "Utils/ListArray.h"
 
 #pragma region Source Only
 
-typedef struct ArrayList
+typedef struct ListArray
 {
     void *data;
     size_t capacity;
     size_t size;
     size_t sizeOfItem;
-} ArrayList;
+} ListArray;
 
 #pragma endregion
 
-ArrayList *ArrayList_Create(size_t sizeOfItem, size_t initialCapacity)
+ListArray *ListArray_Create(size_t sizeOfItem, size_t initialCapacity)
 {
-    ArrayList *list = malloc(sizeof(ArrayList));
+    ListArray *list = malloc(sizeof(ListArray));
     DebugAssert(list != NULL, "Memory allocation failed.");
 
     list->capacity = initialCapacity;
@@ -26,7 +26,7 @@ ArrayList *ArrayList_Create(size_t sizeOfItem, size_t initialCapacity)
     return list;
 }
 
-void ArrayList_Destroy(ArrayList *list)
+void ListArray_Destroy(ListArray *list)
 {
     DebugAssert(list != NULL, "Null pointer passed as parameter.");
 
@@ -37,7 +37,7 @@ void ArrayList_Destroy(ArrayList *list)
     list = NULL;
 }
 
-void ArrayList_Resize(ArrayList *list, size_t newCapacity)
+void ListArray_Resize(ListArray *list, size_t newCapacity)
 {
     DebugAssert(list != NULL, "Null pointer passed as parameter.");
 
@@ -53,7 +53,7 @@ void ArrayList_Resize(ArrayList *list, size_t newCapacity)
     }
 }
 
-void *ArrayList_Get(ArrayList *list, size_t index)
+void *ListArray_Get(ListArray *list, size_t index)
 {
     DebugAssert(list != NULL, "Null pointer passed as parameter.");
     DebugAssert(index < list->size, "Index out of range. List size : %du, index : %du", list->size, index);
@@ -61,24 +61,24 @@ void *ArrayList_Get(ArrayList *list, size_t index)
     return (char *)(list->data) + index * list->sizeOfItem;
 }
 
-void ArrayList_Set(ArrayList *list, size_t index, const void *item)
+void ListArray_Set(ListArray *list, size_t index, const void *item)
 {
     DebugAssert(list != NULL, "Null pointer passed as parameter.");
     DebugAssert(index < list->size, "Index out of range. List size : %du, index : %du", list->size, index);
 
-    void *targetLocation = ArrayList_Get(list, index);
+    void *targetLocation = ListArray_Get(list, index);
 
     memcpy(targetLocation, item, list->sizeOfItem);
 }
 
-void ArrayList_Add(ArrayList *list, const void *item)
+void ListArray_Add(ListArray *list, const void *item)
 {
     DebugAssert(list != NULL, "Null pointer passed as parameter.");
 
     if (list->size >= list->capacity)
     {
-        DebugWarning("ArrayList is full. Resizing it from %du to %du.", list->capacity, list->capacity * ARRAY_LIST_RESIZE_MULTIPLIER);
-        ArrayList_Resize(list, list->capacity * ARRAY_LIST_RESIZE_MULTIPLIER);
+        DebugWarning("ListArray is full. Resizing it from %du to %du.", list->capacity, list->capacity * ARRAY_LIST_RESIZE_MULTIPLIER);
+        ListArray_Resize(list, list->capacity * ARRAY_LIST_RESIZE_MULTIPLIER);
     }
 
     char *targetLocation = (char *)(list->data) + list->size * list->sizeOfItem;
@@ -88,12 +88,12 @@ void ArrayList_Add(ArrayList *list, const void *item)
     list->size++;
 }
 
-void ArrayList_RemoveAtIndex(ArrayList *list, size_t index)
+void ListArray_RemoveAtIndex(ListArray *list, size_t index)
 {
     DebugAssert(list != NULL, "Null pointer passed as parameter.");
     DebugAssert(index < list->size, "Index out of range. List size : %du, index : %du", list->size, index);
 
-    char *targetLocation = ArrayList_Get(list, index);
+    char *targetLocation = ListArray_Get(list, index);
 
     size_t bytesToMove = (list->size - index - 1) * list->sizeOfItem;
 
@@ -105,43 +105,43 @@ void ArrayList_RemoveAtIndex(ArrayList *list, size_t index)
     list->size--;
 }
 
-void ArrayList_RemoveItem(ArrayList *list, const void *item)
+void ListArray_RemoveItem(ListArray *list, const void *item)
 {
     DebugAssert(list != NULL, "Null pointer passed as parameter.");
 
-    ArrayList_RemoveAtIndex(list, ArrayList_IndexOf(list, item));
+    ListArray_RemoveAtIndex(list, ListArray_IndexOf(list, item));
 }
 
-void *ArrayList_Pop(ArrayList *list)
+void *ListArray_Pop(ListArray *list)
 {
     DebugAssert(list != NULL, "Null pointer passed as parameter.");
 
     if (list->size == 0)
     {
-        DebugWarning("ArrayList is empty. Cannot pop an item. Returning NULL.");
+        DebugWarning("ListArray is empty. Cannot pop an item. Returning NULL.");
         return NULL;
     }
 
-    void *item = ArrayList_Get(list, list->size - 1);
-    ArrayList_RemoveAtIndex(list, list->size - 1);
+    void *item = ListArray_Get(list, list->size - 1);
+    ListArray_RemoveAtIndex(list, list->size - 1);
 
     return item;
 }
 
-void ArrayList_Clear(ArrayList *list)
+void ListArray_Clear(ListArray *list)
 {
     DebugAssert(list != NULL, "Null pointer passed as parameter.");
 
     list->size = 0;
 }
 
-long long ArrayList_IndexOf(ArrayList *list, const void *item)
+long long ListArray_IndexOf(ListArray *list, const void *item)
 {
     DebugAssert(list != NULL, "Null pointer passed as parameter.");
 
     for (size_t i = 0; i < list->size; i++)
     {
-        char *currentItem = ArrayList_Get(list, i);
+        char *currentItem = ListArray_Get(list, i);
 
         if (memcmp(currentItem, item, list->sizeOfItem) == 0)
         {
@@ -149,18 +149,18 @@ long long ArrayList_IndexOf(ArrayList *list, const void *item)
         }
     }
 
-    DebugWarning("Item not found in ArrayList. Returning -1.");
+    DebugWarning("Item not found in ListArray. Returning -1.");
     return -1;
 }
 
-size_t ArrayList_GetSize(ArrayList *list)
+size_t ListArray_GetSize(ListArray *list)
 {
     DebugAssert(list != NULL, "Null pointer passed as parameter.");
 
     return list->size;
 }
 
-size_t ArrayList_GetCapacity(ArrayList *list)
+size_t ListArray_GetCapacity(ListArray *list)
 {
     DebugAssert(list != NULL, "Null pointer passed as parameter.");
 

@@ -147,8 +147,22 @@ typedef enum InputKeyCode
     Key_F12 = 276
 } InputKeyCode;
 
+/// @brief Initialize the input manager. Should not be used by app.
+void Input_Initialize();
+
+/// @brief Terminate the input manager. Should not be used by app.
+void Input_Terminate();
+
+/// @brief Poll the input manager for new input events. Should not be used by app.
+void Input_PollInputs();
+
+/// @brief Get whether a specific key is in a certain state.
+/// @param stateToCompare The state to compare against.
+/// @param keyToGet The key to get the state of.
+/// @return True if the key is in the specified state, false otherwise.
 bool InputManager_GetKey(InputKeyState stateToCompare, InputKeyCode keyToGet);
 
+/// @brief Get the state of a specific key.
+/// @param keyToGet The key to get the state of.
+/// @return The state of the specified key.
 InputKeyState InputManager_GetKeyState(InputKeyCode keyToGet);
-
-void InputManager_PollInputs();
