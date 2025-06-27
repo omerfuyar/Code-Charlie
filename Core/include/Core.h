@@ -1,7 +1,7 @@
 #pragma once
 
 #define _POSIX_C_SOURCE 200809L
-
+// todo make cross platform, add windows
 #include <stdio.h>
 #include <time.h>
 #include <stddef.h>

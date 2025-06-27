@@ -4,6 +4,8 @@
 
 #include "Maths/Vectors.h"
 
+#pragma region typedefs
+
 /// @brief Representing text attributes to be used in the terminal.
 /// @note Values can be combined using bitwise OR operations.
 typedef enum RendererTextAttributeMask
@@ -51,6 +53,8 @@ typedef struct RendererTextAttribute RendererTextAttribute;
 
 /// @brief Window structure for rendering text in the terminal. Wrapper for ncurses window with some additions.
 typedef struct RendererWindow RendererWindow;
+
+#pragma endregion
 
 /// @brief Initializes the renderer module. Should not be used by app.
 void Renderer_Initialize();

@@ -5,6 +5,8 @@
 // todo add support to different pin settings for input, output and active levels. for now, only digital output and output.
 // todo add event support for input pins (rising, falling, both edges).
 
+#pragma region typedefs
+
 /// @brief Represents the digital value of a GPIO pin.
 typedef enum GPIODigitalValue
 {
@@ -53,6 +55,8 @@ typedef struct GPIOChip GPIOChip;
 
 /// @brief Represents a GPIO pin.
 typedef struct GPIOPin GPIOPin;
+
+#pragma endregion
 
 /// @brief Creates a GPIO chip instance.
 /// @param chipPath The file path to the GPIO chip (e.g., "/dev/gpiochip0").

@@ -4,6 +4,8 @@
 
 // #define INPUT_KEY_BUFFER_SIZE 8
 
+#pragma region typedefs
+
 typedef enum InputMode
 {
     InputMode_Key,
@@ -146,6 +148,8 @@ typedef enum InputKeyCode
     InputKeyCode_F11 = 275,
     InputKeyCode_F12 = 276
 } InputKeyCode;
+
+#pragma endregion
 
 /// @brief Initialize the input manager. Should not be used by app.
 void Input_Initialize();
