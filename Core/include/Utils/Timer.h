@@ -22,6 +22,8 @@ typedef struct Timer
 
 #pragma endregion
 
+#define TIMEPOINT_KOLPA ((TimePoint){-1, -1})
+
 /// @brief Gets the current time point in seconds and nanoseconds.
 /// @param timePoint Time Point to update with the current time.
 void TimePoint_Update(TimePoint *timePoint);
@@ -45,15 +47,15 @@ Timer *TimerHeap_Create(const char *label);
 /// @param timer Timer to destroy.
 void TimerHeap_Destroy(Timer *timer);
 
-/// @brief Starts the timer.
+/// @brief Starts the timer, updating its start time to the current time.
 /// @param timer Timer to start.
 void Timer_Start(Timer *timer);
 
-/// @brief Stops the timer.
+/// @brief Stops the timer, updating its end time to the current time.
 /// @param timer Timer to stop.
 void Timer_Stop(Timer *timer);
 
-/// @brief Resets the timer to its initial state.
+/// @brief Resets the timers start time to the current time, to it's initial state. Does not check if the timer is running.
 /// @param timer Timer to reset.
 void Timer_Reset(Timer *timer);
 
@@ -61,7 +63,3 @@ void Timer_Reset(Timer *timer);
 /// @param timer Timer to get elapsed time from.
 /// @return Elapsed time of the timer.
 TimePoint Timer_GetElapsedTime(Timer *timer);
-
-/// @brief Prints the elapsed time of the timer as INFO debug.
-/// @param timer Timer to print elapsed time from.
-void Timer_PrintElapsedTime(Timer *timer);

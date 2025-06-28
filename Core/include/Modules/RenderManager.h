@@ -48,6 +48,10 @@ typedef enum RendererCursorVisibility
 /// @note Should be used with only 'RendererColor' enum.
 typedef Vector2Int RendererColorPair;
 
+/// @brief Vector representing the borders of a renderer window.
+/// @note X : Vertical borders, Y : Horizontal borders, Z : All 4 corners
+typedef Vector3Int RendererWindowBorders;
+
 /// @brief Text attribute structure for rendering text in the terminal. Contains color pair and mask.
 typedef struct RendererTextAttribute RendererTextAttribute;
 
@@ -55,6 +59,12 @@ typedef struct RendererTextAttribute RendererTextAttribute;
 typedef struct RendererWindow RendererWindow;
 
 #pragma endregion
+
+/// @brief Global pointer to the main renderer window.
+extern RendererWindow *RENDERER_MAIN_WINDOW;
+
+/// @brief Global pointer to the default text attribute.
+extern RendererTextAttribute *RENDERER_DEFAULT_TEXT_ATTRIBUTE;
 
 /// @brief Initializes the renderer module. Should not be used by app.
 void Renderer_Initialize();
@@ -94,13 +104,27 @@ void RendererTextAttribute_ChangeColor(RendererTextAttribute *attribute, Rendere
 /// @brief Creates a renderer window.
 /// @param position The position of the window in the terminal.
 /// @param size The size of the window.
+/// @param title The title of the window.
 /// @return A pointer to the created renderer window.
 /// @note Position origin is always top left corner
-RendererWindow *RendererWindow_Create(Vector2Int position, Vector2Int size);
+RendererWindow *RendererWindow_Create(const char *title, Vector2Int position, Vector2Int size);
+
+/// @brief Creates a renderer window as a child of another window.
+/// @param parent The parent renderer window.
+/// @param title The title of the child window.
+/// @param position The position of the child window relative to the parent.
+/// @param size The size of the child window.
+/// @return A pointer to the created child window.
+RendererWindow *RendererWindow_CreateAsChild(RendererWindow *parentWindow, const char *title, Vector2Int position, Vector2Int size);
 
 /// @brief Destroys a renderer window and releases its resources.
 /// @param window The renderer window to destroy.
 void RendererWindow_Destroy(RendererWindow *window);
+
+/// @brief Sets the border characters for the renderer window.
+/// @param window The renderer window to set the border characters for.
+/// @param borders Border chars to set for the renderer window. Read from RendererWindowBorders.
+void RendererWindow_SetBorderChars(RendererWindow *window, RendererWindowBorders borders);
 
 /// @brief Updates/renders the renderer window.
 /// @param window The renderer window to update/renders.

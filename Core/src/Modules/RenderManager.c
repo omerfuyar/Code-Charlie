@@ -4,16 +4,14 @@
 
 // todo add cross platform support
 
-//! Source only code should be used consciously.
-//! as it is not meant to be used outside of this file,
-//! there is no error checking, and it is not part of the app side.
 #pragma region Source Only
 
 /// @brief Global index for color pairs. Used to assign unique handles to color pairs.
 int COLOR_PAIR_INDEX = 0;
 
-/// @brief Global pointer to the main renderer window.
-RendererWindow *mainWindow = NULL;
+RendererWindow *RENDERER_MAIN_WINDOW = NULL;
+
+RendererTextAttribute *RENDERER_DEFAULT_TEXT_ATTRIBUTE = NULL;
 
 typedef struct RendererTextAttribute
 {
@@ -24,33 +22,17 @@ typedef struct RendererTextAttribute
 
 typedef struct RendererWindow
 {
+    const char *title;
     WINDOW *windowHandle;
 
     Vector2Int windowSize;
     Vector2Int windowPosition;
     Vector2Int cursorPosition;
 
-    // short _flags; /* window state flags */
-    //
-    // struct ldat *_line; /* the actual line data */
-    //
-    // NCURSES_SIZE_T _regtop;    /* top line of scrolling region */
-    // NCURSES_SIZE_T _regbottom; /* bottom line of scrolling region */
-    //
-    ///* these are used only if this is a sub-window */
-    // int _parx;       /* x coordinate of this window in parent */
-    // int _pary;       /* y coordinate of this window in parent */
-    // WINDOW *_parent; /* pointer to parent if a sub-window */
-    //
-    ///* these are used only if this is a pad */
-    // struct pdat
-    //{
-    //     NCURSES_SIZE_T _pad_y, _pad_x;
-    //     NCURSES_SIZE_T _pad_top, _pad_left;
-    //     NCURSES_SIZE_T _pad_bottom, _pad_right;
-    // } _pad;
-    //
-    // NCURSES_SIZE_T _yoffset; /* real begy is _begy + _yoffset */
+    RendererTextAttribute *defaultAttribute;
+    chtype borderChars[8];
+
+    struct RendererWindow *parent;
 } RendererWindow;
 
 /// @brief Moves the cursor to the specified position in the window.
@@ -88,7 +70,9 @@ void Renderer_Initialize()
     cbreak();              // ncurses disable line buffering but take CTRL^C commands
     keypad(stdscr, true);  // ncurses enable keys like arrow and function
     nodelay(stdscr, true); // ncurses disable blocking on getch()
-    // timeout(TARGET_SLEEP_NANOSECONDS * 1000000);
+
+    RENDERER_MAIN_WINDOW = Renderer_GetMainWindow();
+    RENDERER_DEFAULT_TEXT_ATTRIBUTE = RendererTextAttribute_Create(RendererTextAttributeMask_Normal, (RendererColorPair){RendererColor_White, RendererColor_Black});
 }
 
 void Renderer_Terminate()
@@ -105,20 +89,24 @@ void Renderer_ChangeColor(RendererColor color, Vector3Int colorToChangeTo)
     DebugInfo("Terminal color changed successfully.");
 }
 
-// todo
 RendererWindow *Renderer_GetMainWindow()
 {
-    if (mainWindow == NULL)
+    if (RENDERER_MAIN_WINDOW == NULL)
     {
-        mainWindow = (RendererWindow *)malloc(sizeof(RendererWindow));
-        DebugAssert(mainWindow != NULL, "Memory allocation failed.");
+        RENDERER_MAIN_WINDOW = (RendererWindow *)malloc(sizeof(RendererWindow));
+        DebugAssert(RENDERER_MAIN_WINDOW != NULL, "Memory allocation failed.");
 
-        mainWindow->windowHandle = stdscr;
-        // todo ...
+        RENDERER_MAIN_WINDOW->windowHandle = stdscr;
+        RENDERER_MAIN_WINDOW->windowSize = (Vector2Int){COLS, LINES};
+        RENDERER_MAIN_WINDOW->windowPosition = (Vector2Int){0, 0};
+        RENDERER_MAIN_WINDOW->cursorPosition = (Vector2Int){0, 0};
+        RENDERER_MAIN_WINDOW->title = "Main Window";
+        RENDERER_MAIN_WINDOW->defaultAttribute = RENDERER_DEFAULT_TEXT_ATTRIBUTE;
+        RENDERER_MAIN_WINDOW->parent = NULL;
     }
 
-    DebugInfo("Main window returned successfully");
-    return mainWindow;
+    DebugInfo("Main window '%s' returned successfully", RENDERER_MAIN_WINDOW->title);
+    return RENDERER_MAIN_WINDOW;
 }
 
 void Renderer_SetCursorVisibility(RendererCursorVisibility visibility)
@@ -164,18 +152,34 @@ void RendererTextAttribute_ChangeColor(RendererTextAttribute *attribute, Rendere
     DebugInfo("Text attribute color changed successfully.");
 }
 
-// todo
-RendererWindow *RendererWindow_Create(Vector2Int position, Vector2Int size)
+RendererWindow *RendererWindow_Create(const char *title, Vector2Int position, Vector2Int size)
 {
     RendererWindow *window = (RendererWindow *)malloc(sizeof(RendererWindow));
     DebugAssert(window != NULL, "Memory allocation failed.");
 
     window->windowHandle = newwin(size.y, size.x, position.y, position.x);
-    box(window->windowHandle, 0, 0);
+
+    window->windowSize = (Vector2Int){COLS, LINES};
+    window->windowPosition = (Vector2Int){0, 0};
+    window->cursorPosition = (Vector2Int){0, 0};
+    window->title = "Main Window";
+    window->defaultAttribute = RENDERER_DEFAULT_TEXT_ATTRIBUTE;
+    window->parent = NULL;
 
     // todo ...
 
-    DebugInfo("Renderer window created successfully.");
+    box(window->windowHandle, 0, 0);
+
+    DebugInfo("Renderer window '%s' created successfully.", window->title);
+    return window;
+}
+
+RendererWindow *RendererWindow_CreateAsChild(RendererWindow *parentWindow, const char *title, Vector2Int position, Vector2Int size)
+{
+    RendererWindow *window = RendererWindow_Create(title, position, size);
+    window->parent = parentWindow;
+
+    DebugInfo("Renderer window '%s' created as child of '%s'.", window->title, parentWindow->title);
     return window;
 }
 
@@ -189,7 +193,26 @@ void RendererWindow_Destroy(RendererWindow *window)
     free(window);
     window = NULL;
 
-    DebugInfo("Renderer window destroyed successfully.");
+    DebugInfo("Renderer window '%s' destroyed successfully.", window->title);
+}
+
+void RendererWindow_SetBorderChars(RendererWindow *window, RendererWindowBorders borders)
+{
+    DebugAssert(window != NULL, "Null pointer passed as parameter.");
+
+    window->borderChars[0] = borders.x; // Left vertical border
+    window->borderChars[1] = borders.x; // Right vertical border
+    window->borderChars[2] = borders.y; // Top horizontal border
+    window->borderChars[3] = borders.y; // Bottom horizontal border
+    window->borderChars[4] = borders.z; // Top left corner
+    window->borderChars[5] = borders.z; // Top right corner
+    window->borderChars[6] = borders.z; // Bottom left corner
+    window->borderChars[7] = borders.z; // Bottom right corner
+
+    wborder(window->windowHandle, window->borderChars[0], window->borderChars[1], window->borderChars[2], window->borderChars[3],
+            window->borderChars[4], window->borderChars[5], window->borderChars[6], window->borderChars[7]);
+
+    DebugInfo("Renderer window '%s' border characters set successfully.", window->title);
 }
 
 void RendererWindow_Update(RendererWindow *window)
@@ -198,7 +221,7 @@ void RendererWindow_Update(RendererWindow *window)
 
     wrefresh(window->windowHandle);
 
-    DebugInfo("Renderer window updated successfully.");
+    DebugInfo("Renderer window '%s' updated successfully.", window->title);
 }
 
 void RendererWindow_Clear(RendererWindow *window)
@@ -207,7 +230,7 @@ void RendererWindow_Clear(RendererWindow *window)
 
     wclear(window->windowHandle);
 
-    DebugInfo("Renderer window cleared successfully.");
+    DebugInfo("Renderer window '%s' cleared successfully.", window->title);
 }
 
 void RendererWindow_PutCharToPosition(RendererWindow *window, Vector2Int position, RendererTextAttribute *attributeMask, char charToPut)
@@ -219,12 +242,13 @@ void RendererWindow_PutCharToPosition(RendererWindow *window, Vector2Int positio
     waddch(window->windowHandle, charToPut);
     RendererTextAttribute_Disable(attributeMask);
 
-    DebugInfo("Character %c put to position (%d, %d) successfully.", charToPut, position.x, position.y);
+    DebugInfo("Window '%s': Character %c put to position (%d, %d) successfully.", window->title, charToPut, position.x, position.y);
 }
 
 void RendererWindow_PutStringToPosition(RendererWindow *window, Vector2Int position, RendererTextAttribute *attributeMask, bool override, const char *stringToPut, ...)
 {
     DebugAssert(window != NULL, "Null pointer passed as parameter.");
+    DebugAssert(attributeMask != NULL, "Null pointer passed as parameter.");
 
     RendererWindow_MoveCursorToPosition(window, position);
     RendererTextAttribute_Enable(attributeMask);
@@ -238,13 +262,13 @@ void RendererWindow_PutStringToPosition(RendererWindow *window, Vector2Int posit
     va_end(args);
     RendererTextAttribute_Disable(attributeMask);
 
-    DebugInfo("String '%s' put to position (%d, %d) successfully.", stringToPut, position.x, position.y);
+    DebugInfo("Window '%s': String '%s' put to position (%d, %d) successfully.", window->title, stringToPut, position.x, position.y);
 }
 
 Vector2Int RendererWindow_GetWindowSize(RendererWindow *window)
 {
     DebugAssert(window != NULL, "Null pointer passed as parameter.");
 
-    DebugInfo("Renderer window size retrieved successfully.");
+    DebugInfo("Renderer window '%s' size retrieved successfully.", window->title);
     return window->windowSize;
 }

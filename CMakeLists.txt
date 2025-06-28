@@ -7,11 +7,20 @@ cmake_minimum_required(VERSION 3.25)
 
 project(Code-Charlie C)
 
+# Prefer clang if it is available
+find_program(CLANG_EXECUTABLE clang)
+if(CLANG_EXECUTABLE)
+    set(CMAKE_C_COMPILER ${CLANG_EXECUTABLE})
+endif()
+
+message(STATUS "Using C compiler: ${CMAKE_C_COMPILER}")
+
 set(CMAKE_C_STANDARD 23)
-set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_C_STANDARD_REQUIRED OFF)
+
 set(CMAKE_C_EXTENSIONS OFF)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O2 -Wall -Wextra")
 
 # Build directory setup
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)

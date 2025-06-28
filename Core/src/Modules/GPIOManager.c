@@ -73,8 +73,8 @@ GPIOPin *GPIOPin_ConsumeAsInput(GPIOChip *chip, unsigned char index, const char 
     pin->lineIndex = index;
     pin->inputBiasType = biasType;
     pin->inputEventType = eventType;
-    pin->outputType = GPIOOutputType_KOLPA;
-    pin->lineDirection = GPIOLineDirection_INPUT;
+    pin->outputType = GPIOOutputType_Kolpa;
+    pin->lineDirection = GPIOLineDirection_Input;
 
     pin->lineHandle = gpiod_chip_get_line(chip->chipHandle, pin->lineIndex);
     if (pin->lineHandle == NULL)
@@ -106,10 +106,10 @@ GPIOPin *GPIOPin_ConsumeAsOutput(GPIOChip *chip, unsigned char index, const char
 
     pin->consumerName = consumer;
     pin->lineIndex = index;
-    pin->inputBiasType = GPIOInputBiasType_KOLPA;
+    pin->inputBiasType = GPIOInputBiasType_Kolpa;
     pin->inputEventType = GPIOInputEventType_KOLPA;
     pin->outputType = outputType;
-    pin->lineDirection = GPIOLineDirection_OUTPUT;
+    pin->lineDirection = GPIOLineDirection_Output;
 
     pin->lineHandle = gpiod_chip_get_line(chip->chipHandle, pin->lineIndex);
     if (pin->lineHandle == NULL)
@@ -151,7 +151,7 @@ int GPIOPin_WriteValue(GPIOPin *pin, GPIODigitalValue value)
 {
     DebugAssert(pin != NULL, "Null pointer passed as parameter.");
 
-    if (pin->lineDirection != GPIOLineDirection_OUTPUT)
+    if (pin->lineDirection != GPIOLineDirection_Output)
     {
         DebugError("Pin to write value to must be created as output.");
     }
@@ -171,16 +171,16 @@ GPIODigitalValue GPIOPin_ReadValue(GPIOPin *pin)
 {
     DebugAssert(pin != NULL, "Null pointer passed as parameter.");
 
-    if (pin->lineDirection != GPIOLineDirection_INPUT)
+    if (pin->lineDirection != GPIOLineDirection_Input)
     {
         DebugError("Pin to read value from must be created as input.");
     }
 
     GPIODigitalValue lineValueSetReturn = (GPIODigitalValue)gpiod_line_get_value(pin->lineHandle);
-    if (lineValueSetReturn == GPIODigitalValue_KOLPA)
+    if (lineValueSetReturn == GPIODigitalValue_Kolpa)
     {
         DebugWarning("Failed to get value from input, error in gpiod_line_get_value function with parameter : line handle '%p'. Returning -1.", pin->lineHandle);
-        return GPIODigitalValue_KOLPA;
+        return GPIODigitalValue_Kolpa;
     }
 
     DebugInfo("GPIO pin value read successfully with index '%d', consumer name '%s', value '%d'.", pin->lineIndex, pin->consumerName, lineValueSetReturn);
