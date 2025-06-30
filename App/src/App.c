@@ -2,6 +2,12 @@
 #include "Modules/InputManager.h"
 #include "Modules/RenderManager.h"
 
+static const char *stateStrings[] = {
+    "Released",
+    "Down",
+    "Up",
+    "Pressed"};
+
 void App_Start()
 {
 }
@@ -9,12 +15,6 @@ void App_Start()
 void App_StartLate()
 {
 }
-
-char **stateStrings = (char *[]){
-    "Released",
-    "Down",
-    "Up",
-    "Pressed"};
 
 void App_Update()
 {

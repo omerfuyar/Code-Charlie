@@ -24,10 +24,12 @@ void Core_Run(Core_Start start, Core_StartLate lateStart, Core_Update update, Co
     Input_Initialize();
 
     START();
+    DebugInfo("Start function called.");
 
     START_LATE();
+    DebugInfo("Late start function called.");
 
-    time_t sleepNanoseconds;
+    time_t sleepMilliseconds;
     time_t loopNanoseconds;
 
     Timer loopTimer = TimerStack_Create("Core Loop Timer");
@@ -38,41 +40,46 @@ void Core_Run(Core_Start start, Core_StartLate lateStart, Core_Update update, Co
 
         Timer_Start(&loopTimer);
 
+        Input_PollInputs();
+        DebugInfo("Input polling function called.");
+
         UPDATE();
+        fflush(DEBUG_FILE);
+        DebugInfo("Update function called.");
+        fflush(DEBUG_FILE);
 
         UPDATE_LATE();
+        DebugInfo("Late update function called.");
 
         RendererWindow_Update(RENDERER_MAIN_WINDOW);
+        DebugInfo("Renderer window updated.");
 
         Timer_Stop(&loopTimer);
 
         loopNanoseconds = (loopTimer.endTime.seconds - loopTimer.startTime.seconds) * 1000000000L + (loopTimer.endTime.nanoseconds - loopTimer.startTime.nanoseconds);
-        sleepNanoseconds = TARGET_SLEEP_NANOSECONDS - loopNanoseconds;
+        sleepMilliseconds = (TARGET_SLEEP_NANOSECONDS - loopNanoseconds) / 1000000L;
 
-        DebugInfo("Loop time: %ld milliseconds", loopNanoseconds / 1000000L);
-        DebugInfo("Sleep time: %ld milliseconds", sleepNanoseconds / 1000000L);
+        DebugInfo("Loop time: %ld nanoseconds", loopNanoseconds);
 
-        if (sleepNanoseconds > 0)
+        if (sleepMilliseconds > 0)
         {
-            Core_SleepNanoseconds(sleepNanoseconds);
+            Core_SleepMilliseconds(sleepMilliseconds);
         }
 
-        DebugInfo("Slept for %ld nanoseconds", sleepNanoseconds);
-
-        Input_PollInputs();
-
-        DebugInfo("Main loop iteration finished.");
+        DebugInfo("Slept for %ld milliseconds, loop ended.", sleepMilliseconds);
     }
 }
 
 void Core_Terminate(int exitCode)
 {
+    STOP(exitCode);
+    DebugInfo("Stop function called.");
+
     Renderer_Terminate();
     Input_Terminate();
 
-    STOP(exitCode);
-
-    _exit(exitCode); // program
+    DebugInfo("Core terminated with exit code %d.", exitCode);
+    _exit(exitCode);
 }
 
 void Core_SetTargetLoopPerSecond(unsigned int tlps)
@@ -80,12 +87,16 @@ void Core_SetTargetLoopPerSecond(unsigned int tlps)
     TARGET_SLEEP_NANOSECONDS = (1.0 / (tlps == 0 ? 1 : tlps)) * 1000000000.0;
 }
 
-void Core_SleepNanoseconds(time_t nanoseconds)
+void Core_SleepMilliseconds(time_t milliseconds)
 {
-    struct timespec req = {0};
-    req.tv_sec = nanoseconds / 1000000000L;
-    req.tv_nsec = nanoseconds % 1000000000L;
-    nanosleep(&req, NULL);
+#if PLATFORM_WINDOWS
+    Sleep(milliseconds);
+#else
+    struct timespec timeToSleep = {0};
+    timeToSleep.tv_sec = milliseconds / 1000;
+    timeToSleep.tv_nsec = (milliseconds % 1000) * 1000000;
+    nanosleep(&timeToSleep, NULL);
+#endif
 }
 
 void Core_DebugLog(const char *header, const char *file, int line, const char *function, const char *format, ...)

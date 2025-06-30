@@ -1,18 +1,25 @@
 #pragma once
 
+// Platform detection
 #if defined(_WIN32)
-#define PLATFORM_WINDOWS 1
+#define PLATFORM_WINDOWS true
 #elif defined(__linux__)
-#define PLATFORM_LINUX 1
+#define PLATFORM_LINUX true
 #elif defined(__APPLE__) && defined(__MACH__)
-#define PLATFORM_MACOS 1
+#define PLATFORM_MACOS true
 #else
 #error "Unsupported platform."
 #endif
 
-#ifdef PLATFORM_LINUX
+// Platform specific includes
+#if defined(PLATFORM_LINUX)
 #define _POSIX_C_SOURCE 200809L
 #include <unistd.h>
+#elif defined(PLATFORM_WINDOWS)
+#define _CRT_SECURE_NO_WARNINGS
+#include <windows.h>
+#elif defined(PLATFORM_MACOS)
+// ...
 #endif
 
 #include <stdio.h>
@@ -65,7 +72,7 @@ typedef void (*Core_Stop)(int exitCode);
 /// @param lateStart Called for once after start and before the loop.
 /// @param update Called periodically in the loop first.
 /// @param lateUpdate Called periodically in the loop after update.
-/// @param stop Called once before exiting the program. Can be NULL.
+/// @param stop Called before any built in termination functions. Can be NULL.
 void Core_Run(Core_Start start, Core_StartLate lateStart, Core_Update update, Core_UpdateLate lateUpdate, Core_Stop stop);
 
 /// @brief Stops the loop inside the 'Core_Run' function, closes necessary utilities and exits the program.
@@ -77,7 +84,7 @@ void Core_Terminate(int exitCode);
 void Core_SetTargetLoopPerSecond(unsigned int tlps);
 
 /// @brief Sleeps for the specified amount of nanoseconds.
-void Core_SleepNanoseconds(time_t nanoseconds);
+void Core_SleepMilliseconds(time_t nanoseconds);
 
 /// @brief Logs a debug message to the debug log file.
 /// @param header The header of the log message, like "INFO", "WARNING", "ERROR", etc.
@@ -159,7 +166,9 @@ void Core_DebugLog(const char *header, const char *file, int line, const char *f
     {                                                                                \
         Core_DebugLog("ERROR", __FILE__, __LINE__, __func__, format, ##__VA_ARGS__); \
         if (DEBUG_TERMINATE_ON_ERROR != false)                                       \
+        {                                                                            \
             Core_Terminate(EXIT_FAILURE);                                            \
+        }                                                                            \
     } while (false)
 #endif
 
@@ -173,7 +182,9 @@ void Core_DebugLog(const char *header, const char *file, int line, const char *f
         {                                                                                            \
             Core_DebugLog("ASSERTION FAILURE", __FILE__, __LINE__, __func__, format, ##__VA_ARGS__); \
             if (DEBUG_TERMINATE_ON_ASSERT != false)                                                  \
+            {                                                                                        \
                 Core_Terminate(EXIT_FAILURE);                                                        \
+            }                                                                                        \
         }                                                                                            \
     } while (false)
 #endif

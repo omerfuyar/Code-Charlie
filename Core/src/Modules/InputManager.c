@@ -1,6 +1,10 @@
 #include "Modules/InputManager.h"
 
+#ifdef PLATFORM_WINDOWS
+#include <curses.h>
+#else
 #include <ncurses.h>
+#endif
 
 // todo add cross platform support
 
@@ -15,7 +19,7 @@ typedef struct InputKey
 } InputKey;
 
 #define INPUT_KEY_DELAY_INIT 99
-#define INPUT_KEY_DELAY_TOLERANCE -1
+#define INPUT_KEY_DELAY_TOLERANCE 5
 
 #define INPUT_KEY_STANDARD_SIZE 128
 #define INPUT_KEY_ARROW_SIZE 4
@@ -223,6 +227,10 @@ void InputKey_Update(InputKey *key)
 
 void Input_Initialize()
 {
+    noecho();              // curses echo disable, no writing while getting input
+    cbreak();              // curses disable line buffering but take CTRL^C commands
+    keypad(stdscr, true);  // curses enable keys like arrow and function
+    nodelay(stdscr, true); // curses disable blocking on getch()
 }
 
 void Input_Terminate()
@@ -232,7 +240,6 @@ void Input_Terminate()
 void Input_PollInputs()
 {
     int character;
-    InputKey *key;
 
     // reset keys
     for (int i = 0; i < INPUT_KEY_STANDARD_SIZE; i++)

@@ -1,5 +1,7 @@
 #include "Modules/GPIOManager.h"
 
+#if PLATFORM_LINUX
+
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <linux/spi/spidev.h>
@@ -186,3 +188,5 @@ GPIODigitalValue GPIOPin_ReadValue(GPIOPin *pin)
     DebugInfo("GPIO pin value read successfully with index '%d', consumer name '%s', value '%d'.", pin->lineIndex, pin->consumerName, lineValueSetReturn);
     return lineValueSetReturn;
 }
+
+#endif // PLATFORM_LINUX

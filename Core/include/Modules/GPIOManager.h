@@ -1,5 +1,7 @@
 #pragma once
 
+#if PLATFORM_LINUX
+
 #include "Core.h"
 
 // todo add support to different pin settings for input, output and active levels. for now, only digital output and output.
@@ -109,3 +111,5 @@ int GPIOPin_WriteValue(GPIOPin *pin, GPIODigitalValue value);
 /// @return The digital value of the pin (LOW, HIGH, or KOLPA on error).
 /// @note Logs a warning if the read operation fails.
 GPIODigitalValue GPIOPin_ReadValue(GPIOPin *pin);
+
+#endif // PLATFORM_LINUX

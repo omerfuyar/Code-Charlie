@@ -1,16 +1,20 @@
 #include "Modules/RenderManager.h"
 
+#if PLATFORM_WINDOWS
+#include <curses.h>
+#else
 #include <ncurses.h>
-
-// todo add cross platform support
+#endif
 
 #pragma region Source Only
 
 /// @brief Global index for color pairs. Used to assign unique handles to color pairs.
 int COLOR_PAIR_INDEX = 0;
 
+/// @brief The main renderer window.
 RendererWindow *RENDERER_MAIN_WINDOW = NULL;
 
+/// @brief The default text attribute for the renderer.
 RendererTextAttribute *RENDERER_DEFAULT_TEXT_ATTRIBUTE = NULL;
 
 typedef struct RendererTextAttribute
@@ -64,12 +68,8 @@ void RendererTextAttribute_Disable(RendererTextAttribute *attribute)
 
 void Renderer_Initialize()
 {
-    initscr();             // ncurses initialize screen
-    noecho();              // ncurses echo disable, no writing while getting input
-    start_color();         // ncurses start the color functionality
-    cbreak();              // ncurses disable line buffering but take CTRL^C commands
-    keypad(stdscr, true);  // ncurses enable keys like arrow and function
-    nodelay(stdscr, true); // ncurses disable blocking on getch()
+    initscr();     // curses initialize screen
+    start_color(); // curses start the color functionality
 
     RENDERER_MAIN_WINDOW = Renderer_GetMainWindow();
     RENDERER_DEFAULT_TEXT_ATTRIBUTE = RendererTextAttribute_Create(RendererTextAttributeMask_Normal, (RendererColorPair){RendererColor_White, RendererColor_Black});
@@ -103,9 +103,10 @@ RendererWindow *Renderer_GetMainWindow()
         RENDERER_MAIN_WINDOW->title = "Main Window";
         RENDERER_MAIN_WINDOW->defaultAttribute = RENDERER_DEFAULT_TEXT_ATTRIBUTE;
         RENDERER_MAIN_WINDOW->parent = NULL;
+
+        DebugInfo("Main window created successfully");
     }
 
-    DebugInfo("Main window '%s' returned successfully", RENDERER_MAIN_WINDOW->title);
     return RENDERER_MAIN_WINDOW;
 }
 
@@ -162,7 +163,7 @@ RendererWindow *RendererWindow_Create(const char *title, Vector2Int position, Ve
     window->windowSize = (Vector2Int){COLS, LINES};
     window->windowPosition = (Vector2Int){0, 0};
     window->cursorPosition = (Vector2Int){0, 0};
-    window->title = "Main Window";
+    window->title = title;
     window->defaultAttribute = RENDERER_DEFAULT_TEXT_ATTRIBUTE;
     window->parent = NULL;
 

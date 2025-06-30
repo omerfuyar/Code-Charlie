@@ -1,40 +1,137 @@
-## Code Charlie
--This project is build for some kind of terminal game. 
+# Code Charlie
 
--Project will be cross platform but some modules may be exclusive to SBCs (so linux os) because 
-there is no GPIO support in regular PCs for example.
+* This project started to explore SBCs and their capabilities.
+* But later on I decided to make it a cross platform terminal based game engine like application.
 
--C standard for this projects is 23.
+## Overview
 
-# Project Structure
--Every single file, rather its .h, will include the header "Core.h".
---This file includes:
----Most basic headers for direct use like stdbool, stddef, stdlib etc.
----Necessary headers for debugging like assert, stdio.
----Debugging macros for debug usage.
----Core functions for application developing
---And shouldn't include any custom build files.
+* Project is using **C23** standard
+* Cross-platform support for **Linux**, **macOS**, **Windows**
+* Uses **Clang** as the preferred compiler
+* **curses** libraries for terminal rendering
+* There are some Linux-only hardware modules (like GPIO via `gpiod`)
 
--For debugging, there is info, warning and error debugs for debug build.
+## Project Structure
 
---Debug build configuration can be made from global header.
+```text
+ProjectRoot/
+├── App/                    # App (Game) layer
+    ├──include/             
+    └──src/
+├── Core/                   # Core (Engine) layer
+    ├──include/
+    └──src/
+├── CMakeLists.txt          # Build configuration
+└── build/                  # CMake build output
+```
 
-## The App
--First of all, I don't know what I'm doing in this project honestly. Just trying out some hardware and 
-software ideas that I can't do in windows and regular PCs. The process will show us whats going to happen.
-I hope you good days, evenings and nights.
-
--The app must be run with sudo to make gpio interface work in linux.
+* Core sources can not include any of the App headers.
+* All header files (so indirectly source files) must include a central `Core.h` header.
+* That file includes:
+  * Common standard headers
+  * Debugging macros
+  * Core functions to build the application.
+* For Linux modules involving GPIO, the application must be run with `sudo`.
 
 ## Dependencies
--Compiler I have chosen for this project is Clang so its recommended but its probably compatible with all compilers.
---For Linux and MacOS : simply get ncurses from your package manager. (llvm for apt etc...)
---For Windows, download msys machine and get to mingw64. then enter "pacman -S mingw-w64-clang-x86_64-clang"
 
--In CMake target_link_libraries there are gpiod, m and ncurses for now.
+### Compiler: Clang (Recommended)
 
--To run the core: ncurses must be installed.
---For Linux and MacOS : simply get ncurses from your package manager. (libncurses-dev for apt etc...)
---For Windows, download msys machine and get to mingw64. then enter "pacman -S mingw-w64-x86_64-ncurses"
+#### Linux
 
--To run specific modules: some software and hardware support may be needed like gpiod (libgpiod-dev).
+```bash
+# For Debian
+sudo apt install clang
+```
+
+#### MacOS
+
+```bash
+# For Homebrew
+brew install llvm
+# Ensure Clang is added to your PATH:
+echo 'export PATH="/opt/homebrew/opt/llvm/bin:$PATH"' >> ~/.zprofile
+```
+
+#### Windows
+
+1. Download and install LLVM from the [official site](https://releases.llvm.org/download.html)
+2. Enable the option "Add LLVM to system PATH" during installation
+
+### Terminal Rendering: Curses
+
+#### Linux: `ncurses`
+
+```bash
+# For Debian
+sudo apt install libncurses-dev  
+```
+
+#### MacOS: `ncurses`
+
+```bash
+# For Homebrew
+brew install ncurses            
+```
+
+#### Windows: `pdcurses`
+
+```PowerShell
+# Install vcpkg
+git clone https://github.com/Microsoft/vcpkg.git C:\vcpkg
+C:\vcpkg\bootstrap-vcpkg.bat
+C:\vcpkg\vcpkg integrate install
+
+# Install pdcurses
+C:\vcpkg\vcpkg install pdcurses:x64-windows
+```
+
+### Optional: Linux-only GPIO Support For SBCs
+
+```bash
+sudo apt install libgpiod-dev
+```
+
+## Building the Project
+
+### Linux
+
+```bash
+# Install Ninja (Debian)
+sudo apt install ninja-build
+
+# Build
+mkdir build && cd build
+cmake .. -G Ninja -DCMAKE_C_COMPILER=clang
+cmake --build .
+```
+
+### MacOS
+
+```bash
+# Install Ninja (Homebrew)
+brew install ninja
+
+# Build
+mkdir build && cd build
+cmake .. -G Ninja -DCMAKE_C_COMPILER=clang
+cmake --build .
+```
+
+### Windows
+
+1. Install Ninja (build tool)
+
+```PowerShell
+# Install Ninja using winget
+winget install -e --id Ninja-build.Ninja
+
+# Build
+mkdir build && cd build
+cmake .. -G "Ninja" -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_C_COMPILER=clang
+# Or you can change the path to your vcpkg installation
+cmake --build .
+```
+
+## Notes
+* To avoid compiler errors in code editors in Windows, add include path `C:/vcpkg/installed/x64-windows/include` or wherever your vcpkg is installed.
