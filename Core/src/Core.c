@@ -5,22 +5,20 @@
 
 // 20 Milliseconds, 50 loops per second by default
 time_t TARGET_SLEEP_NANOSECONDS = 20000000L;
-float DELTA_TIME = 0.02f;
+float CORE_DELTA_TIME = 0.02f;
 
 FILE *DEBUG_FILE = NULL;
 Core_VoidToVoid START = NULL;
 Core_VoidToVoid START_LATE = NULL;
 Core_VoidToVoid UPDATE = NULL;
 Core_VoidToVoid UPDATE_LATE = NULL;
-Core_IntegerToVoid STOP = NULL;
 
-void Core_Run(Core_VoidToVoid start, Core_VoidToVoid lateStart, Core_VoidToVoid update, Core_VoidToVoid lateUpdate, Core_IntegerToVoid stop)
+void Core_Run(Core_VoidToVoid start, Core_VoidToVoid lateStart, Core_VoidToVoid update, Core_VoidToVoid lateUpdate)
 {
     START = start;
     START_LATE = lateStart;
     UPDATE = update;
     UPDATE_LATE = lateUpdate;
-    STOP = stop;
 
     Renderer_Initialize();
     Input_Initialize();
@@ -70,7 +68,6 @@ void Core_Run(Core_VoidToVoid start, Core_VoidToVoid lateStart, Core_VoidToVoid 
 
 void Core_Terminate(int exitCode)
 {
-    STOP(exitCode);
     DebugInfo("Stop function called.");
 
     Input_Terminate();
@@ -83,7 +80,7 @@ void Core_Terminate(int exitCode)
 void Core_SetTargetLoopPerSecond(unsigned int tlps)
 {
     TARGET_SLEEP_NANOSECONDS = (1.0 / (tlps < 1 ? 1 : tlps)) * 1000000000.0;
-    DELTA_TIME = (float)tlps / 1.0f;
+    CORE_DELTA_TIME = (float)tlps / 1.0f;
 }
 
 void Core_SleepMilliseconds(time_t milliseconds)

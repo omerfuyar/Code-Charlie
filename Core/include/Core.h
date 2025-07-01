@@ -62,20 +62,18 @@
 #pragma region Core
 
 /// @brief The time difference between the last two frames in seconds. Setted automatically when tlps changed.
-extern float DELTA_TIME;
+extern float CORE_DELTA_TIME;
 
 typedef void (*Core_VoidToVoid)();
-typedef void (*Core_IntegerToVoid)(int exitCode);
 
 /// @brief The function for initializing and running the core utility. Like a game engine, Core takes function pointers and calls them in it's loop and termination.
 /// @param start Called for once before every other function.
 /// @param lateStart Called for once after start and before the loop.
 /// @param update Called periodically in the loop first.
 /// @param lateUpdate Called periodically in the loop after update.
-/// @param stop Called before any system and built in termination functions, should not call any of these functions. Can be NULL.
-void Core_Run(Core_VoidToVoid start, Core_VoidToVoid lateStart, Core_VoidToVoid update, Core_VoidToVoid lateUpdate, Core_IntegerToVoid stop);
+void Core_Run(Core_VoidToVoid start, Core_VoidToVoid lateStart, Core_VoidToVoid update, Core_VoidToVoid lateUpdate);
 
-/// @brief Stops the loop inside the 'Core_Run' function, closes necessary utilities and exits the program.
+/// @brief Terminates and closes necessary utilities and exits the program.
 /// @param exitCode The code to pass to _exit() function.
 void Core_Terminate(int exitCode);
 
@@ -90,7 +88,7 @@ void Core_SleepMilliseconds(time_t nanoseconds);
 /// @param header The header of the log message, like "INFO", "WARNING", "ERROR", etc.
 /// @param format The format string for the log message, similar to printf.
 /// @param ... The arguments for the format string.
-/// @note The log message is written to a file named "debug.log" in the current directory.
+/// @note The log message is written to a file named 'DEBUG_FILE_NAME'. Directory and name can be changed by modifying the macro.
 void Core_DebugLog(const char *header, const char *file, int line, const char *function, const char *format, ...);
 
 #pragma endregion
@@ -111,34 +109,6 @@ void Core_DebugLog(const char *header, const char *file, int line, const char *f
 
 #define DEBUG_TIME_FORMAT "%H:%M:%S"
 #define DEBUG_FILE_NAME "debug.log"
-
-#define DEBUG_TERMINAL_COLOR_DEFAULT "\e[0m"
-#define DEBUG_TERMINAL_COLOR_BLACK "\e[30m"
-#define DEBUG_TERMINAL_COLOR_RED "\e[31m"
-#define DEBUG_TERMINAL_COLOR_GREEN "\e[32m"
-#define DEBUG_TERMINAL_COLOR_YELLOW "\e[33m"
-#define DEBUG_TERMINAL_COLOR_BLUE "\e[34m"
-#define DEBUG_TERMINAL_COLOR_MAGENTA "\e[35m"
-#define DEBUG_TERMINAL_COLOR_CYAN "\e[36m"
-#define DEBUG_TERMINAL_COLOR_WHITE "\e[37m"
-#define DEBUG_TERMINAL_COLOR_ORANGE "\e[38;5;208m"
-#define DEBUG_TERMINAL_COLOR_BRIGHT_BLACK "\e[90m"
-#define DEBUG_TERMINAL_COLOR_BRIGHT_RED "\e[91m"
-#define DEBUG_TERMINAL_COLOR_BRIGHT_GREEN "\e[92m"
-#define DEBUG_TERMINAL_COLOR_BRIGHT_YELLOW "\e[93m"
-#define DEBUG_TERMINAL_COLOR_BRIGHT_RED "\e[91m"
-#define DEBUG_TERMINAL_COLOR_BRIGHT_MAGENTA "\e[95m"
-#define DEBUG_TERMINAL_COLOR_BRIGHT_BLUE "\e[94m"
-#define DEBUG_TERMINAL_COLOR_BRIGHT_CYAN "\e[96m"
-#define DEBUG_TERMINAL_COLOR_BRIGHT_WHITE "\e[97m"
-#define DEBUG_TERMINAL_COLOR_BRIGHT_BLACK "\e[90m"
-#define DEBUG_TERMINAL_COLOR_BRIGHT_ORANGE "\e[38;5;208m"
-
-#define DEBUG_COLOR_RESET DEBUG_TERMINAL_COLOR_DEFAULT
-#define DEBUG_COLOR_INFO DEBUG_TERMINAL_COLOR_GREEN
-#define DEBUG_COLOR_WARNING DEBUG_TERMINAL_COLOR_YELLOW
-#define DEBUG_COLOR_ERROR DEBUG_TERMINAL_COLOR_RED
-#define DEBUG_COLOR_ASSERT DEBUG_TERMINAL_COLOR_MAGENTA
 
 #if DEBUG_INFO_ENABLED == false
 #define DebugInfo(format, ...)

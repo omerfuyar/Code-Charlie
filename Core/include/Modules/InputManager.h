@@ -162,9 +162,9 @@ void Input_PollInputs();
 /// @param stateToCompare The state to compare against.
 /// @param keyToGet The key to get the state of.
 /// @return True if the key is in the specified state, false otherwise.
-bool InputManager_GetKey(InputKeyState stateToCompare, InputKeyCode keyToGet);
+bool Input_GetKey(InputKeyState stateToCompare, InputKeyCode keyToGet);
 
 /// @brief Get the state of a specific key.
 /// @param keyToGet The key to get the state of.
 /// @return The state of the specified key.
-InputKeyState InputManager_GetKeyState(InputKeyCode keyToGet);
+InputKeyState Input_GetKeyState(InputKeyCode keyToGet);

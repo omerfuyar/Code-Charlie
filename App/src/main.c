@@ -19,7 +19,7 @@ int main()
     // DebugAssert(true, "This is an assertion message, please check the application logs for more details.");
     // DebugAssert(false, "This assertion should fail, please check the application logs for more details.");
 
-    Core_Run(App_Start, App_StartLate, App_Update, App_UpdateLate, App_Stop);
+    Core_Run(App_Start, App_StartLate, App_Update, App_UpdateLate);
 
     return 0;
 }

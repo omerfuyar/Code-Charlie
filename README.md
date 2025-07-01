@@ -134,4 +134,4 @@ cmake --build .
 ```
 
 ## Notes
-* To avoid compiler errors in code editors in Windows, add include path `C:/vcpkg/installed/x64-windows/include` or wherever your vcpkg is installed.
+* To avoid compiler errors in code editors in Windows, add include path to intellisense `C:/vcpkg/installed/x64-windows/include` or wherever your vcpkg is installed.

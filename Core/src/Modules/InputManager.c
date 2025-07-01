@@ -232,12 +232,12 @@ void Input_PollInputs()
     }
 }
 
-bool InputManager_GetKey(InputKeyState stateToCompare, InputKeyCode keyToGet)
+bool Input_GetKey(InputKeyState stateToCompare, InputKeyCode keyToGet)
 {
-    return InputManager_GetKeyState(keyToGet) == stateToCompare;
+    return Input_GetKeyState(keyToGet) == stateToCompare;
 }
 
-InputKeyState InputManager_GetKeyState(InputKeyCode keyToGet)
+InputKeyState Input_GetKeyState(InputKeyCode keyToGet)
 {
     if (keyToGet >= INPUT_KEY_STANDARD_OFFSET && keyToGet < INPUT_KEY_STANDARD_OFFSET + INPUT_KEY_STANDARD_SIZE) // standard keys, 0 offset
     {
