@@ -90,7 +90,7 @@ void Renderer_SetCursorVisibility(RendererCursorVisibility visibility);
 /// @param mask The text attribute mask (e.g., Bold, Underline).
 /// @param colorPair The foreground and background colors.
 /// @return A pointer to the created text attribute.
-RendererTextAttribute *RendererTextAttribute_Create(RendererTextAttributeMask mask, RendererColorPair colorPair);
+RendererTextAttribute *RendererTextAttribute_Create(const char *title, RendererTextAttributeMask mask, RendererColorPair colorPair);
 
 /// @brief Destroys a text attribute and releases its resources.
 /// @param attribute The text attribute to destroy.

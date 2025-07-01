@@ -15,9 +15,7 @@ typedef enum InputMode
 typedef enum InputKeyState
 {
     InputKeyState_Released = 0,
-    InputKeyState_Down = 1,
-    InputKeyState_Up = 2,
-    InputKeyState_Pressed = 3,
+    InputKeyState_Pressed = 1,
 } InputKeyState;
 
 typedef enum InputKeyCode

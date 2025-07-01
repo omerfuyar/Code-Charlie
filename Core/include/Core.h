@@ -61,19 +61,19 @@
 
 #pragma region Core
 
-typedef void (*Core_Start)();
-typedef void (*Core_StartLate)();
-typedef void (*Core_Update)();
-typedef void (*Core_UpdateLate)();
-typedef void (*Core_Stop)(int exitCode);
+/// @brief The time difference between the last two frames in seconds. Setted automatically when tlps changed.
+extern float DELTA_TIME;
+
+typedef void (*Core_VoidToVoid)();
+typedef void (*Core_IntegerToVoid)(int exitCode);
 
 /// @brief The function for initializing and running the core utility. Like a game engine, Core takes function pointers and calls them in it's loop and termination.
 /// @param start Called for once before every other function.
 /// @param lateStart Called for once after start and before the loop.
 /// @param update Called periodically in the loop first.
 /// @param lateUpdate Called periodically in the loop after update.
-/// @param stop Called before any built in termination functions. Can be NULL.
-void Core_Run(Core_Start start, Core_StartLate lateStart, Core_Update update, Core_UpdateLate lateUpdate, Core_Stop stop);
+/// @param stop Called before any system and built in termination functions, should not call any of these functions. Can be NULL.
+void Core_Run(Core_VoidToVoid start, Core_VoidToVoid lateStart, Core_VoidToVoid update, Core_VoidToVoid lateUpdate, Core_IntegerToVoid stop);
 
 /// @brief Stops the loop inside the 'Core_Run' function, closes necessary utilities and exits the program.
 /// @param exitCode The code to pass to _exit() function.
@@ -106,6 +106,8 @@ void Core_DebugLog(const char *header, const char *file, int line, const char *f
 #define DEBUG_TERMINATE_ON_ASSERT true
 
 #define DEBUG_PERROR_NOTE_ENABLED false
+
+#define DEBUG_FLUSH_AFTER_LOG true
 
 #define DEBUG_TIME_FORMAT "%H:%M:%S"
 #define DEBUG_FILE_NAME "debug.log"

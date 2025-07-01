@@ -19,9 +19,11 @@ RendererTextAttribute *RENDERER_DEFAULT_TEXT_ATTRIBUTE = NULL;
 
 typedef struct RendererTextAttribute
 {
+    const char *title;
+    int colorPairHandle;
+
     RendererTextAttributeMask mask;
     RendererColorPair colorPair;
-    int colorPairHandle;
 } RendererTextAttribute;
 
 typedef struct RendererWindow
@@ -71,8 +73,10 @@ void Renderer_Initialize()
     initscr();     // curses initialize screen
     start_color(); // curses start the color functionality
 
+    RENDERER_DEFAULT_TEXT_ATTRIBUTE = RendererTextAttribute_Create("Default", RendererTextAttributeMask_Normal, (RendererColorPair){RendererColor_White, RendererColor_Black});
     RENDERER_MAIN_WINDOW = Renderer_GetMainWindow();
-    RENDERER_DEFAULT_TEXT_ATTRIBUTE = RendererTextAttribute_Create(RendererTextAttributeMask_Normal, (RendererColorPair){RendererColor_White, RendererColor_Black});
+
+    DebugInfo("main window : %p, main window handle : %p, default text attribute : %p", RENDERER_MAIN_WINDOW, RENDERER_MAIN_WINDOW->windowHandle, RENDERER_DEFAULT_TEXT_ATTRIBUTE);
 }
 
 void Renderer_Terminate()
@@ -117,11 +121,12 @@ void Renderer_SetCursorVisibility(RendererCursorVisibility visibility)
     DebugInfo("Cursor visibility set successfully.");
 }
 
-RendererTextAttribute *RendererTextAttribute_Create(RendererTextAttributeMask mask, RendererColorPair colorPair)
+RendererTextAttribute *RendererTextAttribute_Create(const char *title, RendererTextAttributeMask mask, RendererColorPair colorPair)
 {
     RendererTextAttribute *attribute = (RendererTextAttribute *)malloc(sizeof(RendererTextAttribute));
     DebugAssert(attribute != NULL, "Memory allocation failed.");
 
+    attribute->title = title;
     attribute->mask = mask;
 
     attribute->colorPairHandle = COLOR_PAIR_INDEX++;
@@ -219,6 +224,7 @@ void RendererWindow_SetBorderChars(RendererWindow *window, RendererWindowBorders
 void RendererWindow_Update(RendererWindow *window)
 {
     DebugAssert(window != NULL, "Null pointer passed as parameter.");
+    DebugAssert(window->windowHandle != NULL, "Null pointer passed as parameter.");
 
     wrefresh(window->windowHandle);
 

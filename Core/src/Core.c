@@ -5,14 +5,16 @@
 
 // 20 Milliseconds, 50 loops per second by default
 time_t TARGET_SLEEP_NANOSECONDS = 20000000L;
-FILE *DEBUG_FILE = NULL;
-Core_Start START = NULL;
-Core_StartLate START_LATE = NULL;
-Core_Update UPDATE = NULL;
-Core_UpdateLate UPDATE_LATE = NULL;
-Core_Stop STOP = NULL;
+float DELTA_TIME = 0.02f;
 
-void Core_Run(Core_Start start, Core_StartLate lateStart, Core_Update update, Core_UpdateLate lateUpdate, Core_Stop stop)
+FILE *DEBUG_FILE = NULL;
+Core_VoidToVoid START = NULL;
+Core_VoidToVoid START_LATE = NULL;
+Core_VoidToVoid UPDATE = NULL;
+Core_VoidToVoid UPDATE_LATE = NULL;
+Core_IntegerToVoid STOP = NULL;
+
+void Core_Run(Core_VoidToVoid start, Core_VoidToVoid lateStart, Core_VoidToVoid update, Core_VoidToVoid lateUpdate, Core_IntegerToVoid stop)
 {
     START = start;
     START_LATE = lateStart;
@@ -36,17 +38,13 @@ void Core_Run(Core_Start start, Core_StartLate lateStart, Core_Update update, Co
 
     while (true)
     {
-        DebugInfo("Main loop iteration started.");
-
         Timer_Start(&loopTimer);
 
         Input_PollInputs();
         DebugInfo("Input polling function called.");
 
         UPDATE();
-        fflush(DEBUG_FILE);
         DebugInfo("Update function called.");
-        fflush(DEBUG_FILE);
 
         UPDATE_LATE();
         DebugInfo("Late update function called.");
@@ -66,7 +64,7 @@ void Core_Run(Core_Start start, Core_StartLate lateStart, Core_Update update, Co
             Core_SleepMilliseconds(sleepMilliseconds);
         }
 
-        DebugInfo("Slept for %ld milliseconds, loop ended.", sleepMilliseconds);
+        DebugInfo("============================== Slept for %ld milliseconds, loop ended. ==============================", sleepMilliseconds);
     }
 }
 
@@ -75,8 +73,8 @@ void Core_Terminate(int exitCode)
     STOP(exitCode);
     DebugInfo("Stop function called.");
 
-    Renderer_Terminate();
     Input_Terminate();
+    Renderer_Terminate();
 
     DebugInfo("Core terminated with exit code %d.", exitCode);
     _exit(exitCode);
@@ -84,7 +82,8 @@ void Core_Terminate(int exitCode)
 
 void Core_SetTargetLoopPerSecond(unsigned int tlps)
 {
-    TARGET_SLEEP_NANOSECONDS = (1.0 / (tlps == 0 ? 1 : tlps)) * 1000000000.0;
+    TARGET_SLEEP_NANOSECONDS = (1.0 / (tlps < 1 ? 1 : tlps)) * 1000000000.0;
+    DELTA_TIME = (float)tlps / 1.0f;
 }
 
 void Core_SleepMilliseconds(time_t milliseconds)
@@ -120,6 +119,11 @@ void Core_DebugLog(const char *header, const char *file, int line, const char *f
     vfprintf(DEBUG_FILE, format, args);
     fprintf(DEBUG_FILE, "\n");
     va_end(args);
+
+    if (DEBUG_FLUSH_AFTER_LOG)
+    {
+        fflush(DEBUG_FILE);
+    }
 
     fclose(DEBUG_FILE);
 }
