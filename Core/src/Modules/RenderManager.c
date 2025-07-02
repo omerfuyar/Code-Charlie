@@ -55,12 +55,8 @@ void RendererWindow_DestroyHandle(RendererWindow *window)
 /// @param window window to set handle to.
 void RendererWindow_CreateHandle(RendererWindow *window)
 {
-    DebugInfo("test");
-
     window->windowHandle = newwin(window->size.y, window->size.x, window->globalPosition.y, window->globalPosition.x);
-    DebugInfo("test");
     DebugAssert(window->windowHandle, "Window handle creation failed for '%s'", window->title);
-    DebugInfo("test");
 
     box(window->windowHandle, '|', '-');
 }

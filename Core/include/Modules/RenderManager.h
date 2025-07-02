@@ -122,6 +122,7 @@ void RendererWindow_UpdateContent(RendererWindow *window);
 
 /// @brief Updates the global position of the window based on its relative position and parent's global position. Used for tasks that destroy and create the curses window.
 /// @param window Window to update global position for.
+/// @note This function should be called after the curses window is created.
 void RendererWindow_UpdateAppearance(RendererWindow *window);
 
 /// @brief Clears the renderer window. Deletes all the content.
