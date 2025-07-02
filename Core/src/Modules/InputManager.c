@@ -91,7 +91,7 @@ InputKey INPUT_KEY_STANDARDS[INPUT_KEY_STANDARD_SIZE] = {
     {InputKeyCode_LessThan, InputKeyState_Released},         // 60
     {InputKeyCode_Equal, InputKeyState_Released},            // 61
     {InputKeyCode_GreaterThan, InputKeyState_Released},      // 62
-    {InputKeyCode_Question, InputKeyState_Released},         // 63
+    {InputKeyCode_QuestionMark, InputKeyState_Released},     // 63
     {InputKeyCode_At, InputKeyState_Released},               // 64
     {InputKeyCode_A, InputKeyState_Released},                // 65
     {InputKeyCode_B, InputKeyState_Released},                // 66

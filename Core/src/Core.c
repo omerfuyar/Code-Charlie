@@ -61,7 +61,7 @@ void Core_Run(Core_VoidToVoid start, Core_VoidToVoid lateStart, Core_VoidToVoid 
             Core_SleepMilliseconds(sleepMilliseconds);
         }
 
-        DebugInfo("'============================== Slept for %ld milliseconds, loop ended. =============================='", sleepMilliseconds);
+        DebugInfo("'============================== Slept for %f milliseconds =============================='", (TARGET_SLEEP_NANOSECONDS - loopNanoseconds) / 1000000.0f);
     }
 }
 

@@ -33,9 +33,9 @@ void App_Update()
 void App_UpdateLate()
 {
 
-    if (Input_GetKey(InputKeyCode_Escape, InputKeyState_Pressed))
+    if (Input_GetKey(InputKeyCode_q, InputKeyState_Pressed))
     {
-        DebugInfo("Escape key pressed, stopping the application.");
+        DebugInfo("'q' key pressed, stopping the application.");
         App_Stop(0);
     }
 }

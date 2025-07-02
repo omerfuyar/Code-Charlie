@@ -58,7 +58,7 @@ typedef enum InputKeyCode
     InputKeyCode_LessThan = 60,
     InputKeyCode_Equal = 61,
     InputKeyCode_GreaterThan = 62,
-    InputKeyCode_Question = 63,
+    InputKeyCode_QuestionMark = 63,
     InputKeyCode_At = 64,
 
     InputKeyCode_A = 65,
