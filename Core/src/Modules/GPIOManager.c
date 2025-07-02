@@ -7,8 +7,6 @@
 #include <linux/spi/spidev.h>
 #include <gpiod.h>
 
-// todo add cross platform support
-
 #pragma region Source Only
 
 typedef struct GPIOPin

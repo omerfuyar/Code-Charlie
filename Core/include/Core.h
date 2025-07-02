@@ -34,28 +34,28 @@
 #pragma region Constants
 
 // The value of Pi
-#define PI 3.14159265
+#define PI 3.14159265f
 
 // The value of Euler's number
-#define E 2.71828183
+#define E 2.71828183f
 
 // The square root of 2_
-#define SQRT2 1.41421356
+#define SQRT2 1.41421356f
 
 // The square root of 3
-#define SQRT3 1.73205081
+#define SQRT3 1.73205081f
 
 // The square root of 5
-#define SQRT5 2.23606798
+#define SQRT5 2.23606798f
 
 // The Earth's gravity in m/s^2
-#define GRAVITY 9.80665
+#define GRAVITY 9.80665f
 
 // The Universal gravitational constant in m^3 kg^-1 s^-2
-#define G 6.67430e-11
+#define G 6.67430e-11f
 
 // The speed of light in m/s
-#define C 299792458.0
+#define C 299792458.0f
 
 #pragma endregion
 
@@ -82,7 +82,7 @@ void Core_Terminate(int exitCode);
 void Core_SetTargetLoopPerSecond(unsigned int tlps);
 
 /// @brief Sleeps for the specified amount of nanoseconds.
-void Core_SleepMilliseconds(time_t nanoseconds);
+void Core_SleepMilliseconds(unsigned long nanoseconds);
 
 /// @brief Logs a debug message to the debug log file.
 /// @param header The header of the log message, like "INFO", "WARNING", "ERROR", etc.
@@ -113,51 +113,51 @@ void Core_DebugLog(const char *header, const char *file, int line, const char *f
 #if DEBUG_INFO_ENABLED == false
 #define DebugInfo(format, ...)
 #else
-#define DebugInfo(format, ...)                                                      \
-    do                                                                              \
-    {                                                                               \
-        Core_DebugLog("INFO", __FILE__, __LINE__, __func__, format, ##__VA_ARGS__); \
+#define DebugInfo(format, ...)                                                    \
+    do                                                                            \
+    {                                                                             \
+        Core_DebugLog("INFO", __FILE__, __LINE__, __func__, format, __VA_ARGS__); \
     } while (false)
 #endif
 
 #if DEBUG_WARNING_ENABLED == false
 #define DebugWarning(format, ...)
 #else
-#define DebugWarning(format, ...)                                                      \
-    do                                                                                 \
-    {                                                                                  \
-        Core_DebugLog("WARNING", __FILE__, __LINE__, __func__, format, ##__VA_ARGS__); \
+#define DebugWarning(format, ...)                                                    \
+    do                                                                               \
+    {                                                                                \
+        Core_DebugLog("WARNING", __FILE__, __LINE__, __func__, format, __VA_ARGS__); \
     } while (false)
 #endif
 
 #if DEBUG_ERROR_ENABLED == false
 #define DebugError(format, ...)
 #else
-#define DebugError(format, ...)                                                      \
-    do                                                                               \
-    {                                                                                \
-        Core_DebugLog("ERROR", __FILE__, __LINE__, __func__, format, ##__VA_ARGS__); \
-        if (DEBUG_TERMINATE_ON_ERROR != false)                                       \
-        {                                                                            \
-            Core_Terminate(EXIT_FAILURE);                                            \
-        }                                                                            \
+#define DebugError(format, ...)                                                    \
+    do                                                                             \
+    {                                                                              \
+        Core_DebugLog("ERROR", __FILE__, __LINE__, __func__, format, __VA_ARGS__); \
+        if (DEBUG_TERMINATE_ON_ERROR != false)                                     \
+        {                                                                          \
+            Core_Terminate(EXIT_FAILURE);                                          \
+        }                                                                          \
     } while (false)
 #endif
 
 #if DEBUG_ASSERT_ENABLED == false
 #define DebugAssert(condition, format, ...)
 #else
-#define DebugAssert(condition, format, ...)                                                          \
-    do                                                                                               \
-    {                                                                                                \
-        if (!(condition))                                                                            \
-        {                                                                                            \
-            Core_DebugLog("ASSERTION FAILURE", __FILE__, __LINE__, __func__, format, ##__VA_ARGS__); \
-            if (DEBUG_TERMINATE_ON_ASSERT != false)                                                  \
-            {                                                                                        \
-                Core_Terminate(EXIT_FAILURE);                                                        \
-            }                                                                                        \
-        }                                                                                            \
+#define DebugAssert(condition, format, ...)                                                        \
+    do                                                                                             \
+    {                                                                                              \
+        if (!(condition))                                                                          \
+        {                                                                                          \
+            Core_DebugLog("ASSERTION FAILURE", __FILE__, __LINE__, __func__, format, __VA_ARGS__); \
+            if (DEBUG_TERMINATE_ON_ASSERT != false)                                                \
+            {                                                                                      \
+                Core_Terminate(EXIT_FAILURE);                                                      \
+            }                                                                                      \
+        }                                                                                          \
     } while (false)
 #endif
 

@@ -79,11 +79,11 @@ void Core_Terminate(int exitCode)
 
 void Core_SetTargetLoopPerSecond(unsigned int tlps)
 {
-    TARGET_SLEEP_NANOSECONDS = (1.0 / (tlps < 1 ? 1 : tlps)) * 1000000000.0;
+    TARGET_SLEEP_NANOSECONDS = (time_t)((1.0 / (tlps < 1 ? 1 : tlps)) * 1000000000.0);
     CORE_DELTA_TIME = (float)tlps / 1.0f;
 }
 
-void Core_SleepMilliseconds(time_t milliseconds)
+void Core_SleepMilliseconds(unsigned long milliseconds)
 {
 #if PLATFORM_WINDOWS
     Sleep(milliseconds);

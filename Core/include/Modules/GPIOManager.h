@@ -1,7 +1,5 @@
 #pragma once
 
-#if PLATFORM_LINUX
-
 #include "Core.h"
 
 // todo add support to different pin settings for input, output and active levels. for now, only digital output and output.
@@ -59,6 +57,8 @@ typedef struct GPIOChip GPIOChip;
 typedef struct GPIOPin GPIOPin;
 
 #pragma endregion
+
+#if PLATFORM_LINUX
 
 /// @brief Creates a GPIO chip instance.
 /// @param chipPath The file path to the GPIO chip (e.g., "/dev/gpiochip0").

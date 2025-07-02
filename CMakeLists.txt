@@ -22,7 +22,9 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 message(STATUS "Using C compiler: ${CMAKE_C_COMPILER}")
 
 # Set compiler flags
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O2 -Wall -Wextra")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O2 -Wall -Wextra -Wshadow -Wnull-dereference -Wunused-result -fstack-protector-strong -fno-common")
+
+# -fsanitize=undefined -fsanitize=address
 
 # Build directory setup
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
