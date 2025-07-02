@@ -12,13 +12,13 @@
 #endif
 
 // Platform specific includes
-#if defined(PLATFORM_LINUX)
+#if PLATFORM_LINUX
 #define _POSIX_C_SOURCE 200809L
 #include <unistd.h>
-#elif defined(PLATFORM_WINDOWS)
+#elif PLATFORM_WINDOWS
 #define _CRT_SECURE_NO_WARNINGS
 #include <windows.h>
-#elif defined(PLATFORM_MACOS)
+#elif PLATFORM_MACOS
 // ...
 #endif
 

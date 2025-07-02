@@ -50,8 +50,9 @@ add_executable(${PROJECT_NAME}
 
 # Find and link libraries
 if(UNIX)
+    find_package(CURL REQUIRED)
     find_package(Curses REQUIRED)
-    target_link_libraries(${PROJECT_NAME} PRIVATE ${CURSES_LIBRARIES} gpiod m )
+    target_link_libraries(${PROJECT_NAME} PRIVATE ${CURSES_LIBRARIES} gpiod m CURL::libcurl)
 elseif(WIN32)
     find_package(unofficial-pdcurses CONFIG REQUIRED)
     target_link_libraries(${PROJECT_NAME} PRIVATE unofficial::pdcurses::pdcurses)

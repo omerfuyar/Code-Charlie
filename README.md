@@ -35,7 +35,27 @@ ProjectRoot/
 
 ## Dependencies
 
-### Compiler: Clang (Recommended)
+### Build System: `CMake`
+
+#### Linux
+
+```bash
+# For Debian
+sudo apt install cmake
+```
+
+#### MacOS
+
+```bash
+# For Homebrew
+brew install cmake
+```
+
+#### Windows
+
+1. Download and install CMake from the [official site](https://cmake.org/download/) in binary distributions section.
+
+### Recommended Compiler: `Clang` 
 
 #### Linux
 
@@ -58,7 +78,35 @@ echo 'export PATH="/opt/homebrew/opt/llvm/bin:$PATH"' >> ~/.zprofile
 1. Download and install LLVM from the [official site](https://releases.llvm.org/download.html)
 2. Enable the option "Add LLVM to system PATH" during installation
 
-### Terminal Rendering: Curses
+### HTTP Client: `libcurl`
+
+#### Linux
+
+```bash
+# For Debian
+sudo apt install libcurl4-openssl-dev
+```
+
+#### MacOS
+
+```bash
+# For Homebrew
+brew install curl            
+```
+
+#### Windows
+
+```PowerShell
+# Install vcpkg if not already done
+git clone https://github.com/Microsoft/vcpkg.git C:\vcpkg
+C:\vcpkg\bootstrap-vcpkg.bat
+C:\vcpkg\vcpkg integrate install
+
+# Install curl
+C:\vcpkg\vcpkg install curl:x64-windows
+```
+
+### Terminal Rendering: `Curses`
 
 #### Linux: `ncurses`
 
@@ -77,7 +125,7 @@ brew install ncurses
 #### Windows: `pdcurses`
 
 ```PowerShell
-# Install vcpkg
+# Install vcpkg if not already done
 git clone https://github.com/Microsoft/vcpkg.git C:\vcpkg
 C:\vcpkg\bootstrap-vcpkg.bat
 C:\vcpkg\vcpkg integrate install
@@ -86,9 +134,10 @@ C:\vcpkg\vcpkg integrate install
 C:\vcpkg\vcpkg install pdcurses:x64-windows
 ```
 
-### Optional: Linux-only GPIO Support For SBCs
+### Optional Linux-only GPIO Support For SBCs: `gpiod`
 
 ```bash
+# For Debian
 sudo apt install libgpiod-dev
 ```
 
