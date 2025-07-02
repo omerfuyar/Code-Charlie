@@ -10,6 +10,7 @@
 /// @note Values can be combined using bitwise OR operations.
 typedef enum RendererTextAttributeMask
 {
+    RendererTextAttributeMask_Kolpa = -1,                       // Invalid attributes.
     RendererTextAttributeMask_Normal = (1U - 1U),               // Normal, plain text.
     RendererTextAttributeMask_Underline = (1U << 17),           // Underlining text.
     RendererTextAttributeMask_Blink = (1U << 19),               // Blinking text.
@@ -26,6 +27,7 @@ typedef enum RendererTextAttributeMask
 /// @brief Representing text and background colors to be used in the terminal.
 typedef enum RendererColor
 {
+    RendererColor_Kolpa = -1,
     RendererColor_Black = 0,
     RendererColor_Red = 1,
     RendererColor_Green = 2,
@@ -105,30 +107,22 @@ void RendererTextAttribute_ChangeColor(RendererTextAttribute *attribute, Rendere
 /// @param position The position of the window in the terminal.
 /// @param size The size of the window.
 /// @param title The title of the window.
+/// @param parentWindow The parent renderer window. if NULL, the main window will be used.
 /// @return A pointer to the created renderer window.
 /// @note Position origin is always top left corner
-RendererWindow *RendererWindow_Create(const char *title, Vector2Int position, Vector2Int size);
-
-/// @brief Creates a renderer window as a child of another window.
-/// @param parent The parent renderer window.
-/// @param title The title of the child window.
-/// @param position The position of the child window relative to the parent.
-/// @param size The size of the child window.
-/// @return A pointer to the created child window.
-RendererWindow *RendererWindow_CreateAsChild(RendererWindow *parentWindow, const char *title, Vector2Int position, Vector2Int size);
+RendererWindow *RendererWindow_Create(const char *title, Vector2Int position, Vector2Int size, RendererWindow *parentWindow);
 
 /// @brief Destroys a renderer window and releases its resources.
 /// @param window The renderer window to destroy.
 void RendererWindow_Destroy(RendererWindow *window);
 
-/// @brief Sets the border characters for the renderer window.
-/// @param window The renderer window to set the border characters for.
-/// @param borders Border chars to set for the renderer window. Read from RendererWindowBorders.
-void RendererWindow_SetBorderChars(RendererWindow *window, RendererWindowBorders borders);
-
-/// @brief Updates/renders the renderer window.
+/// @brief Updates/renders the renderer window. Used for redrawing the curses window content.
 /// @param window The renderer window to update/renders.
-void RendererWindow_Update(RendererWindow *window);
+void RendererWindow_UpdateContent(RendererWindow *window);
+
+/// @brief Updates the global position of the window based on its relative position and parent's global position. Used for tasks that destroy and create the curses window.
+/// @param window Window to update global position for.
+void RendererWindow_UpdateAppearance(RendererWindow *window);
 
 /// @brief Clears the renderer window. Deletes all the content.
 /// @param window The renderer window to clear.
@@ -136,11 +130,12 @@ void RendererWindow_Clear(RendererWindow *window);
 
 /// @brief Puts a character at a specific position in the renderer window.
 /// @param window The renderer window.
-/// @param position The position to put the character.
+/// @param position The position to put the character. Relative to the window's position.
 /// @param attributeMask The text attribute to apply.
+/// @param override Override the text that already in position.
 /// @param charToPut The character to put.
 /// @note Position origin is always top left corner
-void RendererWindow_PutCharToPosition(RendererWindow *window, Vector2Int position, RendererTextAttribute *attributeMask, char charToPut);
+void RendererWindow_PutCharToPosition(RendererWindow *window, Vector2Int position, RendererTextAttribute *attributeMask, bool override, char charToPut);
 
 /// @brief Puts a formatted string at a specific position in the renderer window.
 /// @param window The renderer window.
@@ -156,3 +151,34 @@ void RendererWindow_PutStringToPosition(RendererWindow *window, Vector2Int posit
 /// @param window The renderer window.
 /// @return The size of the window as a Vector2Int.
 Vector2Int RendererWindow_GetWindowSize(RendererWindow *window);
+
+/// @brief Gets the position of the renderer window.
+/// @param window The renderer window.
+/// @return The position of the window as a Vector2Int.
+Vector2Int RendererWindow_GetWindowPosition(RendererWindow *window);
+
+/// @brief Sets the border characters for the renderer window.
+/// @param window Renderer window to set the border characters for.
+/// @param borders Border chars to set for the renderer window. Read from RendererWindowBorders.
+void RendererWindow_SetBorderChars(RendererWindow *window, RendererWindowBorders borders);
+
+/// @brief Sets the size of the window to new size.
+/// @param window Renderer window to change size.
+/// @param newSize New size to set for renderer window.
+void RendererWindow_SetSize(RendererWindow *window, Vector2Int newSize);
+
+/// @brief Sets the position of the window to new position.
+/// @param window Renderer window to change position.
+/// @param newPosition New position to set for renderer window.
+/// @param add If true, the new position will be added to the current position.
+void RendererWindow_SetPosition(RendererWindow *window, Vector2Int newPosition, bool add);
+
+/// @brief Sets the parent window for the renderer window.
+/// @param window The renderer window.
+/// @param parentWindow The parent window to set.
+void RendererWindow_SetParent(RendererWindow *window, RendererWindow *parentWindow);
+
+/// @brief Sets the default text attribute for the renderer window.
+/// @param window The renderer window to set the default attribute for.
+/// @param defaultAttribute The default text attribute to set.
+void RendererWindow_SetDefaultAttribute(RendererWindow *window, RendererTextAttribute *defaultAttribute);

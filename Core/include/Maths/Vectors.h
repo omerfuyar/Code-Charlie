@@ -52,6 +52,19 @@ typedef struct Vector4Int
     int w;
 } Vector4Int;
 
+#define NewVector2(x, y) \
+    (Vector2) { x, y }
+#define NewVector3(x, y, z) \
+    (Vector3) { x, y, z }
+#define NewVector4(x, y, z, w) \
+    (Vector4) { x, y, z, w }
+#define NewVector2Int(x, y) \
+    (Vector2Int) { x, y }
+#define NewVector3Int(x, y, z) \
+    (Vector3Int) { x, y, z }
+#define NewVector4Int(x, y, z, w) \
+    (Vector4Int) { x, y, z, w }
+
 #pragma endregion
 
 #pragma region Vector2

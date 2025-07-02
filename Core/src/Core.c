@@ -24,10 +24,10 @@ void Core_Run(Core_VoidToVoid start, Core_VoidToVoid lateStart, Core_VoidToVoid 
     Input_Initialize();
 
     START();
-    DebugInfo("Start function called.");
+    DebugInfo("'Start' function called.");
 
     START_LATE();
-    DebugInfo("Late start function called.");
+    DebugInfo("'Late start' function called.");
 
     time_t sleepMilliseconds;
     time_t loopNanoseconds;
@@ -39,16 +39,15 @@ void Core_Run(Core_VoidToVoid start, Core_VoidToVoid lateStart, Core_VoidToVoid 
         Timer_Start(&loopTimer);
 
         Input_PollInputs();
-        DebugInfo("Input polling function called.");
+        DebugInfo("'Input polling' function called.");
 
         UPDATE();
-        DebugInfo("Update function called.");
+        DebugInfo("'Update' function called.");
 
         UPDATE_LATE();
-        DebugInfo("Late update function called.");
+        DebugInfo("'Late update' function called.");
 
-        RendererWindow_Update(RENDERER_MAIN_WINDOW);
-        DebugInfo("Renderer window updated.");
+        // RendererWindow_UpdateContent(RENDERER_MAIN_WINDOW);
 
         Timer_Stop(&loopTimer);
 
@@ -62,7 +61,7 @@ void Core_Run(Core_VoidToVoid start, Core_VoidToVoid lateStart, Core_VoidToVoid 
             Core_SleepMilliseconds(sleepMilliseconds);
         }
 
-        DebugInfo("============================== Slept for %ld milliseconds, loop ended. ==============================", sleepMilliseconds);
+        DebugInfo("'============================== Slept for %ld milliseconds, loop ended. =============================='", sleepMilliseconds);
     }
 }
 
@@ -111,7 +110,7 @@ void Core_DebugLog(const char *header, const char *file, int line, const char *f
 
     va_list args;
     va_start(args, format);
-    fprintf(DEBUG_FILE, "[%s:%03ld] : [%s] : [%s:%d:%s] : ",
+    fprintf(DEBUG_FILE, "[%s:%03ld] : [%s] : [%s:%d:%s] :\n",
             buffer, timer.tv_nsec / 1000000, header, file, line, function);
     vfprintf(DEBUG_FILE, format, args);
     fprintf(DEBUG_FILE, "\n");

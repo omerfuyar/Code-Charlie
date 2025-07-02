@@ -159,10 +159,10 @@ void Input_Terminate();
 void Input_PollInputs();
 
 /// @brief Get whether a specific key is in a certain state.
-/// @param stateToCompare The state to compare against.
 /// @param keyToGet The key to get the state of.
+/// @param stateToCompare The state to compare against.
 /// @return True if the key is in the specified state, false otherwise.
-bool Input_GetKey(InputKeyState stateToCompare, InputKeyCode keyToGet);
+bool Input_GetKey(InputKeyCode keyToGet, InputKeyState stateToCompare);
 
 /// @brief Get the state of a specific key.
 /// @param keyToGet The key to get the state of.

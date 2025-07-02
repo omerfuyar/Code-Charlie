@@ -11,8 +11,6 @@ void TimePoint_Update(TimePoint *timePoint)
 
     timePoint->seconds = currentTime.tv_sec;
     timePoint->nanoseconds = currentTime.tv_nsec;
-
-    DebugInfo("TimePoint updated: %ld seconds, %ld nanoseconds", timePoint->seconds, timePoint->nanoseconds);
 }
 
 time_t TimePoint_ToMilliseconds(TimePoint *timePoint)

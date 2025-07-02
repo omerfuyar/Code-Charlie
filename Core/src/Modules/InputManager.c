@@ -232,7 +232,7 @@ void Input_PollInputs()
     }
 }
 
-bool Input_GetKey(InputKeyState stateToCompare, InputKeyCode keyToGet)
+bool Input_GetKey(InputKeyCode keyToGet, InputKeyState stateToCompare)
 {
     return Input_GetKeyState(keyToGet) == stateToCompare;
 }
