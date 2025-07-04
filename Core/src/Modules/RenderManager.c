@@ -19,7 +19,7 @@ RendererTextAttribute *RENDERER_DEFAULT_TEXT_ATTRIBUTE = NULL;
 
 typedef struct RendererTextAttribute
 {
-    const char *title;
+    stringHeap title;
     int colorPairHandle;
 
     RendererTextAttributeMask mask;
@@ -28,7 +28,7 @@ typedef struct RendererTextAttribute
 
 typedef struct RendererWindow
 {
-    const char *title;
+    stringHeap title;
     WINDOW *windowHandle;
 
     Vector2Int size;
@@ -95,21 +95,21 @@ void RendererTextAttribute_Disable(RendererTextAttribute *attribute)
 
 #pragma endregion
 
-void Renderer_Initialize()
+void RendererManager_Initialize()
 {
     initscr();     // curses initialize screen
     start_color(); // curses start the color functionality
 
     RENDERER_DEFAULT_TEXT_ATTRIBUTE = RendererTextAttribute_Create("Default", RendererTextAttributeMask_Normal, (RendererColorPair){RendererColor_White, RendererColor_Black});
-    RENDERER_MAIN_WINDOW = Renderer_GetMainWindow();
+    RENDERER_MAIN_WINDOW = RendererManager_GetMainWindow();
 }
 
-void Renderer_Terminate()
+void RendererManager_Terminate()
 {
     endwin(); // ncurses terminate
 }
 
-void Renderer_ChangeColor(RendererColor color, Vector3Int colorToChangeTo)
+void RendererManager_ChangeColor(RendererColor color, Vector3Int colorToChangeTo)
 {
     DebugAssert(can_change_color(), "Your terminal doesn't have support for changing colors.");
 
@@ -118,7 +118,7 @@ void Renderer_ChangeColor(RendererColor color, Vector3Int colorToChangeTo)
     DebugInfo("Terminal color changed successfully.");
 }
 
-RendererWindow *Renderer_GetMainWindow()
+RendererWindow *RendererManager_GetMainWindow()
 {
     if (RENDERER_MAIN_WINDOW == NULL)
     {
@@ -140,14 +140,14 @@ RendererWindow *Renderer_GetMainWindow()
     return RENDERER_MAIN_WINDOW;
 }
 
-void Renderer_SetCursorVisibility(RendererCursorVisibility visibility)
+void RendererManager_SetCursorVisibility(RendererCursorVisibility visibility)
 {
     curs_set(visibility);
 
     DebugInfo("Cursor visibility set successfully.");
 }
 
-RendererTextAttribute *RendererTextAttribute_Create(const char *title, RendererTextAttributeMask mask, RendererColorPair colorPair)
+RendererTextAttribute *RendererTextAttribute_Create(const string title, RendererTextAttributeMask mask, RendererColorPair colorPair)
 {
     RendererTextAttribute *attribute = (RendererTextAttribute *)malloc(sizeof(RendererTextAttribute));
     DebugAssert(attribute != NULL, "Memory allocation failed.");
@@ -169,12 +169,15 @@ void RendererTextAttribute_Destroy(RendererTextAttribute *attribute)
     attribute->colorPairHandle = -1;
     attribute->mask = RendererTextAttributeMask_Kolpa;
     attribute->colorPair = (RendererColorPair){RendererColor_Kolpa, RendererColor_Kolpa};
+
+    char tempTitle[strlen(attribute->title) + 1];
+    strcpy(tempTitle, attribute->title);
     attribute->title = NULL;
 
     free(attribute);
     attribute = NULL;
 
-    DebugInfo("Text attribute '%s' destroyed successfully.", attribute->title);
+    DebugInfo("Text attribute '%s' destroyed successfully.", tempTitle);
 }
 
 void RendererTextAttribute_ChangeColor(RendererTextAttribute *attribute, RendererColorPair colorPair)
@@ -187,7 +190,7 @@ void RendererTextAttribute_ChangeColor(RendererTextAttribute *attribute, Rendere
     DebugInfo("Text attribute color changed successfully.");
 }
 
-RendererWindow *RendererWindow_Create(const char *title, Vector2Int position, Vector2Int size, RendererWindow *parentWindow)
+RendererWindow *RendererWindow_Create(const string title, Vector2Int position, Vector2Int size, RendererWindow *parentWindow)
 {
     DebugAssert(title != NULL, "Null pointer passed as parameter. Title cannot be NULL.");
 
@@ -214,12 +217,15 @@ void RendererWindow_Destroy(RendererWindow *window)
     RendererWindow_DestroyHandle(window);
     window->defaultAttribute = NULL;
     window->parent = NULL;
+
+    char tempTitle[strlen(window->title) + 1];
+    strcpy(tempTitle, window->title);
     window->title = NULL;
 
     free(window);
     window = NULL;
 
-    DebugInfo("Renderer window '%s' destroyed successfully.", window->title);
+    DebugInfo("Renderer window '%s' destroyed successfully.", tempTitle);
 }
 
 void RendererWindow_UpdateContent(RendererWindow *window)
@@ -274,10 +280,10 @@ void RendererWindow_PutCharToPosition(RendererWindow *window, Vector2Int positio
     waddch(window->windowHandle, charToPut);
     RendererTextAttribute_Disable(attributeMask);
 
-    DebugInfo("Window '%s': Character %c put to position (%d, %d) successfully.", window->title, charToPut, position.x, position.y);
+    DebugInfo("Window '%s': Character '%c' put to position (%d, %d) successfully.", window->title, charToPut, position.x, position.y);
 }
 
-void RendererWindow_PutStringToPosition(RendererWindow *window, Vector2Int position, RendererTextAttribute *attributeMask, bool override, const char *stringToPut, ...)
+void RendererWindow_PutStringToPosition(RendererWindow *window, Vector2Int position, RendererTextAttribute *attributeMask, bool override, const string stringToPut, ...)
 {
     DebugAssert(window != NULL, "Null pointer passed as parameter. Renderer window cannot be NULL.");
     DebugAssert(attributeMask != NULL, "Null pointer passed as parameter. Renderer text attribute cannot be NULL.");

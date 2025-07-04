@@ -150,21 +150,21 @@ typedef enum InputKeyCode
 #pragma endregion
 
 /// @brief Initialize the input manager. Should not be used by app.
-void Input_Initialize();
+void InputManager_Initialize();
 
 /// @brief Terminate the input manager. Should not be used by app.
-void Input_Terminate();
+void InputManager_Terminate();
 
 /// @brief Poll the input manager for new input events. Should not be used by app.
-void Input_PollInputs();
+void InputManager_PollInputs();
 
 /// @brief Get whether a specific key is in a certain state.
 /// @param keyToGet The key to get the state of.
 /// @param stateToCompare The state to compare against.
 /// @return True if the key is in the specified state, false otherwise.
-bool Input_GetKey(InputKeyCode keyToGet, InputKeyState stateToCompare);
+bool InputManager_GetKey(InputKeyCode keyToGet, InputKeyState stateToCompare);
 
 /// @brief Get the state of a specific key.
 /// @param keyToGet The key to get the state of.
 /// @return The state of the specified key.
-InputKeyState Input_GetKeyState(InputKeyCode keyToGet);
+InputKeyState InputManager_GetKeyState(InputKeyCode keyToGet);

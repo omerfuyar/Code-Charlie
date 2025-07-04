@@ -18,10 +18,10 @@ time_t TimePoint_ToMilliseconds(TimePoint *timePoint)
     return timePoint->seconds * 1000 + timePoint->nanoseconds / 1000000;
 }
 
-Timer TimerStack_Create(const char *label)
+Timer TimerStack_Create(const string title)
 {
     Timer timer;
-    timer.label = label;
+    timer.title = title;
     timer.isRunning = false;
 
     timer.startTime = TIMEPOINT_KOLPA;
@@ -30,7 +30,7 @@ Timer TimerStack_Create(const char *label)
     return timer;
 }
 
-Timer *TimerHeap_Create(const char *label)
+Timer *TimerHeap_Create(const string title)
 {
     Timer *timer = (Timer *)malloc(sizeof(Timer));
 
@@ -40,7 +40,7 @@ Timer *TimerHeap_Create(const char *label)
         return NULL;
     }
 
-    timer->label = label;
+    timer->title = title;
     timer->isRunning = false;
 
     timer->startTime = TIMEPOINT_KOLPA;

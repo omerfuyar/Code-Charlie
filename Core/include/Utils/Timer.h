@@ -14,7 +14,7 @@ typedef struct TimePoint
 /// @brief Represents a timer that can be used for measuring elapsed time. Should be used with helper functions.
 typedef struct Timer
 {
-    const char *label;
+    string title;
     TimePoint startTime;
     TimePoint endTime;
     bool isRunning;
@@ -34,14 +34,14 @@ void TimePoint_Update(TimePoint *timePoint);
 time_t TimePoint_ToMilliseconds(TimePoint *timePoint);
 
 /// @brief Creates a new timer on the stack.
-/// @param label Label for the timer.
+/// @param title Label for the timer.
 /// @return Timer instance.
-Timer TimerStack_Create(const char *label);
+Timer TimerStack_Create(const string title);
 
 /// @brief Creates a new timer on the heap.
-/// @param label Label for the timer.
+/// @param title Label for the timer.
 /// @return Pointer to the created timer.
-Timer *TimerHeap_Create(const char *label);
+Timer *TimerHeap_Create(const string title);
 
 /// @brief Destroys the timer and frees any associated resources.
 /// @param timer Timer to destroy.

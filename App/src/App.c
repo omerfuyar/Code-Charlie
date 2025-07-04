@@ -1,6 +1,8 @@
 #include "App.h"
 #include "Modules/InputManager.h"
 #include "Modules/RenderManager.h"
+#include "Modules/NetworkManager.h"
+#include "Utils/ResourceManager.h"
 
 Vector2Int terminalSize;
 RendererWindow *rightWindow;
@@ -22,8 +24,20 @@ void App_Start()
     RendererWindow_UpdateContent(leftBottomWindow);
 }
 
+void App_OnNetworkResponse(const NetworkResponse *response)
+{
+    DebugWarning("Data received: \n%s", response->body);
+}
+
 void App_StartLate()
 {
+    stringStack data = "{"
+                       "\"model\": \"gpt-3.5-turbo\","
+                       "\"messages\": [{\"role\": \"user\", \"content\": \"Hello World!\"}]"
+                       "}";
+    NetworkRequest *request = NetworkRequest_Create(NetworkRequestType_POST, "https://api.openai.com/v1/chat/completions", data, strlen(data), true);
+
+    NetworkManager_Request(request, App_OnNetworkResponse);
 }
 
 void App_Update()
@@ -32,8 +46,7 @@ void App_Update()
 
 void App_UpdateLate()
 {
-
-    if (Input_GetKey(InputKeyCode_q, InputKeyState_Pressed))
+    if (InputManager_GetKey(InputKeyCode_q, InputKeyState_Pressed))
     {
         DebugInfo("'q' key pressed, stopping the application.");
         App_Stop(0);

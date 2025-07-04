@@ -20,8 +20,10 @@ void Core_Run(Core_VoidToVoid start, Core_VoidToVoid lateStart, Core_VoidToVoid 
     UPDATE = update;
     UPDATE_LATE = lateUpdate;
 
-    Renderer_Initialize();
-    Input_Initialize();
+    RendererManager_Initialize();
+    InputManager_Initialize();
+    NetworkManager_Initialize();
+    DebugInfo("Core initialized successfully.");
 
     START();
     DebugInfo("'Start' function called.");
@@ -38,7 +40,7 @@ void Core_Run(Core_VoidToVoid start, Core_VoidToVoid lateStart, Core_VoidToVoid 
     {
         Timer_Start(&loopTimer);
 
-        Input_PollInputs();
+        InputManager_PollInputs();
         DebugInfo("'Input polling' function called.");
 
         UPDATE();
@@ -69,8 +71,9 @@ void Core_Terminate(int exitCode)
 {
     DebugInfo("Stop function called.");
 
-    Input_Terminate();
-    Renderer_Terminate();
+    InputManager_Terminate();
+    RendererManager_Terminate();
+    NetworkManager_Terminate();
 
     DebugInfo("Core terminated with exit code %d.", exitCode);
     _exit(exitCode);
@@ -102,6 +105,7 @@ void Core_DebugLog(const char *header, const char *file, int line, const char *f
     }
 
     DEBUG_FILE = fopen(DEBUG_FILE_NAME, "a");
+    DebugAssert(file != NULL, "File open failed for %s", DEBUG_FILE_NAME);
 
     struct timespec timer;
     char buffer[16];

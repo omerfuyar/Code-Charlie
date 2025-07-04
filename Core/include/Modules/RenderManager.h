@@ -69,30 +69,30 @@ extern RendererWindow *RENDERER_MAIN_WINDOW;
 extern RendererTextAttribute *RENDERER_DEFAULT_TEXT_ATTRIBUTE;
 
 /// @brief Initializes the renderer module. Should not be used by app.
-void Renderer_Initialize();
+void RendererManager_Initialize();
 
 /// @brief Stops the renderer module. Should not be used by app.
-void Renderer_Terminate();
+void RendererManager_Terminate();
 
 /// @brief Changes the color of the terminal.
 /// @param color The color to change.
 /// @param colorToChangeTo The RGB values to change the color to.
 /// @note Should be used within only 0-1000 range. User's terminal should support changing colors.
-void Renderer_ChangeColor(RendererColor color, Vector3Int colorToChangeTo);
+void RendererManager_ChangeColor(RendererColor color, Vector3Int colorToChangeTo);
 
 /// @brief Getter function for the main renderer window.
 /// @return The main window application running in the terminal.
-RendererWindow *Renderer_GetMainWindow();
+RendererWindow *RendererManager_GetMainWindow();
 
 /// @brief Sets the visibility of the cursor in the terminal.
 /// @param visibility The desired cursor visibility.
-void Renderer_SetCursorVisibility(RendererCursorVisibility visibility);
+void RendererManager_SetCursorVisibility(RendererCursorVisibility visibility);
 
 /// @brief Creates a text attribute for rendering text in the terminal.
 /// @param mask The text attribute mask (e.g., Bold, Underline).
 /// @param colorPair The foreground and background colors.
 /// @return A pointer to the created text attribute.
-RendererTextAttribute *RendererTextAttribute_Create(const char *title, RendererTextAttributeMask mask, RendererColorPair colorPair);
+RendererTextAttribute *RendererTextAttribute_Create(const string title, RendererTextAttributeMask mask, RendererColorPair colorPair);
 
 /// @brief Destroys a text attribute and releases its resources.
 /// @param attribute The text attribute to destroy.
@@ -110,7 +110,7 @@ void RendererTextAttribute_ChangeColor(RendererTextAttribute *attribute, Rendere
 /// @param parentWindow The parent renderer window. if NULL, the main window will be used.
 /// @return A pointer to the created renderer window.
 /// @note Position origin is always top left corner
-RendererWindow *RendererWindow_Create(const char *title, Vector2Int position, Vector2Int size, RendererWindow *parentWindow);
+RendererWindow *RendererWindow_Create(const string title, Vector2Int position, Vector2Int size, RendererWindow *parentWindow);
 
 /// @brief Destroys a renderer window and releases its resources.
 /// @param window The renderer window to destroy.
@@ -146,7 +146,7 @@ void RendererWindow_PutCharToPosition(RendererWindow *window, Vector2Int positio
 /// @param override Override the text that already in position.
 /// @param ... Additional arguments for the formatted string.
 /// @note Position origin is always top left corner
-void RendererWindow_PutStringToPosition(RendererWindow *window, Vector2Int position, RendererTextAttribute *attributeMask, bool override, const char *stringToPut, ...);
+void RendererWindow_PutStringToPosition(RendererWindow *window, Vector2Int position, RendererTextAttribute *attributeMask, bool override, const string stringToPut, ...);
 
 /// @brief Gets the size of the renderer window.
 /// @param window The renderer window.

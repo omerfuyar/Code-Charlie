@@ -64,7 +64,17 @@
 /// @brief The time difference between the last two frames in seconds. Setted automatically when tlps changed.
 extern float CORE_DELTA_TIME;
 
+/// @brief Function pointer type for core functions that take no parameters and return nothing.
 typedef void (*Core_VoidToVoid)();
+
+/// @brief String type for stack-allocated strings. Used for clarity in design.
+typedef char *stringStack;
+
+/// @brief String type for heap-allocated strings. Used for clarity in design.
+typedef char *stringHeap;
+
+/// @brief String type for any (stack or heap) allocated strings. Used for clarity in design.
+typedef char *string;
 
 /// @brief The function for initializing and running the core utility. Like a game engine, Core takes function pointers and calls them in it's loop and termination.
 /// @param start Called for once before every other function.

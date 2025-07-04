@@ -13,7 +13,7 @@ typedef struct GPIOPin
 {
     struct gpiod_line *lineHandle;
     int lineIndex;
-    const char *consumerName;
+    const stringHeap consumerName;
 
     GPIOInputBiasType inputBiasType;
     GPIOInputEventType inputEventType;
@@ -24,12 +24,12 @@ typedef struct GPIOPin
 typedef struct GPIOChip
 {
     struct gpiod_chip *chipHandle;
-    const char *chipPath;
+    const stringHeap chipPath;
 } GPIOChip;
 
 #pragma endregion
 
-GPIOChip *GPIOChip_Create(const char *chipPath)
+GPIOChip *GPIOChip_Create(const string chipPath)
 {
     GPIOChip *chip = (GPIOChip *)malloc(sizeof(GPIOChip));
     DebugAssert(chip != NULL, "Memory allocation failed.");
@@ -62,7 +62,7 @@ void GPIOChip_Destroy(GPIOChip *chip)
     DebugInfo("GPIO chip destroyed successfully with path '%s'.", chip->chipPath);
 }
 
-GPIOPin *GPIOPin_ConsumeAsInput(GPIOChip *chip, unsigned char index, const char *consumer, GPIOInputBiasType biasType, GPIOInputEventType eventType)
+GPIOPin *GPIOPin_ConsumeAsInput(GPIOChip *chip, unsigned char index, const string consumer, GPIOInputBiasType biasType, GPIOInputEventType eventType)
 {
     DebugAssert(chip != NULL, "Null pointer passed as parameter.");
 
@@ -97,7 +97,7 @@ GPIOPin *GPIOPin_ConsumeAsInput(GPIOChip *chip, unsigned char index, const char 
     return pin;
 }
 
-GPIOPin *GPIOPin_ConsumeAsOutput(GPIOChip *chip, unsigned char index, const char *consumer, GPIOOutputType outputType, GPIODigitalValue initialValue)
+GPIOPin *GPIOPin_ConsumeAsOutput(GPIOChip *chip, unsigned char index, const string consumer, GPIOOutputType outputType, GPIODigitalValue initialValue)
 {
     DebugAssert(chip != NULL, "Null pointer passed as parameter.");
 

@@ -75,7 +75,7 @@ Matrix2 Matrix2_Rotate(const Matrix2 *matrix, float angle)
 
 Matrix2 Matrix2_Translate(const Matrix2 *matrix, float translateX, float translateY)
 {
-    // Translation is not applicable for 2x2 matrices, so return the original matrix
+    // todo Translation is not applicable for 2x2 matrices, so return the original matrix
     return *matrix;
 }
 

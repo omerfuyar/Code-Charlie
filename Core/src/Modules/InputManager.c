@@ -182,7 +182,7 @@ InputKey INPUT_KEY_FUNCTIONS[INPUT_KEY_FUNCTION_SIZE] = {
 
 #pragma endregion
 
-void Input_Initialize()
+void InputManager_Initialize()
 {
     noecho();              // curses echo disable, no writing while getting input
     cbreak();              // curses disable line buffering but take CTRL^C commands
@@ -190,11 +190,11 @@ void Input_Initialize()
     nodelay(stdscr, true); // curses disable blocking on getch()
 }
 
-void Input_Terminate()
+void InputManager_Terminate()
 {
 }
 
-void Input_PollInputs()
+void InputManager_PollInputs()
 {
     int character;
 
@@ -232,12 +232,12 @@ void Input_PollInputs()
     }
 }
 
-bool Input_GetKey(InputKeyCode keyToGet, InputKeyState stateToCompare)
+bool InputManager_GetKey(InputKeyCode keyToGet, InputKeyState stateToCompare)
 {
-    return Input_GetKeyState(keyToGet) == stateToCompare;
+    return InputManager_GetKeyState(keyToGet) == stateToCompare;
 }
 
-InputKeyState Input_GetKeyState(InputKeyCode keyToGet)
+InputKeyState InputManager_GetKeyState(InputKeyCode keyToGet)
 {
     if (keyToGet >= INPUT_KEY_STANDARD_OFFSET && keyToGet < INPUT_KEY_STANDARD_OFFSET + INPUT_KEY_STANDARD_SIZE) // standard keys, 0 offset
     {

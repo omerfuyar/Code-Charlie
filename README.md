@@ -78,6 +78,26 @@ echo 'export PATH="/opt/homebrew/opt/llvm/bin:$PATH"' >> ~/.zprofile
 1. Download and install LLVM from the [official site](https://releases.llvm.org/download.html)
 2. Enable the option "Add LLVM to system PATH" during installation
 
+### Build Tool: `Ninja`
+
+```bash
+# For Debian
+sudo apt install ninja-build
+```
+
+#### MacOS
+
+```bash
+# For Homebrew
+brew install ninja
+```
+
+#### Windows
+```PowerShell
+# Install Ninja using winget
+winget install -e --id Ninja-build.Ninja
+```
+
 ### HTTP Client: `libcurl`
 
 #### Linux
@@ -145,25 +165,24 @@ sudo apt install libgpiod-dev
 
 ### Linux
 
-```bash
-# Install Ninja (Debian)
-sudo apt install ninja-build
-
 # Build
+```bash
+# Directory creation
 mkdir build && cd build
+# Configure
 cmake .. -G Ninja -DCMAKE_C_COMPILER=clang
+# Build
 cmake --build .
 ```
 
 ### MacOS
 
 ```bash
-# Install Ninja (Homebrew)
-brew install ninja
-
-# Build
+# Directory creation
 mkdir build && cd build
+# Configure
 cmake .. -G Ninja -DCMAKE_C_COMPILER=clang
+# Build
 cmake --build .
 ```
 
@@ -172,15 +191,15 @@ cmake --build .
 1. Install Ninja (build tool)
 
 ```PowerShell
-# Install Ninja using winget
-winget install -e --id Ninja-build.Ninja
-
-# Build
+# Directory creation
 mkdir build && cd build
+# Configure (You can change the path to your vcpkg installation)
 cmake .. -G "Ninja" -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_C_COMPILER=clang
-# Or you can change the path to your vcpkg installation
+# Build
 cmake --build .
 ```
 
 ## Notes
 * To avoid compiler errors in code editors in Windows, add include path to intellisense `C:/vcpkg/installed/x64-windows/include` or wherever your vcpkg is installed.
+* For Linux modules involving GPIO, the application must be run with `sudo`.
+* For NetworkManager, ensure you have internet connection.

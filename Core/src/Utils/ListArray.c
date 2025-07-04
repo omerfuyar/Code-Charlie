@@ -60,7 +60,7 @@ void *ListArray_Get(ListArray *list, size_t index)
     DebugAssert(list != NULL, "Null pointer passed as parameter.");
     DebugAssert(index < list->size, "Index out of range. List size : %du, index : %du", list->size, index);
 
-    return (char *)(list->data) + index * list->sizeOfItem;
+    return (void *)(list->data) + index * list->sizeOfItem;
 }
 
 void ListArray_Set(ListArray *list, size_t index, const void *item)
@@ -83,7 +83,7 @@ void ListArray_Add(ListArray *list, const void *item)
         ListArray_Resize(list, list->capacity * ARRAY_LIST_RESIZE_MULTIPLIER);
     }
 
-    char *targetLocation = (char *)(list->data) + list->size * list->sizeOfItem;
+    void *targetLocation = (void *)(list->data) + list->size * list->sizeOfItem;
 
     memcpy(targetLocation, item, list->sizeOfItem);
 
@@ -95,7 +95,7 @@ void ListArray_RemoveAtIndex(ListArray *list, size_t index)
     DebugAssert(list != NULL, "Null pointer passed as parameter.");
     DebugAssert(index < list->size, "Index out of range. List size : %du, index : %du", list->size, index);
 
-    char *targetLocation = ListArray_Get(list, index);
+    void *targetLocation = ListArray_Get(list, index);
 
     size_t bytesToMove = (list->size - index - 1) * list->sizeOfItem;
 
@@ -143,7 +143,7 @@ long long ListArray_IndexOf(ListArray *list, const void *item)
 
     for (size_t i = 0; i < list->size; i++)
     {
-        char *currentItem = ListArray_Get(list, i);
+        void *currentItem = ListArray_Get(list, i);
 
         if (memcmp(currentItem, item, list->sizeOfItem) == 0)
         {
