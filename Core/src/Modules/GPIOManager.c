@@ -13,7 +13,7 @@ typedef struct GPIOPin
 {
     struct gpiod_line *lineHandle;
     int lineIndex;
-    const stringHeap consumerName;
+    stringHeap consumerName;
 
     GPIOInputBiasType inputBiasType;
     GPIOInputEventType inputEventType;
@@ -24,23 +24,32 @@ typedef struct GPIOPin
 typedef struct GPIOChip
 {
     struct gpiod_chip *chipHandle;
-    const stringHeap chipPath;
+    stringHeap chipPath;
 } GPIOChip;
 
 #pragma endregion Source Only
 
 GPIOChip *GPIOChip_Create(const string chipPath)
 {
+    DebugAssert(chipPath != NULL, "Null pointer passed as parameter. Chip path cannot be NULL.");
+
     GPIOChip *chip = (GPIOChip *)malloc(sizeof(GPIOChip));
     DebugAssert(chip != NULL, "Memory allocation failed.");
 
-    chip->chipPath = chipPath;
+    chip->chipPath = StringDuplicate(chipPath);
 
     chip->chipHandle = gpiod_chip_open(chip->chipPath);
     if (chip->chipHandle == NULL)
     {
         DebugError("Failed to open GPIO chip handle, error in gpiod_chip_open function with parameter : chip path '%s'. Returning NULL.", chip->chipPath);
+
+        free(chip->chipPath);
+        chip->chipPath = NULL;
+        chip->chipHandle = NULL;
+
         free(chip);
+        chip = NULL;
+
         return NULL;
     }
 
@@ -50,26 +59,31 @@ GPIOChip *GPIOChip_Create(const string chipPath)
 
 void GPIOChip_Destroy(GPIOChip *chip)
 {
-    DebugAssert(chip != NULL, "Null pointer passed as parameter.");
+    DebugAssert(chip != NULL, "Null pointer passed as parameter. Chip cannot be NULL.");
+
+    char tempChipPath[strlen(chip->chipPath) + 1];
+    strcpy(tempChipPath, chip->chipPath);
 
     gpiod_chip_close(chip->chipHandle);
-    free(chip);
-
+    free(chip->chipPath);
     chip->chipHandle = NULL;
     chip->chipPath = NULL;
+
+    free(chip);
     chip = NULL;
 
-    DebugInfo("GPIO chip destroyed successfully with path '%s'.", chip->chipPath);
+    DebugInfo("GPIO chip destroyed successfully with path '%s'.", tempChipPath);
 }
 
-GPIOPin *GPIOPin_ConsumeAsInput(GPIOChip *chip, unsigned char index, const string consumer, GPIOInputBiasType biasType, GPIOInputEventType eventType)
+GPIOPin *GPIOPin_ConsumeAsInput(const GPIOChip *chip, unsigned char index, const string consumer, GPIOInputBiasType biasType, GPIOInputEventType eventType)
 {
     DebugAssert(chip != NULL, "Null pointer passed as parameter.");
+    DebugAssert(consumer != NULL, "Null pointer passed as parameter. Consumer name cannot be NULL.");
 
     GPIOPin *pin = (GPIOPin *)malloc(sizeof(GPIOPin));
     DebugAssert(pin != NULL, "Memory allocation failed.");
 
-    pin->consumerName = consumer;
+    pin->consumerName = StringDuplicate(consumer);
     pin->lineIndex = index;
     pin->inputBiasType = biasType;
     pin->inputEventType = eventType;
@@ -80,7 +94,14 @@ GPIOPin *GPIOPin_ConsumeAsInput(GPIOChip *chip, unsigned char index, const strin
     if (pin->lineHandle == NULL)
     {
         DebugError("Failed to get GPIO line handle, error in gpiod_chip_get_line function with parameters : chip handle '%p', line index '%d'. Returning NULL.", chip->chipHandle, pin->lineIndex);
+
+        free(pin->consumerName);
+        pin->lineHandle = NULL;
+        pin->consumerName = NULL;
+
         free(pin);
+        pin = NULL;
+
         return NULL;
     }
 
@@ -88,8 +109,14 @@ GPIOPin *GPIOPin_ConsumeAsInput(GPIOChip *chip, unsigned char index, const strin
     if (lineRequestReturn != 0)
     {
         DebugError("Failed to request line, error in gpiod_line_request_input function with parameters : line handle '%p', consumer name '%s'. Returning NULL.", pin->lineHandle, pin->consumerName);
+
         gpiod_line_release(pin->lineHandle);
+        free(pin->consumerName);
+        pin->lineHandle = NULL;
+        pin->consumerName = NULL;
+
         free(pin);
+        pin = NULL;
         return NULL;
     }
 
@@ -97,17 +124,18 @@ GPIOPin *GPIOPin_ConsumeAsInput(GPIOChip *chip, unsigned char index, const strin
     return pin;
 }
 
-GPIOPin *GPIOPin_ConsumeAsOutput(GPIOChip *chip, unsigned char index, const string consumer, GPIOOutputType outputType, GPIODigitalValue initialValue)
+GPIOPin *GPIOPin_ConsumeAsOutput(const GPIOChip *chip, unsigned char index, const string consumer, GPIOOutputType outputType, GPIODigitalValue initialValue)
 {
     DebugAssert(chip != NULL, "Null pointer passed as parameter.");
+    DebugAssert(consumer != NULL, "Null pointer passed as parameter. Consumer name cannot be NULL.");
 
     GPIOPin *pin = (GPIOPin *)malloc(sizeof(GPIOPin));
     DebugAssert(pin != NULL, "Memory allocation failed.");
 
-    pin->consumerName = consumer;
+    pin->consumerName = StringDuplicate(consumer);
     pin->lineIndex = index;
     pin->inputBiasType = GPIOInputBiasType_Kolpa;
-    pin->inputEventType = GPIOInputEventType_KOLPA;
+    pin->inputEventType = GPIOInputEventType_Kolpa;
     pin->outputType = outputType;
     pin->lineDirection = GPIOLineDirection_Output;
 
@@ -115,7 +143,14 @@ GPIOPin *GPIOPin_ConsumeAsOutput(GPIOChip *chip, unsigned char index, const stri
     if (pin->lineHandle == NULL)
     {
         DebugError("Failed to get GPIO line handle, error in gpiod_chip_get_line function with parameters : chip handle '%p', line index '%d'. Returning NULL.", chip->chipHandle, pin->lineIndex);
+
+        free(pin->consumerName);
+        pin->lineHandle = NULL;
+        pin->consumerName = NULL;
+
         free(pin);
+        pin = NULL;
+
         return NULL;
     }
 
@@ -123,8 +158,15 @@ GPIOPin *GPIOPin_ConsumeAsOutput(GPIOChip *chip, unsigned char index, const stri
     if (lineRequestReturn != 0)
     {
         DebugError("Failed to request line, error in gpiod_line_request_output function with parameters : line handle '%p', consumer name '%s', initial value '%d'. Returning NULL.", "output", pin->lineHandle, pin->consumerName, initialValue);
+
         gpiod_line_release(pin->lineHandle);
+        free(pin->consumerName);
+        pin->lineHandle = NULL;
+        pin->consumerName = NULL;
+
         free(pin);
+        pin = NULL;
+
         return NULL;
     }
 
@@ -136,18 +178,22 @@ void GPIOPin_Release(GPIOPin *pin)
 {
     DebugAssert(pin != NULL, "Null pointer passed as parameter.");
 
-    gpiod_line_release(pin->lineHandle);
-    free(pin);
+    int tempIndex = pin->lineIndex;
+    char tempConsumerName[strlen(pin->consumerName) + 1];
+    strcpy(tempConsumerName, pin->consumerName);
 
+    gpiod_line_release(pin->lineHandle);
+    free(pin->consumerName);
     pin->lineHandle = NULL;
     pin->consumerName = NULL;
-    pin->lineIndex = 0;
+
+    free(pin);
     pin = NULL;
 
-    DebugInfo("GPIO pin released successfully with index '%d', consumer name '%s'.", pin->lineIndex, pin->consumerName);
+    DebugInfo("GPIO pin released successfully with index '%d' and consumer name '%s'.", tempIndex, tempConsumerName);
 }
 
-int GPIOPin_WriteValue(GPIOPin *pin, GPIODigitalValue value)
+int GPIOPin_WriteValue(const GPIOPin *pin, GPIODigitalValue value)
 {
     DebugAssert(pin != NULL, "Null pointer passed as parameter.");
 
@@ -167,7 +213,7 @@ int GPIOPin_WriteValue(GPIOPin *pin, GPIODigitalValue value)
     return 0;
 }
 
-GPIODigitalValue GPIOPin_ReadValue(GPIOPin *pin)
+GPIODigitalValue GPIOPin_ReadValue(const GPIOPin *pin)
 {
     DebugAssert(pin != NULL, "Null pointer passed as parameter.");
 

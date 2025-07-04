@@ -1,23 +1,21 @@
 #pragma once
 
-// Platform detection
 #if defined(_WIN32)
-#define PLATFORM_WINDOWS true
+#define PLATFORM_WINDOWS 1
 #elif defined(__linux__)
-#define PLATFORM_LINUX true
+#define PLATFORM_LINUX 1
 #elif defined(__APPLE__) && defined(__MACH__)
-#define PLATFORM_MACOS true
+#define PLATFORM_MACOS 1
 #else
 #error "Unsupported platform."
 #endif
 
-// Platform specific includes
-#if PLATFORM_LINUX
-#define _POSIX_C_SOURCE 200809L
-#include <unistd.h>
-#elif PLATFORM_WINDOWS
+#if PLATFORM_WINDOWS
 #define _CRT_SECURE_NO_WARNINGS
 #include <windows.h>
+#elif PLATFORM_LINUX
+#define _POSIX_C_SOURCE 200809L
+#include <unistd.h>
 #elif PLATFORM_MACOS
 // ...
 #endif
@@ -172,3 +170,13 @@ void Core_DebugLog(const char *header, const char *file, int line, const char *f
 #endif
 
 #pragma endregion Debug
+
+#pragma region Cross Platform Macros
+
+#if PLATFORM_WINDOWS
+#define StringDuplicate(str) _strdup(str)
+#else
+#define StringDuplicate(str) strdup(str)
+#endif
+
+#pragma endregion Cross Platform Macros

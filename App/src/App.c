@@ -22,31 +22,36 @@ void App_OnNetworkResponseChunk(void *data, size_t dataSize, void *userData)
 
 void App_Start()
 {
-    terminalSize = RendererWindow_GetWindowSize(RENDERER_MAIN_WINDOW);
+    // terminalSize = RendererWindow_GetWindowSize(RENDERER_MAIN_WINDOW);
+    //
+    // rightWindow = RendererWindow_Create("test right", NewVector2Int(terminalSize.x / 2, 0), NewVector2Int(terminalSize.x / 2, terminalSize.y), RENDERER_MAIN_WINDOW);
+    // leftTopWindow = RendererWindow_Create("test left top", NewVector2Int(0, 0), NewVector2Int(terminalSize.x / 2, terminalSize.y / 2), RENDERER_MAIN_WINDOW);
+    // leftBottomWindow = RendererWindow_Create("test left bottom", NewVector2Int(0, terminalSize.y / 2), NewVector2Int(terminalSize.x / 2, terminalSize.y / 2), RENDERER_MAIN_WINDOW);
+    //
+    // RendererWindow_SetPosition(leftBottomWindow, NewVector2Int(1, 1), true);
+    // RendererWindow_UpdateContent(RENDERER_MAIN_WINDOW);
+    // RendererWindow_UpdateContent(rightWindow);
+    // RendererWindow_UpdateContent(leftTopWindow);
+    // RendererWindow_UpdateContent(leftBottomWindow);
 
-    rightWindow = RendererWindow_Create("test right", NewVector2Int(terminalSize.x / 2, 0), NewVector2Int(terminalSize.x / 2, terminalSize.y), RENDERER_MAIN_WINDOW);
-    leftTopWindow = RendererWindow_Create("test left top", NewVector2Int(0, 0), NewVector2Int(terminalSize.x / 2, terminalSize.y / 2), RENDERER_MAIN_WINDOW);
-    leftBottomWindow = RendererWindow_Create("test left bottom", NewVector2Int(0, terminalSize.y / 2), NewVector2Int(terminalSize.x / 2, terminalSize.y / 2), RENDERER_MAIN_WINDOW);
-
-    RendererWindow_SetPosition(leftBottomWindow, NewVector2Int(1, 1), true);
-    RendererWindow_UpdateContent(RENDERER_MAIN_WINDOW);
-    RendererWindow_UpdateContent(rightWindow);
-    RendererWindow_UpdateContent(leftTopWindow);
-    RendererWindow_UpdateContent(leftBottomWindow);
-}
-
-void App_StartLate()
-{
     strcpy(OPEN_AI_API_KEY, Resource_GetEnvironmentObjectValue(NETWORK_MANAGER_ENV_FILE, "OPENAI_API_KEY"));
+
     stringStack requestData = "{\"model\": \"gpt-3.5-turbo\",\"messages\": [{\"role\": \"user\", \"content\": \"Hello World!\"}]}";
     stringStack requestUrl = "https://api.openai.com/v1/chat/completions";
+
     char bearerToken[256];
     snprintf(bearerToken, sizeof(bearerToken), "Bearer %s", OPEN_AI_API_KEY);
-    NetworkRequestHeader headers[] = {{"Authorization", bearerToken}, {"Content-Type", "application/json"}};
+    NetworkRequestHeader headers[] = {
+        {"Authorization", bearerToken},
+        {"Content-Type", "application/json"}};
 
     NetworkRequest *request = NetworkRequest_Create(NetworkRequestType_POST, requestUrl, requestData, strlen(requestData), true, headers, sizeof(headers) / sizeof(NetworkRequestHeader));
 
     NetworkRequest_Request(request, App_OnNetworkResponseFinal, App_OnNetworkResponseChunk);
+}
+
+void App_StartLate()
+{
 }
 
 void App_Update()

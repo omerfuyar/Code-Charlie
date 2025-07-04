@@ -34,7 +34,7 @@ void Core_Run(Core_VoidToVoid start, Core_VoidToVoid lateStart, Core_VoidToVoid 
     time_t sleepMilliseconds;
     time_t loopNanoseconds;
 
-    Timer loopTimer = TimerStack_Create("Core Loop Timer");
+    Timer loopTimer = Timer_CreateStack("Core Loop Timer");
 
     while (true)
     {
@@ -76,7 +76,12 @@ void Core_Terminate(int exitCode)
     NetworkManager_Terminate();
 
     DebugInfo("Core terminated with exit code %d.", exitCode);
+
+#if PLATFORM_WINDOWS
     _exit(exitCode);
+#else
+    exit(exitCode);
+#endif
 }
 
 void Core_SetTargetLoopPerSecond(unsigned int tlps)
@@ -94,6 +99,7 @@ void Core_SleepMilliseconds(unsigned long milliseconds)
     timeToSleep.tv_sec = milliseconds / 1000;
     timeToSleep.tv_nsec = (milliseconds % 1000) * 1000000;
     nanosleep(&timeToSleep, NULL);
+
 #endif
 }
 

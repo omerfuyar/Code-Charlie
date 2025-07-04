@@ -36,16 +36,16 @@ time_t TimePoint_ToMilliseconds(TimePoint *timePoint);
 /// @brief Creates a new timer on the stack.
 /// @param title Label for the timer.
 /// @return Timer instance.
-Timer TimerStack_Create(const string title);
+Timer Timer_CreateStack(const string title);
 
 /// @brief Creates a new timer on the heap.
 /// @param title Label for the timer.
 /// @return Pointer to the created timer.
-Timer *TimerHeap_Create(const string title);
+Timer *Timer_CreateHeap(const string title);
 
 /// @brief Destroys the timer and frees any associated resources.
 /// @param timer Timer to destroy.
-void TimerHeap_Destroy(Timer *timer);
+void Timer_DestroyHeap(Timer *timer);
 
 /// @brief Starts the timer, updating its start time to the current time.
 /// @param timer Timer to start.
@@ -59,7 +59,12 @@ void Timer_Stop(Timer *timer);
 /// @param timer Timer to reset.
 void Timer_Reset(Timer *timer);
 
-/// @brief Gets the elapsed time of the timer. Does not stops the timer.
+/// @brief Gets the elapsed time of the timer. Does not stop the timer or update its end time. So the user must stop the timer before using.
 /// @param timer Timer to get elapsed time from.
 /// @return Elapsed time of the timer.
 TimePoint Timer_GetElapsedTime(Timer *timer);
+
+/// @brief Gets the elapsed time of the timer in nanoseconds. Does not stop the timer or update its end time. So the user must stop the timer before using.
+/// @param timer Timer to get elapsed time from.
+/// @return Elapsed time of the timer in nanoseconds.
+time_t Timer_GetElapsedNanoseconds(Timer *timer);

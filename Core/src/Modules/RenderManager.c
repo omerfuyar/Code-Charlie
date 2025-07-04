@@ -63,7 +63,7 @@ void RendererWindow_CreateHandle(RendererWindow *window)
 
 /// @brief Enables the text attribute for the specified attribute.
 /// @param attribute Text attribute to enable.
-void RendererTextAttribute_Enable(RendererTextAttribute *attribute)
+void RendererTextAttribute_Enable(const RendererTextAttribute *attribute)
 {
     attron(COLOR_PAIR(attribute->colorPairHandle));
     attron(attribute->mask);
@@ -71,7 +71,7 @@ void RendererTextAttribute_Enable(RendererTextAttribute *attribute)
 
 /// @brief Disables the text attribute for the specified attribute.
 /// @param attribute Text attribute to disable.
-void RendererTextAttribute_Disable(RendererTextAttribute *attribute)
+void RendererTextAttribute_Disable(const RendererTextAttribute *attribute)
 {
     attroff(COLOR_PAIR(attribute->colorPairHandle));
     attroff(attribute->mask);
@@ -127,7 +127,7 @@ RendererTextAttribute *RendererTextAttribute_Create(const string title, Renderer
     RendererTextAttribute *attribute = (RendererTextAttribute *)malloc(sizeof(RendererTextAttribute));
     DebugAssert(attribute != NULL, "Memory allocation failed.");
 
-    attribute->title = title;
+    attribute->title = StringDuplicate(title);
     attribute->mask = mask;
 
     attribute->colorPairHandle = COLOR_PAIR_INDEX++;
@@ -147,6 +147,8 @@ void RendererTextAttribute_Destroy(RendererTextAttribute *attribute)
 
     char tempTitle[strlen(attribute->title) + 1];
     strcpy(tempTitle, attribute->title);
+
+    free(attribute->title);
     attribute->title = NULL;
 
     free(attribute);
@@ -168,11 +170,12 @@ void RendererTextAttribute_ChangeColor(RendererTextAttribute *attribute, Rendere
 RendererWindow *RendererWindow_Create(const string title, Vector2Int position, Vector2Int size, RendererWindow *parentWindow)
 {
     DebugAssert(title != NULL, "Null pointer passed as parameter. Title cannot be NULL.");
+    DebugAssert(parentWindow != NULL, "Null pointer passed as parameter. Parent window cannot be NULL.");
 
     RendererWindow *window = (RendererWindow *)malloc(sizeof(RendererWindow));
     DebugAssert(window != NULL, "Memory allocation failed.");
 
-    window->title = title;
+    window->title = StringDuplicate(title);
 
     RendererWindow_SetSize(window, size);
     RendererWindow_SetPosition(window, position, false);
@@ -181,7 +184,7 @@ RendererWindow *RendererWindow_Create(const string title, Vector2Int position, V
     RendererWindow_CreateHandle(window);
     RendererWindow_UpdateAppearance(window);
 
-    DebugInfo("Renderer window '%s' created with parent '%s' successfully.", window->title, window->parent->title);
+    DebugInfo("Renderer window '%s' created successfully.", window->title);
     return window;
 }
 
@@ -190,8 +193,10 @@ void RendererWindow_Destroy(RendererWindow *window)
     DebugAssert(window != NULL, "Null pointer passed as parameter. Renderer window cannot be NULL.");
 
     RendererWindow_DestroyHandle(window);
-    window->defaultAttribute = NULL;
+    free(window->title);
     window->parent = NULL;
+    window->windowHandle = NULL;
+    window->defaultAttribute = NULL;
 
     char tempTitle[strlen(window->title) + 1];
     strcpy(tempTitle, window->title);
@@ -203,17 +208,20 @@ void RendererWindow_Destroy(RendererWindow *window)
     DebugInfo("Renderer window '%s' destroyed successfully.", tempTitle);
 }
 
-void RendererWindow_UpdateContent(RendererWindow *window)
+void RendererWindow_UpdateContent(const RendererWindow *window)
 {
     DebugAssert(window != NULL, "Null pointer passed as parameter. Renderer window cannot be NULL.");
 
     wrefresh(window->windowHandle);
 
-    DebugInfo("Renderer window '%s' updated.", window->title);
+    DebugInfo("Renderer window '%s' content updated successfully.", window->title);
 }
 
 void RendererWindow_UpdateAppearance(RendererWindow *window)
 {
+    DebugAssert(window != NULL, "Null pointer passed as parameter. Renderer window cannot be NULL.");
+    DebugAssert(window->parent != NULL, "Renderer window '%s' has no parent. Parent cannot be NULL.", window->title);
+
     window->globalPosition = Vector2Int_Add(window->relativePosition, window->parent->globalPosition);
 
     if (window->globalPosition.x + window->size.x > COLS ||
@@ -231,9 +239,11 @@ void RendererWindow_UpdateAppearance(RendererWindow *window)
 
     RendererWindow_DestroyHandle(window);
     RendererWindow_CreateHandle(window);
+
+    DebugInfo("Renderer window '%s' appearance updated successfully.", window->title);
 }
 
-void RendererWindow_Clear(RendererWindow *window)
+void RendererWindow_Clear(const RendererWindow *window)
 {
     DebugAssert(window != NULL, "Null pointer passed as parameter. Renderer window cannot be NULL.");
 
@@ -242,8 +252,10 @@ void RendererWindow_Clear(RendererWindow *window)
     DebugInfo("Renderer window '%s' cleared successfully.", window->title);
 }
 
-void RendererWindow_SetCursorPosition(RendererWindow *window, Vector2Int position)
+void RendererWindow_SetCursorPosition(const RendererWindow *window, Vector2Int position)
 {
+    DebugAssert(window != NULL, "Null pointer passed as parameter. Renderer window cannot be NULL.");
+
     if (position.x < 0 || position.x > window->size.x ||
         position.y < 0 || position.y > window->size.y)
     {
@@ -253,11 +265,14 @@ void RendererWindow_SetCursorPosition(RendererWindow *window, Vector2Int positio
     }
 
     wmove(window->windowHandle, position.y, position.x);
+
+    DebugInfo("Renderer window '%s': Cursor moved to position (%d, %d) successfully.", window->title, position.x, position.y);
 }
 
-void RendererWindow_PutCharToPosition(RendererWindow *window, Vector2Int position, RendererTextAttribute *attributeMask, bool override, char charToPut)
+void RendererWindow_PutCharToPosition(const RendererWindow *window, Vector2Int position, const RendererTextAttribute *attributeMask, bool override, char charToPut)
 {
     DebugAssert(window != NULL, "Null pointer passed as parameter. Renderer window cannot be NULL.");
+    DebugAssert(attributeMask != NULL, "Null pointer passed as parameter. Renderer text attribute cannot be NULL.");
 
     RendererWindow_SetCursorPosition(window, position);
     RendererTextAttribute_Enable(attributeMask);
@@ -271,7 +286,7 @@ void RendererWindow_PutCharToPosition(RendererWindow *window, Vector2Int positio
     DebugInfo("Window '%s': Character '%c' put to position (%d, %d) successfully.", window->title, charToPut, position.x, position.y);
 }
 
-void RendererWindow_PutStringToPosition(RendererWindow *window, Vector2Int position, RendererTextAttribute *attributeMask, bool override, const string stringToPut, ...)
+void RendererWindow_PutStringToPosition(const RendererWindow *window, Vector2Int position, const RendererTextAttribute *attributeMask, bool override, const string stringToPut, ...)
 {
     DebugAssert(window != NULL, "Null pointer passed as parameter. Renderer window cannot be NULL.");
     DebugAssert(attributeMask != NULL, "Null pointer passed as parameter. Renderer text attribute cannot be NULL.");
@@ -294,15 +309,15 @@ void RendererWindow_PutStringToPosition(RendererWindow *window, Vector2Int posit
     DebugInfo("Window '%s': String '%s' put to position (%d, %d) successfully.", window->title, stringToPut, position.x, position.y);
 }
 
-Vector2Int RendererWindow_GetWindowSize(RendererWindow *window)
+Vector2Int RendererWindow_GetWindowSize(const RendererWindow *window)
 {
     DebugAssert(window != NULL, "Null pointer passed as parameter. Renderer window cannot be NULL.");
 
-    DebugInfo("Renderer window '%s' size retrieved successfully.", window->title);
+    DebugInfo("Renderer window '%s' size (%d, %d) retrieved successfully.", window->title, window->size.x, window->size.y);
     return window->size;
 }
 
-Vector2Int RendererWindow_GetWindowPosition(RendererWindow *window)
+Vector2Int RendererWindow_GetWindowPosition(const RendererWindow *window)
 {
     DebugAssert(window != NULL, "Null pointer passed as parameter. Renderer window cannot be NULL.");
 

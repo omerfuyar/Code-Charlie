@@ -24,10 +24,10 @@ typedef struct ListLinked
 /// @return The created ListLinkedNode struct.
 ListLinkedNode *ListLinkedNode_Create(size_t sizeOfData, const void *data)
 {
-    ListLinkedNode *node = malloc(sizeof(ListLinkedNode));
+    ListLinkedNode *node = (ListLinkedNode *)malloc(sizeof(ListLinkedNode));
     DebugAssert(node != NULL, "Memory allocation failed for node.");
 
-    node->data = malloc(sizeOfData);
+    node->data = (void *)malloc(sizeOfData);
     DebugAssert(node->data != NULL, "Memory allocation failed for node data.");
 
     memcpy(node->data, data, sizeOfData);
@@ -73,9 +73,6 @@ void ListLinkedNode_DestroyAll(ListLinkedNode *node)
 /// @param nextNode Next node to connect.
 void ListLinkedNode_Connect(ListLinkedNode *node, ListLinkedNode *nextNode)
 {
-    DebugAssert(node != NULL, "Null pointer passed as parameter for node.");
-    DebugAssert(nextNode != NULL, "Null pointer passed as parameter for next node.");
-
     node->next = nextNode;
 }
 
@@ -108,6 +105,7 @@ long long ListLinkedNode_GetIndexIfMatch(ListLinkedNode *node, size_t sizeOfItem
     }
     else if (node->next == NULL)
     {
+        DebugWarning("Item not found in ListLinked. Returning -1.");
         return -1;
     }
     else
@@ -121,12 +119,14 @@ long long ListLinkedNode_GetIndexIfMatch(ListLinkedNode *node, size_t sizeOfItem
 
 ListLinked *ListLinked_Create(size_t sizeOfItem)
 {
-    ListLinked *list = malloc(sizeof(ListLinked));
+    ListLinked *list = (ListLinked *)malloc(sizeof(ListLinked));
     DebugAssert(list != NULL, "Memory allocation failed.");
 
     list->size = 0;
     list->sizeOfItem = sizeOfItem;
+    list->head = NULL;
 
+    DebugInfo("ListLinked created with size of item: %zu", sizeOfItem);
     return list;
 }
 
@@ -139,8 +139,12 @@ void ListLinked_Destroy(ListLinked *list)
         ListLinkedNode_DestroyAll(list->head);
     }
 
+    list->head = NULL;
+
     free(list);
     list = NULL;
+
+    DebugInfo("ListLinked destroyed.");
 }
 
 void *ListLinked_Get(ListLinked *list, size_t index)
@@ -155,7 +159,7 @@ void *ListLinked_Get(ListLinked *list, size_t index)
         currentNode = currentNode->next;
     }
 
-    return currentNode;
+    return currentNode->data;
 }
 
 void ListLinked_Set(ListLinked *list, size_t index, const void *item)

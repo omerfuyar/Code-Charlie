@@ -5,6 +5,9 @@
 // The resize multiplier used when the ListArray size reached to the capacity when adding new item
 #define ARRAY_LIST_RESIZE_MULTIPLIER 2
 
+// The limit for resizing the ListArray when it's size is less than 1/x of the capacity
+#define ARRAY_LIST_MIN_DECIMAL_LIMIT 4
+
 /// @brief A dynamic array list implementation. Can be used in any type. Copies passed items to its own property. Shouldn't be used without helper functions.
 typedef struct ListArray ListArray;
 
@@ -27,13 +30,13 @@ void ListArray_Resize(ListArray *list, size_t newCapacity);
 /// @param list ListArray to get item in index.
 /// @param index Index to get item.
 /// @return The item in given index.
-void *ListArray_Get(ListArray *list, size_t index);
+void *ListArray_Get(const ListArray *list, size_t index);
 
 /// @brief Item setter function for ListArray. Works only in range of size. Uses memcpy to copy the item to the given index.
 /// @param list ListArray to change item in.
 /// @param index Index to replace item at.
 /// @param item New item at index.
-void ListArray_Set(ListArray *list, size_t index, const void *item);
+void ListArray_Set(const ListArray *list, size_t index, const void *item);
 
 /// @brief Adder function for ListArray. Sets the last last index to given item. Uses memcpy to copy the item to the given index.
 /// @param list ListArray to add item.
@@ -65,7 +68,7 @@ void ListArray_Clear(ListArray *list);
 /// @param list List to search for item.
 /// @param item Item to find index of.
 /// @return The index of found item. -1 if the item is absent in the list.
-long long ListArray_IndexOf(ListArray *list, const void *item);
+long long ListArray_IndexOf(const ListArray *list, const void *item);
 
 /// @brief Size getter for ListArray.
 /// @param list ListArray to get size.

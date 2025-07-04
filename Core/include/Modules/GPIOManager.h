@@ -35,8 +35,8 @@ typedef enum GPIOInputBiasType
 /// @brief Represents the event trigger type for GPIO input pins.
 typedef enum GPIOInputEventType
 {
-    GPIOInputEventType_KOLPA = -1,       // An invalid or error state (-1).
-    GPIOInputEventType_RISING_EDGE = 1,  // Triggers when the pin transitions from LOW to HIGH.
+    GPIOInputEventType_Kolpa = -1,       // An invalid or error state (-1).
+    GPIOInputEventType_RisingEdge = 1,   // Triggers when the pin transitions from LOW to HIGH.
     GPIOInputEventType_FallingEdge = 2,  // Triggers when the pin transitions from HIGH to LOW.
     GPIOInputEventType_BothEdges = 1 | 2 // Triggers on both transitions, LOW to HIGH and HIGH to LOW.
 } GPIOInputEventType;
@@ -82,7 +82,7 @@ void GPIOChip_Destroy(GPIOChip *chip);
 /// @param eventType The input event type for the pin.
 /// @return A pointer to the created GPIOPin instance, or NULL if consumption fails.
 /// @note Logs an error if the GPIO line cannot be retrieved or if the line request fails.
-GPIOPin *GPIOPin_ConsumeAsInput(GPIOChip *chip, unsigned char index, const string consumer, GPIOInputBiasType biasType, GPIOInputEventType eventType);
+GPIOPin *GPIOPin_ConsumeAsInput(const GPIOChip *chip, unsigned char index, const string consumer, GPIOInputBiasType biasType, GPIOInputEventType eventType);
 
 /// @brief Consumes a GPIO pin from a GPIO chip with output request.
 /// @param chip The GPIOChip instance to consume the pin from.
@@ -91,7 +91,7 @@ GPIOPin *GPIOPin_ConsumeAsInput(GPIOChip *chip, unsigned char index, const strin
 /// @param outputType The output type for the pin.
 /// @param initialValue The initial value to write for the pin.
 /// @return A pointer to the created GPIOPin instance, or NULL if consumption fails.
-GPIOPin *GPIOPin_ConsumeAsOutput(GPIOChip *chip, unsigned char index, string consumer, GPIOOutputType outputType, GPIODigitalValue initialValue);
+GPIOPin *GPIOPin_ConsumeAsOutput(const GPIOChip *chip, unsigned char index, string consumer, GPIOOutputType outputType, GPIODigitalValue initialValue);
 
 /// @brief Releases a GPIO pin and frees its resources.
 /// @param pin The GPIOPin instance to release.
@@ -104,12 +104,12 @@ void GPIOPin_Release(GPIOPin *pin);
 /// @param value The digital value to write (LOW or HIGH).
 /// @return 0 on success, or -1 if the operation fails.
 /// @note Logs a warning if the write operation fails.
-int GPIOPin_WriteValue(GPIOPin *pin, GPIODigitalValue value);
+int GPIOPin_WriteValue(const GPIOPin *pin, GPIODigitalValue value);
 
 /// @brief Reads the digital value from a GPIO pin.
 /// @param pin The GPIOPin instance to read from.
 /// @return The digital value of the pin (LOW, HIGH, or KOLPA on error).
 /// @note Logs a warning if the read operation fails.
-GPIODigitalValue GPIOPin_ReadValue(GPIOPin *pin);
+GPIODigitalValue GPIOPin_ReadValue(const GPIOPin *pin);
 
 #endif // PLATFORM_LINUX

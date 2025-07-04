@@ -1,7 +1,5 @@
 #include "Utils/Timer.h"
 
-// todo add cross platform support
-
 void TimePoint_Update(TimePoint *timePoint)
 {
     DebugAssert(timePoint != NULL, "Null pointer passed as parameter.");
@@ -18,7 +16,7 @@ time_t TimePoint_ToMilliseconds(TimePoint *timePoint)
     return timePoint->seconds * 1000 + timePoint->nanoseconds / 1000000;
 }
 
-Timer TimerStack_Create(const string title)
+Timer Timer_CreateStack(const string title)
 {
     Timer timer;
     timer.title = title;
@@ -30,7 +28,7 @@ Timer TimerStack_Create(const string title)
     return timer;
 }
 
-Timer *TimerHeap_Create(const string title)
+Timer *Timer_CreateHeap(const string title)
 {
     Timer *timer = (Timer *)malloc(sizeof(Timer));
 
@@ -49,7 +47,7 @@ Timer *TimerHeap_Create(const string title)
     return timer;
 }
 
-void TimerHeap_Destroy(Timer *timer)
+void Timer_DestroyHeap(Timer *timer)
 {
     DebugAssert(timer != NULL, "Null pointer passed as parameter.");
 
@@ -112,4 +110,12 @@ TimePoint Timer_GetElapsedTime(Timer *timer)
     }
 
     return elapsedTime;
+}
+
+time_t Timer_GetElapsedNanoseconds(Timer *timer)
+{
+    DebugAssert(timer != NULL, "Null pointer passed as parameter.");
+
+    TimePoint elapsedTime = Timer_GetElapsedTime(timer);
+    return elapsedTime.seconds * 1000000000 + elapsedTime.nanoseconds;
 }

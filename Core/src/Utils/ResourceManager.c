@@ -1,23 +1,27 @@
 #include "Utils/ResourceManager.h"
 
+#pragma region Source Only
+
 typedef struct Resource
 {
     stringHeap title;
     stringHeap path;
-    void *data;
+    stringHeap data;
     size_t dataSize;
 } Resource;
+
+#pragma endregion Source Only
 
 Resource *Resource_Create(const string path, const string title, unsigned int maxLineCharCount, unsigned int maxLineCount)
 {
     DebugAssert(path != NULL, "Null pointer passed as parameter. Path cannot be NULL.");
     DebugAssert(title != NULL, "Null pointer passed as parameter. Title cannot be NULL.");
 
-    Resource *resource = malloc(sizeof(Resource));
+    Resource *resource = (Resource *)malloc(sizeof(Resource));
     DebugAssert(resource != NULL, "Memory allocation failed for resource %s.", path);
 
-    resource->title = title;
-    resource->path = path;
+    resource->title = StringDuplicate(title);
+    resource->path = StringDuplicate(path);
 
     FILE *file = fopen(resource->path, "r");
     DebugAssert(file != NULL, "File open failed for %s", resource->path);
@@ -37,8 +41,8 @@ Resource *Resource_Create(const string path, const string title, unsigned int ma
 
     resource->dataSize = strlen(dataBuffer) + 1;
 
-    resource->data = (void *)malloc(resource->dataSize);
-    DebugAssert(resource != NULL, "Memory allocation failed for resource data %s.", resource->path);
+    resource->data = (stringHeap)malloc(resource->dataSize);
+    DebugAssert(resource->data != NULL, "Memory allocation failed for resource data %s.", resource->path);
 
     strcpy(resource->data, dataBuffer);
 
@@ -57,11 +61,7 @@ ListArray *Resource_GetAsEnvironmentObjectArray(Resource *resource, const string
 
     ListArray *arrayList = ListArray_Create(sizeof(EnvironmentObject), lineCount);
 
-#if PLATFORM_WINDOWS
-    stringHeap dataCopy = _strdup(resource->data);
-#else
-    stringHeap dataCopy = strdup(resource->data);
-#endif
+    stringHeap dataCopy = StringDuplicate(resource->data);
     DebugAssert(dataCopy != NULL, "Memory allocation failed for dataCopy.");
 
     stringStack lineSave = NULL;
@@ -70,7 +70,7 @@ ListArray *Resource_GetAsEnvironmentObjectArray(Resource *resource, const string
 #if PLATFORM_WINDOWS
     stringHeap line = strtok_s(dataCopy, "\n", &lineSave);
 #else
-    stringHeap line = strtok_r(dataCopy, "\n", &lineSave);
+    stringHeap line = __strtok_r(dataCopy, "\n", &lineSave);
 #endif
 
     while (line != NULL)
@@ -79,8 +79,8 @@ ListArray *Resource_GetAsEnvironmentObjectArray(Resource *resource, const string
         stringHeap key = strtok_s(line, delimeter, &pairSave);
         stringHeap value = strtok_s(NULL, delimeter, &pairSave);
 #else
-        stringHeap key = strtok_r(line, delimeter, &pairSave);
-        stringHeap value = strtok_r(NULL, delimeter, &pairSave);
+        stringHeap key = __strtok_r(line, delimeter, &pairSave);
+        stringHeap value = __strtok_r(NULL, delimeter, &pairSave);
 #endif
 
         EnvironmentObject envObj;
@@ -92,7 +92,7 @@ ListArray *Resource_GetAsEnvironmentObjectArray(Resource *resource, const string
 #if PLATFORM_WINDOWS
         line = strtok_s(NULL, "\n", &lineSave);
 #else
-        line = strtok_r(NULL, "\n", &lineSave);
+        line = __strtok_r(NULL, "\n", &lineSave);
 #endif
     }
 
@@ -118,11 +118,7 @@ stringHeap Resource_GetEnvironmentObjectValue(const string path, const string ke
             DebugInfo("Key '%s' found in resource '%s' in '%s'. Returning value '%s'.", key, resource->title, resource->path, envObject.value);
             Resource_Destroy(resource);
             ListArray_Destroy(envObjects);
-#if PLATFORM_WINDOWS
-            stringHeap valueCopy = _strdup(envObject.value);
-#else
-            stringHeap valueCopy = strdup(envObject.value);
-#endif
+            stringHeap valueCopy = StringDuplicate(envObject.value);
             return valueCopy;
         }
     }

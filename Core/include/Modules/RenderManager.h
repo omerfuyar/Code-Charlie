@@ -114,7 +114,7 @@ void RendererWindow_Destroy(RendererWindow *window);
 
 /// @brief Updates/renders the renderer window. Used for redrawing the curses window content.
 /// @param window The renderer window to update/renders.
-void RendererWindow_UpdateContent(RendererWindow *window);
+void RendererWindow_UpdateContent(const RendererWindow *window);
 
 /// @brief Updates the global position of the window based on its relative position and parent's global position. Used for tasks that destroy and create the curses window.
 /// @param window Window to update global position for.
@@ -123,12 +123,12 @@ void RendererWindow_UpdateAppearance(RendererWindow *window);
 
 /// @brief Clears the renderer window. Deletes all the content.
 /// @param window The renderer window to clear.
-void RendererWindow_Clear(RendererWindow *window);
+void RendererWindow_Clear(const RendererWindow *window);
 
 /// @brief Moves the cursor to the specified position in the window.
 /// @param window Window to move the cursor in.
 /// @param position Position to move the cursor to.
-void RendererWindow_SetCursorPosition(RendererWindow *window, Vector2Int position);
+void RendererWindow_SetCursorPosition(const RendererWindow *window, Vector2Int position);
 
 /// @brief Puts a character at a specific position in the renderer window.
 /// @param window The renderer window.
@@ -137,7 +137,7 @@ void RendererWindow_SetCursorPosition(RendererWindow *window, Vector2Int positio
 /// @param override Override the text that already in position.
 /// @param charToPut The character to put.
 /// @note Position origin is always top left corner
-void RendererWindow_PutCharToPosition(RendererWindow *window, Vector2Int position, RendererTextAttribute *attributeMask, bool override, char charToPut);
+void RendererWindow_PutCharToPosition(const RendererWindow *window, Vector2Int position, const RendererTextAttribute *attributeMask, bool override, char charToPut);
 
 /// @brief Puts a formatted string at a specific position in the renderer window.
 /// @param window The renderer window.
@@ -147,17 +147,17 @@ void RendererWindow_PutCharToPosition(RendererWindow *window, Vector2Int positio
 /// @param override Override the text that already in position.
 /// @param ... Additional arguments for the formatted string.
 /// @note Position origin is always top left corner
-void RendererWindow_PutStringToPosition(RendererWindow *window, Vector2Int position, RendererTextAttribute *attributeMask, bool override, const string stringToPut, ...);
+void RendererWindow_PutStringToPosition(const RendererWindow *window, Vector2Int position, const RendererTextAttribute *attributeMask, bool override, const string stringToPut, ...);
 
 /// @brief Gets the size of the renderer window.
 /// @param window The renderer window.
 /// @return The size of the window as a Vector2Int.
-Vector2Int RendererWindow_GetWindowSize(RendererWindow *window);
+Vector2Int RendererWindow_GetWindowSize(const RendererWindow *window);
 
 /// @brief Gets the position of the renderer window.
 /// @param window The renderer window.
 /// @return The position of the window as a Vector2Int.
-Vector2Int RendererWindow_GetWindowPosition(RendererWindow *window);
+Vector2Int RendererWindow_GetWindowPosition(const RendererWindow *window);
 
 /// @brief Sets the border characters for the renderer window.
 /// @param window Renderer window to set the border characters for.

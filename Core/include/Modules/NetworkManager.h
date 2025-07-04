@@ -7,13 +7,11 @@
 #pragma region typedefs
 
 #define NETWORK_MANAGER_MAX_RESPONSE_DATA_LENGTH 8192
-#define NETWORK_MANAGER_MAX_REQUEST_DATA_LENGTH 8192
-#define NETWORK_MANAGER_MAX_HEADER_LENGTH 128
 
 #if PLATFORM_WINDOWS
 #define NETWORK_MANAGER_ENV_FILE "C:\\Users\\omruyr\\Documents\\Programming\\Code-Charlie\\.env"
 #else
-#define NETWORK_MANAGER_ENV_FILE "/home/omruyr/Documents/Programming/Code-Charlie/.env"
+#define NETWORK_MANAGER_ENV_FILE "/home/omruyr/Projects/Code-Charlie/.env"
 #endif
 
 /// @brief Enum representing the response codes for network requests.
@@ -182,7 +180,8 @@ typedef struct NetworkRequest NetworkRequest;
 /// @brief Holds the response from a network request.
 typedef struct NetworkResponse
 {
-    char body[NETWORK_MANAGER_MAX_RESPONSE_DATA_LENGTH];
+    stringHeap body;
+    size_t bodySize;
     NetworkResponseCode code;
 } NetworkResponse;
 
@@ -207,13 +206,13 @@ void NetworkManager_Terminate();
 /// @brief Creates a network request to use with the Network Manager. Does not copy pointers.
 /// @param type The type of the network request.
 /// @param url The URL for the request.
-/// @param data The data to send with the request.
+/// @param data The data to send with the request. Can be NULL for GET requests.
 /// @param dataSize The size of the data to send.
 /// @param singleUse If true, the request will be destroyed after use.
 /// @param headers The headers to send with the request.
-/// @param headerCount The number of headers in the headers array.
+/// @param headerCount The size of the whole header array.
 /// @return A pointer to the created NetworkRequest.
-NetworkRequest *NetworkRequest_Create(NetworkRequestType type, string url, void *data, size_t dataSize, bool singleUse, NetworkRequestHeader *headers, size_t headerCount);
+NetworkRequest *NetworkRequest_Create(NetworkRequestType type, const string url, const void *data, size_t dataSize, bool singleUse, NetworkRequestHeader *headers, size_t headerCount);
 
 /// @brief Destroys the network request and frees its resources.
 /// @param request The network request to destroy.
@@ -223,4 +222,5 @@ void NetworkRequest_Destroy(NetworkRequest *request);
 ///@param request The network request to perform.
 ///@param finishCallback The callback function to handle the response. Can be NULL.
 ///@param chunkCallback The callback function to handle response chunks. Can be NULL.
-void NetworkRequest_Request(NetworkRequest *request, NetworkResponseFinishCallback finishCallback, NetworkResponseChunkCallback chunkCallback);
+/// @return The response from the network request or NULL if error. Response is allocated on heap and must be freed by the caller.
+NetworkResponse *NetworkRequest_Request(NetworkRequest *request, NetworkResponseFinishCallback finishCallback, NetworkResponseChunkCallback chunkCallback);
