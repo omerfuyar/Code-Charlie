@@ -65,7 +65,7 @@ typedef struct Vector4Int
 #define NewVector4Int(x, y, z, w) \
     (Vector4Int) { x, y, z, w }
 
-#pragma endregion
+#pragma endregion typedefs
 
 #pragma region Vector2
 
@@ -109,7 +109,7 @@ float Vector2_Dot(Vector2 vector1, Vector2 vector2);
 /// @return The interpolated vector.
 Vector2 Vector2_Lerp(Vector2 startVector, Vector2 endVector, float time);
 
-#pragma endregion
+#pragma endregion Vector2
 
 #pragma region Vector3
 
@@ -153,7 +153,7 @@ float Vector3_Dot(Vector3 vector1, Vector3 vector2);
 /// @return The interpolated vector.
 Vector3 Vector3_Lerp(Vector3 startVector, Vector3 endVector, float time);
 
-#pragma endregion
+#pragma endregion Vector3
 
 #pragma region Vector4
 
@@ -197,7 +197,7 @@ float Vector4_Dot(Vector4 vector1, Vector4 vector2);
 /// @return The interpolated vector.
 Vector4 Vector4_Lerp(Vector4 startVector, Vector4 endVector, float time);
 
-#pragma endregion
+#pragma endregion Vector4
 
 #pragma region Vector2Int
 
@@ -229,7 +229,7 @@ float Vector2Int_Dot(Vector2Int vector1, Vector2Int vector2);
 /// @return The magnitude of the vector.
 float Vector2Int_Magnitude(Vector2Int vector);
 
-#pragma endregion
+#pragma endregion Vector2Int
 
 #pragma region Vector3Int
 
@@ -261,7 +261,7 @@ float Vector3Int_Dot(Vector3Int vector1, Vector3Int vector2);
 /// @return The magnitude of the vector.
 float Vector3Int_Magnitude(Vector3Int vector);
 
-#pragma endregion
+#pragma endregion Vector3Int
 
 #pragma region Vector4Int
 
@@ -293,4 +293,4 @@ float Vector4Int_Dot(Vector4Int vector1, Vector4Int vector2);
 /// @return The magnitude of the vector.
 float Vector4Int_Magnitude(Vector4Int vector);
 
-#pragma endregion
+#pragma endregion Vector4Int

@@ -56,7 +56,7 @@ typedef struct GPIOChip GPIOChip;
 /// @brief Represents a GPIO pin.
 typedef struct GPIOPin GPIOPin;
 
-#pragma endregion
+#pragma endregion typedefs
 
 #if PLATFORM_LINUX
 

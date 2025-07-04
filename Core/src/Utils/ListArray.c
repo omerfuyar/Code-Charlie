@@ -12,7 +12,7 @@ typedef struct ListArray
     size_t sizeOfItem;
 } ListArray;
 
-#pragma endregion
+#pragma endregion Source Only
 
 ListArray *ListArray_Create(size_t sizeOfItem, size_t initialCapacity)
 {

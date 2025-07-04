@@ -8,6 +8,13 @@
 
 #define NETWORK_MANAGER_MAX_RESPONSE_DATA_LENGTH 8192
 #define NETWORK_MANAGER_MAX_REQUEST_DATA_LENGTH 8192
+#define NETWORK_MANAGER_MAX_HEADER_LENGTH 128
+
+#if PLATFORM_WINDOWS
+#define NETWORK_MANAGER_ENV_FILE "C:\\Users\\omruyr\\Documents\\Programming\\Code-Charlie\\.env"
+#else
+#define NETWORK_MANAGER_ENV_FILE "/home/omruyr/Documents/Programming/Code-Charlie/.env"
+#endif
 
 /// @brief Enum representing the response codes for network requests.
 typedef enum NetworkResponseCode
@@ -160,10 +167,14 @@ typedef enum NetworkRequestType
 {
     NetworkRequestType_GET,
     NetworkRequestType_POST,
-    NetworkRequestType_PUT,
-    NetworkRequestType_DELETE,
-    NetworkRequestType_PATCH
 } NetworkRequestType;
+
+/// @brief Represents a header key value pair in a network request. key and value should not include the colon or whitespace character.
+typedef struct NetworkRequestHeader
+{
+    string key;
+    string value;
+} NetworkRequestHeader;
 
 /// @brief Holds the request data for a network request. Can be used for all types of requests.
 typedef struct NetworkRequest NetworkRequest;
@@ -176,9 +187,16 @@ typedef struct NetworkResponse
 } NetworkResponse;
 
 /// @brief Callback function type for handling network responses.
-typedef void (*NetworkResponseCallback)(const NetworkResponse *response);
+/// @param response The network response received from the request.
+typedef void (*NetworkResponseFinishCallback)(const NetworkResponse *response);
 
-#pragma endregion
+/// @brief Callback function type for handling network response chunks. Called by CURL.
+/// @param data The last chunk of data received from the network request.
+/// @param dataSize The size of the data chunk.
+/// @param userData Accumulated data from the request before the last chunk. Null terminated.
+typedef void (*NetworkResponseChunkCallback)(void *data, size_t dataSize, void *userData);
+
+#pragma endregion Callbacks
 
 ///@brief Initializes the Network Manager. Should not be used by app.
 void NetworkManager_Initialize();
@@ -186,16 +204,23 @@ void NetworkManager_Initialize();
 ///@brief Terminates the Network Manager. Should not be used by app.
 void NetworkManager_Terminate();
 
-/// @brief Creates a network request to use with the Network Manager.
+/// @brief Creates a network request to use with the Network Manager. Does not copy pointers.
 /// @param type The type of the network request.
 /// @param url The URL for the request.
 /// @param data The data to send with the request.
 /// @param dataSize The size of the data to send.
 /// @param singleUse If true, the request will be destroyed after use.
+/// @param headers The headers to send with the request.
+/// @param headerCount The number of headers in the headers array.
 /// @return A pointer to the created NetworkRequest.
-NetworkRequest *NetworkRequest_Create(NetworkRequestType type, string url, void *data, size_t dataSize, bool singleUse);
+NetworkRequest *NetworkRequest_Create(NetworkRequestType type, string url, void *data, size_t dataSize, bool singleUse, NetworkRequestHeader *headers, size_t headerCount);
 
-///@brief Performs a network request.
+/// @brief Destroys the network request and frees its resources.
+/// @param request The network request to destroy.
+void NetworkRequest_Destroy(NetworkRequest *request);
+
+///@brief Performs a network request. Blocks the thread until the response is received.
 ///@param request The network request to perform.
-///@param callback The callback function to handle the response.
-void NetworkManager_Request(NetworkRequest *request, NetworkResponseCallback callback);
+///@param finishCallback The callback function to handle the response. Can be NULL.
+///@param chunkCallback The callback function to handle response chunks. Can be NULL.
+void NetworkRequest_Request(NetworkRequest *request, NetworkResponseFinishCallback finishCallback, NetworkResponseChunkCallback chunkCallback);

@@ -61,22 +61,6 @@ void RendererWindow_CreateHandle(RendererWindow *window)
     box(window->windowHandle, '|', '-');
 }
 
-/// @brief Moves the cursor to the specified position in the window.
-/// @param window Window to move the cursor in.
-/// @param position Position to move the cursor to.
-void RendererWindow_SetCursorPosition(RendererWindow *window, Vector2Int position)
-{
-    if (position.x < 0 || position.x > window->size.x ||
-        position.y < 0 || position.y > window->size.y)
-    {
-        DebugWarning("Renderer window '%s': Invalid cursor position (%d, %d). Position must be within the window size (%d, %d).", window->title, position.x, position.y, window->size.x, window->size.y);
-        position.x = position.x < 0 ? 0 : (position.x > window->size.x ? window->size.x - 1 : position.x);
-        position.y = position.y < 0 ? 0 : (position.y > window->size.y ? window->size.y - 1 : position.y);
-    }
-
-    wmove(window->windowHandle, position.y, position.x);
-}
-
 /// @brief Enables the text attribute for the specified attribute.
 /// @param attribute Text attribute to enable.
 void RendererTextAttribute_Enable(RendererTextAttribute *attribute)
@@ -93,7 +77,7 @@ void RendererTextAttribute_Disable(RendererTextAttribute *attribute)
     attroff(attribute->mask);
 }
 
-#pragma endregion
+#pragma endregion Source Only
 
 void RendererManager_Initialize()
 {
@@ -101,7 +85,20 @@ void RendererManager_Initialize()
     start_color(); // curses start the color functionality
 
     RENDERER_DEFAULT_TEXT_ATTRIBUTE = RendererTextAttribute_Create("Default", RendererTextAttributeMask_Normal, (RendererColorPair){RendererColor_White, RendererColor_Black});
-    RENDERER_MAIN_WINDOW = RendererManager_GetMainWindow();
+
+    RENDERER_MAIN_WINDOW = (RendererWindow *)malloc(sizeof(RendererWindow));
+    DebugAssert(RENDERER_MAIN_WINDOW != NULL, "Memory allocation failed for RENDERER_MAIN_WINDOW.");
+
+    RENDERER_MAIN_WINDOW->windowHandle = stdscr;
+    RENDERER_MAIN_WINDOW->title = "Main Window";
+    RENDERER_MAIN_WINDOW->size = NewVector2Int(COLS, LINES);
+    RENDERER_MAIN_WINDOW->relativePosition = NewVector2Int(0, 0);
+    RENDERER_MAIN_WINDOW->globalPosition = NewVector2Int(0, 0);
+    RENDERER_MAIN_WINDOW->parent = NULL;
+
+    RendererWindow_SetDefaultAttribute(RENDERER_MAIN_WINDOW, RENDERER_DEFAULT_TEXT_ATTRIBUTE);
+
+    DebugInfo("Main window created successfully. Terminal size : (%d, %d)", RENDERER_MAIN_WINDOW->size.x, RENDERER_MAIN_WINDOW->size.y);
 }
 
 void RendererManager_Terminate()
@@ -116,28 +113,6 @@ void RendererManager_ChangeColor(RendererColor color, Vector3Int colorToChangeTo
     init_color(color, colorToChangeTo.x, colorToChangeTo.y, colorToChangeTo.z);
 
     DebugInfo("Terminal color changed successfully.");
-}
-
-RendererWindow *RendererManager_GetMainWindow()
-{
-    if (RENDERER_MAIN_WINDOW == NULL)
-    {
-        RENDERER_MAIN_WINDOW = (RendererWindow *)malloc(sizeof(RendererWindow));
-        DebugAssert(RENDERER_MAIN_WINDOW != NULL, "Memory allocation failed.");
-
-        RENDERER_MAIN_WINDOW->windowHandle = stdscr;
-        RENDERER_MAIN_WINDOW->title = "Main Window";
-        RENDERER_MAIN_WINDOW->size = NewVector2Int(COLS, LINES);
-        RENDERER_MAIN_WINDOW->relativePosition = NewVector2Int(0, 0);
-        RENDERER_MAIN_WINDOW->globalPosition = NewVector2Int(0, 0);
-        RENDERER_MAIN_WINDOW->parent = NULL;
-
-        RendererWindow_SetDefaultAttribute(RENDERER_MAIN_WINDOW, RENDERER_DEFAULT_TEXT_ATTRIBUTE);
-
-        DebugInfo("Main window created successfully. Terminal size : (%d, %d)", RENDERER_MAIN_WINDOW->size.x, RENDERER_MAIN_WINDOW->size.y);
-    }
-
-    return RENDERER_MAIN_WINDOW;
 }
 
 void RendererManager_SetCursorVisibility(RendererCursorVisibility visibility)
@@ -265,6 +240,19 @@ void RendererWindow_Clear(RendererWindow *window)
     wclear(window->windowHandle);
 
     DebugInfo("Renderer window '%s' cleared successfully.", window->title);
+}
+
+void RendererWindow_SetCursorPosition(RendererWindow *window, Vector2Int position)
+{
+    if (position.x < 0 || position.x > window->size.x ||
+        position.y < 0 || position.y > window->size.y)
+    {
+        DebugWarning("Renderer window '%s': Invalid cursor position (%d, %d). Position must be within the window size (%d, %d).", window->title, position.x, position.y, window->size.x, window->size.y);
+        position.x = position.x < 0 ? 0 : (position.x > window->size.x ? window->size.x - 1 : position.x);
+        position.y = position.y < 0 ? 0 : (position.y > window->size.y ? window->size.y - 1 : position.y);
+    }
+
+    wmove(window->windowHandle, position.y, position.x);
 }
 
 void RendererWindow_PutCharToPosition(RendererWindow *window, Vector2Int position, RendererTextAttribute *attributeMask, bool override, char charToPut)

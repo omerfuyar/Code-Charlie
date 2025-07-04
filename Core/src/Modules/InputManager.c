@@ -180,7 +180,7 @@ InputKey INPUT_KEY_FUNCTIONS[INPUT_KEY_FUNCTION_SIZE] = {
     {InputKeyCode_F12, InputKeyState_Released}  // 11
 };
 
-#pragma endregion
+#pragma endregion Source Only
 
 void InputManager_Initialize()
 {

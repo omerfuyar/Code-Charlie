@@ -20,7 +20,7 @@ typedef struct Timer
     bool isRunning;
 } Timer;
 
-#pragma endregion
+#pragma endregion typedefs
 
 #define TIMEPOINT_KOLPA ((TimePoint){-1, -1})
 

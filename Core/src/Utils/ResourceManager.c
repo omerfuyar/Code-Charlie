@@ -68,9 +68,9 @@ ListArray *Resource_GetAsEnvironmentObjectArray(Resource *resource, const string
     stringStack pairSave = NULL;
 
 #if PLATFORM_WINDOWS
-    stringHeap line = strtok_s(dataCopy, "\n", lineSave);
+    stringHeap line = strtok_s(dataCopy, "\n", &lineSave);
 #else
-    stringHeap line = strtok_r(dataCopy, "\n", lineSave);
+    stringHeap line = strtok_r(dataCopy, "\n", &lineSave);
 #endif
 
     while (line != NULL)
@@ -115,7 +115,7 @@ stringHeap Resource_GetEnvironmentObjectValue(const string path, const string ke
 
         if (strcmp(envObject.key, key) == 0)
         {
-            DebugInfo("Key '%s' found in resource '%s'. Returning value '%s'.", key, resource->title, envObject.value);
+            DebugInfo("Key '%s' found in resource '%s' in '%s'. Returning value '%s'.", key, resource->title, resource->path, envObject.value);
             Resource_Destroy(resource);
             ListArray_Destroy(envObjects);
 #if PLATFORM_WINDOWS

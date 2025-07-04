@@ -57,7 +57,7 @@
 // The speed of light in m/s
 #define C 299792458.0f
 
-#pragma endregion
+#pragma endregion Constants
 
 #pragma region Core
 
@@ -101,7 +101,7 @@ void Core_SleepMilliseconds(unsigned long nanoseconds);
 /// @note The log message is written to a file named 'DEBUG_FILE_NAME'. Directory and name can be changed by modifying the macro.
 void Core_DebugLog(const char *header, const char *file, int line, const char *function, const char *format, ...);
 
-#pragma endregion
+#pragma endregion Core
 
 #pragma region Debug
 
@@ -171,4 +171,4 @@ void Core_DebugLog(const char *header, const char *file, int line, const char *f
     } while (false)
 #endif
 
-#pragma endregion
+#pragma endregion Debug

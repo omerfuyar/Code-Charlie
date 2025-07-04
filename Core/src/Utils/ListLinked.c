@@ -117,7 +117,7 @@ long long ListLinkedNode_GetIndexIfMatch(ListLinkedNode *node, size_t sizeOfItem
     }
 }
 
-#pragma endregion
+#pragma endregion Source Only
 
 ListLinked *ListLinked_Create(size_t sizeOfItem)
 {

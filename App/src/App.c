@@ -4,10 +4,21 @@
 #include "Modules/NetworkManager.h"
 #include "Utils/ResourceManager.h"
 
+char OPEN_AI_API_KEY[256];
 Vector2Int terminalSize;
 RendererWindow *rightWindow;
 RendererWindow *leftTopWindow;
 RendererWindow *leftBottomWindow;
+
+void App_OnNetworkResponseFinal(const NetworkResponse *response)
+{
+    DebugWarning("Network response received finally with code '%d' and size '%zu': \n'%s'", response->code, strlen(response->body), response->body);
+}
+
+void App_OnNetworkResponseChunk(void *data, size_t dataSize, void *userData)
+{
+    DebugWarning("Network response received chunk with size '%zu': \n'%.*s'", dataSize, (int)dataSize, (char *)data);
+}
 
 void App_Start()
 {
@@ -24,20 +35,18 @@ void App_Start()
     RendererWindow_UpdateContent(leftBottomWindow);
 }
 
-void App_OnNetworkResponse(const NetworkResponse *response)
-{
-    DebugWarning("Data received: \n%s", response->body);
-}
-
 void App_StartLate()
 {
-    stringStack data = "{"
-                       "\"model\": \"gpt-3.5-turbo\","
-                       "\"messages\": [{\"role\": \"user\", \"content\": \"Hello World!\"}]"
-                       "}";
-    NetworkRequest *request = NetworkRequest_Create(NetworkRequestType_POST, "https://api.openai.com/v1/chat/completions", data, strlen(data), true);
+    strcpy(OPEN_AI_API_KEY, Resource_GetEnvironmentObjectValue(NETWORK_MANAGER_ENV_FILE, "OPENAI_API_KEY"));
+    stringStack requestData = "{\"model\": \"gpt-3.5-turbo\",\"messages\": [{\"role\": \"user\", \"content\": \"Hello World!\"}]}";
+    stringStack requestUrl = "https://api.openai.com/v1/chat/completions";
+    char bearerToken[256];
+    snprintf(bearerToken, sizeof(bearerToken), "Bearer %s", OPEN_AI_API_KEY);
+    NetworkRequestHeader headers[] = {{"Authorization", bearerToken}, {"Content-Type", "application/json"}};
 
-    NetworkManager_Request(request, App_OnNetworkResponse);
+    NetworkRequest *request = NetworkRequest_Create(NetworkRequestType_POST, requestUrl, requestData, strlen(requestData), true, headers, sizeof(headers) / sizeof(NetworkRequestHeader));
+
+    NetworkRequest_Request(request, App_OnNetworkResponseFinal, App_OnNetworkResponseChunk);
 }
 
 void App_Update()

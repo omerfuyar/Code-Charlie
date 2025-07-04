@@ -27,7 +27,7 @@ typedef struct GPIOChip
     const stringHeap chipPath;
 } GPIOChip;
 
-#pragma endregion
+#pragma endregion Source Only
 
 GPIOChip *GPIOChip_Create(const string chipPath)
 {

@@ -79,7 +79,7 @@ Matrix2 Matrix2_Translate(const Matrix2 *matrix, float translateX, float transla
     return *matrix;
 }
 
-#pragma endregion
+#pragma endregion Matrix2
 
 #pragma region Matrix3
 
@@ -153,7 +153,7 @@ Matrix3 Matrix3_Translate(const Matrix3 *matrix, float translateX, float transla
     return Matrix3_Dot(matrix, &translationMatrix);
 }
 
-#pragma endregion
+#pragma endregion Matrix3
 
 #pragma region Matrix4
 
@@ -249,4 +249,4 @@ Matrix4 Matrix4_Translate(const Matrix4 *matrix, float translateX, float transla
     return Matrix4_Dot(matrix, &translationMatrix);
 }
 
-#pragma endregion
+#pragma endregion Matrix4

@@ -7,14 +7,7 @@
 
 #pragma region Source Only
 
-#if PLATFORM_WINDOWS
-#define NETWORK_MANAGER_ENV_FILE "C:\\Users\\omruyr\\Documents\\Programming\\Code-Charlie\\.env"
-#else
-#define NETWORK_MANAGER_ENV_FILE "/home/omruyr/Documents/Programming/Code-Charlie/.env"
-#endif
-
-char openAIAPIKey[256];
-NetworkResponseCallback currentCallback = NULL;
+NetworkResponseChunkCallback CURRENT_CHUNK_CALLBACK = NULL;
 
 typedef struct NetworkRequest
 {
@@ -24,27 +17,33 @@ typedef struct NetworkRequest
     void *data;
     size_t dataSize;
     bool singleUse;
+    NetworkRequestHeader *headers;
+    size_t headerCount;
 } NetworkRequest;
 
 /// @brief Callback function for writing data received from a network request.
-/// @param data Received data from the network request.
-/// @param dataSize Size of the received data in bytes.
-/// @param elementCount Number of elements in the received data.
-/// @param userData User data which setted with CURLOPT_WRITEDATA option.
+/// @param data Received data from the network request. Not null terminated.
+/// @param elementCount Number of elements in the data. (curl says it is always 1)
+/// @param dataSize Size of the data element.
+/// @param userData User data which setted with CURLOPT_WRITEDATA option. Null terminated.
 /// @return Number of bytes processed.
-size_t NetworkManager_WriteCallback(void *data, size_t dataSize, size_t elementCount, void *userData)
+size_t NetworkManager_WriteCallback(void *data, size_t elementCount, size_t dataSize, void *userData)
 {
-    DebugInfo("NetworkManager_WriteCallback called with dataSize: %zu, elementCount: %zu", dataSize, elementCount);
-    strncat((string)userData, (string)data, dataSize * elementCount);
-    return dataSize * elementCount;
+    if (CURRENT_CHUNK_CALLBACK != NULL)
+    {
+        CURRENT_CHUNK_CALLBACK(data, elementCount * dataSize, userData);
+    }
+
+    strncat((string)userData, (string)data, elementCount * dataSize);
+
+    return elementCount * dataSize;
 }
 
-#pragma endregion
+#pragma endregion Source Only
 
 void NetworkManager_Initialize()
 {
     curl_global_init(CURL_GLOBAL_DEFAULT);
-    strcpy(openAIAPIKey, Resource_GetEnvironmentObjectValue(NETWORK_MANAGER_ENV_FILE, "OPENAI_API_KEY"));
 }
 
 void NetworkManager_Terminate()
@@ -52,7 +51,7 @@ void NetworkManager_Terminate()
     curl_global_cleanup();
 }
 
-NetworkRequest *NetworkRequest_Create(NetworkRequestType type, string url, void *data, size_t dataSize, bool singleUse)
+NetworkRequest *NetworkRequest_Create(NetworkRequestType type, string url, void *data, size_t dataSize, bool singleUse, NetworkRequestHeader *headers, size_t headerCount)
 {
     DebugAssert(url != NULL, "Null pointer passed as parameter. URL cannot be NULL.");
 
@@ -64,17 +63,26 @@ NetworkRequest *NetworkRequest_Create(NetworkRequestType type, string url, void 
     request->data = data;
     request->dataSize = dataSize;
     request->singleUse = singleUse;
+    request->headers = headers;
+    request->headerCount = headerCount;
     request->handle = NULL;
 
     return request;
 }
 
-void NetworkManager_Request(NetworkRequest *request, NetworkResponseCallback callback)
+void NetworkRequest_Destroy(NetworkRequest *request)
+{
+    DebugAssert(request != NULL, "Null pointer passed as parameter. Network Request cannot be NULL.");
+
+    free(request);
+}
+
+void NetworkRequest_Request(NetworkRequest *request, NetworkResponseFinishCallback finishCallback, NetworkResponseChunkCallback chunkCallback)
 {
     DebugAssert(request != NULL, "Null pointer passed as parameter. Network Request cannot be NULL.");
 
     request->handle = curl_easy_init();
-    DebugAssert(request->handle != NULL, "Failed to initialize CURL request handle.");
+    DebugAssert(request->handle != NULL, "Failed to get CURL request handle.");
 
     NetworkResponse response = {
         "",
@@ -83,37 +91,74 @@ void NetworkManager_Request(NetworkRequest *request, NetworkResponseCallback cal
 
     struct curl_slist *headers = NULL;
 
-    char headerAuthorization[256];
-    snprintf(headerAuthorization, sizeof(headerAuthorization), "Authorization: Bearer %s", openAIAPIKey);
-
-    headers = curl_slist_append(headers, "Content-Type: application/json");
-    headers = curl_slist_append(headers, headerAuthorization);
-
-    DebugAssert(request->dataSize < NETWORK_MANAGER_MAX_REQUEST_DATA_LENGTH, "Data size exceeds maximum request data length.");
-    char dataBuffer[NETWORK_MANAGER_MAX_REQUEST_DATA_LENGTH] = {0};
-    strncpy(dataBuffer, request->data, request->dataSize);
-    request->data = dataBuffer;
-
     curl_easy_setopt(request->handle, CURLOPT_URL, request->url);
-    curl_easy_setopt(request->handle, CURLOPT_HTTPHEADER, headers);
-    curl_easy_setopt(request->handle, CURLOPT_POSTFIELDS, request->data);
-    curl_easy_setopt(request->handle, CURLOPT_POSTFIELDSIZE, request->dataSize);
     curl_easy_setopt(request->handle, CURLOPT_WRITEFUNCTION, NetworkManager_WriteCallback);
     curl_easy_setopt(request->handle, CURLOPT_WRITEDATA, response.body);
 
+    switch (request->type)
+    {
+    case NetworkRequestType_GET:
+        break;
+
+    case NetworkRequestType_POST:
+    {
+
+        headers = curl_slist_append(headers, "Content-Type: application/json");
+        for (size_t i = 0; i < request->headerCount; i++)
+        {
+            NetworkRequestHeader *header = &request->headers[i];
+            DebugAssert(header->key != NULL && header->value != NULL, "Header key or value cannot be NULL.");
+            char headerString[256];
+            snprintf(headerString, sizeof(headerString), "%s: %s", header->key, header->value);
+            headers = curl_slist_append(headers, headerString);
+        }
+
+        curl_easy_setopt(request->handle, CURLOPT_HTTPHEADER, headers);
+
+        // Set the POST data directly from the request struct
+        DebugAssert(request->data != NULL, "POST request data cannot be NULL.");
+        curl_easy_setopt(request->handle, CURLOPT_POSTFIELDS, request->data);
+        curl_easy_setopt(request->handle, CURLOPT_POSTFIELDSIZE, request->dataSize);
+    }
+    break;
+
+    default:
+        DebugError("Unsupported NetworkRequestType: %d", request->type);
+        curl_easy_cleanup(request->handle);
+        return;
+    }
+
+    DebugInfo("Network request sent to '%s'. Body: \n'%s'", request->url, (char *)request->data);
+
+    if (finishCallback != NULL)
+    {
+        CURRENT_CHUNK_CALLBACK = chunkCallback;
+    }
     response.code = (NetworkResponseCode)curl_easy_perform(request->handle);
     if (response.code != NetworkResponseCode_Ok)
     {
-        DebugWarning("CURL request failed with error code: %s", curl_easy_strerror((CURLcode)response.code));
+        DebugError("CURL request failed with error code: %s", curl_easy_strerror((CURLcode)response.code));
     }
 
-    callback(&response);
+    if (finishCallback != NULL)
+    {
+        finishCallback(&response);
+    }
+
+    CURRENT_CHUNK_CALLBACK = NULL;
 
     if (request->singleUse)
     {
-        free(request);
+        NetworkRequest_Destroy(request);
     }
 
-    curl_slist_free_all(headers);
-    curl_easy_cleanup(request->handle);
+    if (headers)
+    {
+        curl_slist_free_all(headers);
+    }
+
+    if (request->handle)
+    {
+        curl_easy_cleanup(request->handle);
+    }
 }

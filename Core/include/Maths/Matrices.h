@@ -22,7 +22,7 @@ typedef struct Matrix4
     float matrix[4][4];
 } Matrix4;
 
-#pragma endregion
+#pragma endregion typedefs
 
 #pragma region Matrix2
 
@@ -78,7 +78,7 @@ Matrix2 Matrix2_Rotate(const Matrix2 *matrix, float angle);
 /// @return The translated matrix.
 Matrix2 Matrix2_Translate(const Matrix2 *matrix, float translateX, float translateY);
 
-#pragma endregion
+#pragma endregion Matrix2
 
 #pragma region Matrix3
 
@@ -134,7 +134,7 @@ Matrix3 Matrix3_Rotate(const Matrix3 *matrix, float angle);
 /// @return The translated matrix.
 Matrix3 Matrix3_Translate(const Matrix3 *matrix, float translateX, float translateY);
 
-#pragma endregion
+#pragma endregion Matrix3
 
 #pragma region Matrix4
 
@@ -195,4 +195,4 @@ Matrix4 Matrix4_Rotate(const Matrix4 *matrix, float angle, float x, float y, flo
 /// @return The translated matrix.
 Matrix4 Matrix4_Translate(const Matrix4 *matrix, float translateX, float translateY, float translateZ);
 
-#pragma endregion
+#pragma endregion Matrix4

@@ -43,7 +43,7 @@ Vector2 Vector2_Lerp(Vector2 startVector, Vector2 endVector, float time)
         startVector.y + (endVector.y - startVector.y) * time};
 }
 
-#pragma endregion
+#pragma endregion Vector2
 
 #pragma region Vector3
 
@@ -88,7 +88,7 @@ Vector3 Vector3_Lerp(Vector3 startVector, Vector3 endVector, float time)
         startVector.z + (endVector.z - startVector.z) * time};
 }
 
-#pragma endregion
+#pragma endregion Vector3
 
 #pragma region Vector4
 
@@ -134,7 +134,7 @@ Vector4 Vector4_Lerp(Vector4 startVector, Vector4 endVector, float time)
         startVector.w + (endVector.w - startVector.w) * time};
 }
 
-#pragma endregion
+#pragma endregion Vector4
 
 #pragma region Vector2Int
 
@@ -163,7 +163,7 @@ float Vector2Int_Dot(Vector2Int vector1, Vector2Int vector2)
     return (vector1.x * vector2.x) + (vector1.y * vector2.y);
 }
 
-#pragma endregion
+#pragma endregion Vector2Int
 
 #pragma region Vector3Int
 
@@ -192,7 +192,7 @@ float Vector3Int_Dot(Vector3Int vector1, Vector3Int vector2)
     return (vector1.x * vector2.x) + (vector1.y * vector2.y) + (vector1.z * vector2.z);
 }
 
-#pragma endregion
+#pragma endregion Vector3Int
 
 #pragma region Vector4Int
 
@@ -221,4 +221,4 @@ float Vector4Int_Dot(Vector4Int vector1, Vector4Int vector2)
     return (vector1.x * vector2.x) + (vector1.y * vector2.y) + (vector1.z * vector2.z) + (vector1.w * vector2.w);
 }
 
-#pragma endregion
+#pragma endregion Vector4Int

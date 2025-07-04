@@ -147,7 +147,7 @@ typedef enum InputKeyCode
     InputKeyCode_F12 = 276
 } InputKeyCode;
 
-#pragma endregion
+#pragma endregion InputKeyCode
 
 /// @brief Initialize the input manager. Should not be used by app.
 void InputManager_Initialize();

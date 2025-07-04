@@ -60,7 +60,7 @@ typedef struct RendererTextAttribute RendererTextAttribute;
 /// @brief Window structure for rendering text in the terminal. Wrapper for ncurses window with some additions.
 typedef struct RendererWindow RendererWindow;
 
-#pragma endregion
+#pragma endregion typedefs
 
 /// @brief Global pointer to the main renderer window.
 extern RendererWindow *RENDERER_MAIN_WINDOW;
@@ -79,10 +79,6 @@ void RendererManager_Terminate();
 /// @param colorToChangeTo The RGB values to change the color to.
 /// @note Should be used within only 0-1000 range. User's terminal should support changing colors.
 void RendererManager_ChangeColor(RendererColor color, Vector3Int colorToChangeTo);
-
-/// @brief Getter function for the main renderer window.
-/// @return The main window application running in the terminal.
-RendererWindow *RendererManager_GetMainWindow();
 
 /// @brief Sets the visibility of the cursor in the terminal.
 /// @param visibility The desired cursor visibility.
@@ -128,6 +124,11 @@ void RendererWindow_UpdateAppearance(RendererWindow *window);
 /// @brief Clears the renderer window. Deletes all the content.
 /// @param window The renderer window to clear.
 void RendererWindow_Clear(RendererWindow *window);
+
+/// @brief Moves the cursor to the specified position in the window.
+/// @param window Window to move the cursor in.
+/// @param position Position to move the cursor to.
+void RendererWindow_SetCursorPosition(RendererWindow *window, Vector2Int position);
 
 /// @brief Puts a character at a specific position in the renderer window.
 /// @param window The renderer window.

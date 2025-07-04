@@ -16,7 +16,7 @@ typedef struct EnvironmentObject
     char value[RESOURCE_MANAGER_MAX_PAIR_ELEMENT_LENGTH];
 } EnvironmentObject;
 
-#pragma endregion
+#pragma endregion typedefs
 
 Resource *Resource_Create(const string path, const string name, unsigned int maxLineCharCount, unsigned int maxLineCount);
 
