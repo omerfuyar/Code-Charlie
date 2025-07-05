@@ -20,6 +20,8 @@ void Core_Run(Core_VoidToVoid start, Core_VoidToVoid lateStart, Core_VoidToVoid 
     UPDATE = update;
     UPDATE_LATE = lateUpdate;
 
+    remove(DEBUG_FILE_NAME);
+
     RendererManager_Initialize();
     InputManager_Initialize();
     NetworkManager_Initialize();

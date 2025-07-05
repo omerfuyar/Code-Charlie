@@ -108,7 +108,7 @@ void Core_DebugLog(const char *header, const char *file, int line, const char *f
 #define DEBUG_ERROR_ENABLED true
 #define DEBUG_ASSERT_ENABLED true
 
-#define DEBUG_TERMINATE_ON_ERROR false
+#define DEBUG_TERMINATE_ON_ERROR true
 #define DEBUG_TERMINATE_ON_ASSERT true
 
 #define DEBUG_PERROR_NOTE_ENABLED false

@@ -165,12 +165,13 @@ NetworkResponse *NetworkRequest_Request(NetworkRequest *request, NetworkResponse
         CURRENT_CHUNK_CALLBACK = chunkCallback;
     }
 
-    DebugInfo("Network request sent to '%s'. Body: \n'%s'", request->url, (char *)request->data);
+    DebugInfo("Network request sent to URL : '%s'\nRequest body : '%s'", request->url, (char *)request->data);
     Timer timer = Timer_CreateStack("Network Request Timer");
     Timer_Start(&timer);
     response->code = (NetworkResponseCode)curl_easy_perform(requestHandle);
     Timer_Stop(&timer);
-    DebugInfo("CURL request response received. Time taken: %f ms, Response code: %d", Timer_GetElapsedNanoseconds(&timer) / 1000000.0f, response->code);
+    DebugInfo("Network response received. Time taken: %f ms, response code: %d", Timer_GetElapsedNanoseconds(&timer) / 1000000.0f, response->code);
+    DebugWarning("Response from URL : '%s'\nResponse body : %s", request->url, response->body);
 
     if (response->code != NetworkResponseCode_Ok)
     {
@@ -207,4 +208,18 @@ NetworkResponse *NetworkRequest_Request(NetworkRequest *request, NetworkResponse
     }
 
     return response;
+}
+
+void NetworkResponse_Destroy(NetworkResponse *response)
+{
+    DebugAssert(response != NULL, "Null pointer passed as parameter. Network Response cannot be NULL.");
+    DebugAssert(response->body != NULL, "Null pointer passed as parameter. Network Response body cannot be NULL.");
+
+    free(response->body);
+    response->body = NULL;
+
+    free(response);
+    response = NULL;
+
+    DebugInfo("Network response destroyed.");
 }

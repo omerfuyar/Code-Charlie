@@ -1,4 +1,6 @@
 #include "AI/AIManager.h"
+#include "Modules/NetworkManager.h"
+#include "Utils/cJSON.h"
 
 #pragma region Source Only
 
@@ -38,6 +40,9 @@ void AIChat_Destroy(AIChat *chat)
 {
     DebugAssert(chat != NULL, "Null pointer passed as parameter. Chat cannot be NULL.");
 
+    char tempTitle[strlen(chat->title) + 1];
+    strcpy(tempTitle, chat->title);
+
     free(chat->title);
     free(chat->model);
     free(chat->apiUrl);
@@ -56,8 +61,54 @@ void AIChat_Destroy(AIChat *chat)
 
     free(chat);
     chat = NULL;
+
+    DebugInfo("AI Chat %s destroyed successfully.", tempTitle);
 }
 
 stringHeap AIChat_SendAndReceive(const AIChat *chat, const string message)
 {
+    DebugAssert(chat != NULL, "Null pointer passed as parameter. Chat cannot be NULL.");
+    DebugAssert(message != NULL, "Null pointer passed as parameter. Message cannot be NULL.");
+
+    char query[1024];
+    snprintf(query, sizeof(query), "{\"model\": \"%s\",\"messages\": [{\"role\": \"user\", \"content\": \"%s\"}]}", chat->model, message);
+
+    char bearerToken[256];
+    snprintf(bearerToken, sizeof(bearerToken), "Bearer %s", chat->apiKey);
+
+    NetworkRequestHeader headers[] = {
+        {"Authorization", bearerToken},
+        {"Content-Type", "application/json"}};
+
+    NetworkRequest *request = NetworkRequest_Create(NetworkRequestType_POST, chat->apiUrl, query, strlen(query), false, headers, sizeof(headers) / sizeof(NetworkRequestHeader));
+
+    NetworkResponse *response = NetworkRequest_Request(request, NULL, NULL);
+
+    stringHeap responseString = StringDuplicate(response->body);
+
+    NetworkResponse_Destroy(response);
+    NetworkRequest_Destroy(request);
+
+    cJSON *jsonResponse = cJSON_Parse(responseString);
+    DebugAssert(jsonResponse != NULL, "Failed to parse JSON response from AI Chat : '%s'", cJSON_GetErrorPtr());
+
+    cJSON *choices = cJSON_GetObjectItemCaseSensitive(jsonResponse, "choices");
+    DebugAssert(cJSON_IsArray(choices), "Expected 'choices' to be an array.");
+
+    cJSON *choice = cJSON_GetArrayItem(choices, 0);
+    DebugAssert(choice != NULL, "No choices found in the response from AI Chat.");
+
+    cJSON *messageItem = cJSON_GetObjectItemCaseSensitive(choice, "message");
+    DebugAssert(messageItem != NULL, "No message found in the choice from AI Chat.");
+
+    cJSON *content = cJSON_GetObjectItemCaseSensitive(messageItem, "content");
+    DebugAssert(content != NULL, "No content found in the message from AI Chat.");
+
+    free(responseString);
+    responseString = StringDuplicate(cJSON_GetStringValue(content));
+
+    cJSON_Delete(jsonResponse);
+
+    DebugInfo("Message sent to AI Chat '%s'. Response received.", chat->title);
+    return responseString;
 }

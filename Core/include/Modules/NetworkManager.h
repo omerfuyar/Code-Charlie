@@ -8,12 +8,6 @@
 
 #define NETWORK_MANAGER_MAX_RESPONSE_DATA_LENGTH 8192
 
-#if PLATFORM_WINDOWS
-#define NETWORK_MANAGER_ENV_FILE "C:\\Users\\omruyr\\Documents\\Programming\\Code-Charlie\\.env"
-#else
-#define NETWORK_MANAGER_ENV_FILE "/home/omruyr/Projects/Code-Charlie/.env"
-#endif
-
 /// @brief Enum representing the response codes for network requests.
 typedef enum NetworkResponseCode
 {
@@ -224,3 +218,7 @@ void NetworkRequest_Destroy(NetworkRequest *request);
 ///@param chunkCallback The callback function to handle response chunks. Can be NULL.
 /// @return The response from the network request or NULL if error. Response is allocated on heap and must be freed by the caller.
 NetworkResponse *NetworkRequest_Request(NetworkRequest *request, NetworkResponseFinishCallback finishCallback, NetworkResponseChunkCallback chunkCallback);
+
+/// @brief Destroys the network response and frees its resources.
+/// @param response The network response to destroy.
+void NetworkResponse_Destroy(NetworkResponse *response);

@@ -269,30 +269,40 @@ void RendererWindow_SetCursorPosition(const RendererWindow *window, Vector2Int p
     DebugInfo("Renderer window '%s': Cursor moved to position (%d, %d) successfully.", window->title, position.x, position.y);
 }
 
-void RendererWindow_PutCharToPosition(const RendererWindow *window, Vector2Int position, const RendererTextAttribute *attributeMask, bool override, char charToPut)
+Vector2Int RendererWindow_GetCursorPosition(const RendererWindow *window)
 {
     DebugAssert(window != NULL, "Null pointer passed as parameter. Renderer window cannot be NULL.");
-    DebugAssert(attributeMask != NULL, "Null pointer passed as parameter. Renderer text attribute cannot be NULL.");
+
+    int y, x;
+    getyx(window->windowHandle, y, x);
+    Vector2Int cursorPosition = NewVector2Int(x, y);
+
+    DebugInfo("Renderer window '%s': Cursor position retrieved successfully: (%d, %d).", window->title, cursorPosition.x, cursorPosition.y);
+    return cursorPosition;
+}
+
+void RendererWindow_PutCharToPosition(const RendererWindow *window, Vector2Int position, const RendererTextAttribute *attribute, bool override, char charToPut)
+{
+    DebugAssert(window != NULL, "Null pointer passed as parameter. Renderer window cannot be NULL.");
 
     RendererWindow_SetCursorPosition(window, position);
-    RendererTextAttribute_Enable(attributeMask);
+    RendererTextAttribute_Enable(attribute ? attribute : window->defaultAttribute);
     if (override)
     {
         waddch(window->windowHandle, '\b');
     }
     waddch(window->windowHandle, charToPut);
-    RendererTextAttribute_Disable(attributeMask);
+    RendererTextAttribute_Disable(attribute ? attribute : window->defaultAttribute);
 
     DebugInfo("Window '%s': Character '%c' put to position (%d, %d) successfully.", window->title, charToPut, position.x, position.y);
 }
 
-void RendererWindow_PutStringToPosition(const RendererWindow *window, Vector2Int position, const RendererTextAttribute *attributeMask, bool override, const string stringToPut, ...)
+void RendererWindow_PutStringToPosition(const RendererWindow *window, Vector2Int position, const RendererTextAttribute *attribute, bool override, const string stringToPut, ...)
 {
     DebugAssert(window != NULL, "Null pointer passed as parameter. Renderer window cannot be NULL.");
-    DebugAssert(attributeMask != NULL, "Null pointer passed as parameter. Renderer text attribute cannot be NULL.");
 
     RendererWindow_SetCursorPosition(window, position);
-    RendererTextAttribute_Enable(attributeMask);
+    RendererTextAttribute_Enable(attribute ? attribute : window->defaultAttribute);
     va_list args;
     va_start(args, stringToPut);
     if (override)
@@ -304,9 +314,45 @@ void RendererWindow_PutStringToPosition(const RendererWindow *window, Vector2Int
     }
     vw_printw(window->windowHandle, stringToPut, args);
     va_end(args);
-    RendererTextAttribute_Disable(attributeMask);
+    RendererTextAttribute_Disable(attribute ? attribute : window->defaultAttribute);
 
     DebugInfo("Window '%s': String '%s' put to position (%d, %d) successfully.", window->title, stringToPut, position.x, position.y);
+}
+
+void RendererWindow_PutStringToPositionWrap(const RendererWindow *window, Vector2Int position, const RendererTextAttribute *attribute, bool override, const string stringToPut, ...)
+{
+    DebugAssert(window != NULL, "Null pointer passed as parameter. Renderer window cannot be NULL.");
+
+    Vector2Int maxBounds = NewVector2Int(window->size.x - 2, window->size.y - 2);
+
+    stringHeap textCopy = StringDuplicate(stringToPut);
+    stringHeap word = strtok(textCopy, " ");
+
+    RendererWindow_SetCursorPosition(window, NewVector2Int(position.x, position.y));
+
+    while (word != NULL)
+    {
+        Vector2Int cursorPos = RendererWindow_GetCursorPosition(window);
+
+        if (cursorPos.x + (int)strlen(word) > maxBounds.x)
+        {
+            cursorPos.y++;
+            cursorPos.x = position.x;
+
+            if (cursorPos.y > maxBounds.y)
+            {
+                break;
+            }
+
+            RendererWindow_SetCursorPosition(window, cursorPos);
+        }
+
+        RendererWindow_PutStringToPosition(window, cursorPos, attribute, override, "%s ", word);
+
+        word = strtok(NULL, " ");
+    }
+
+    free(textCopy);
 }
 
 Vector2Int RendererWindow_GetWindowSize(const RendererWindow *window)

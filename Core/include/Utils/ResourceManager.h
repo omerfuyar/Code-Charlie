@@ -8,6 +8,12 @@
 #define RESOURCE_MANAGER_MAX_PAIR_ELEMENT_LENGTH 256
 #define RESOURCE_MANAGER_DEFAULT_LINE_COUNT 128
 
+#if PLATFORM_WINDOWS
+#define NETWORK_MANAGER_ENV_FILE "C:\\Users\\omruyr\\Documents\\Programming\\Code-Charlie\\.env"
+#else
+#define NETWORK_MANAGER_ENV_FILE "/home/omruyr/Projects/Code-Charlie/.env"
+#endif
+
 typedef struct Resource Resource;
 
 typedef struct EnvironmentObject
