@@ -2,15 +2,12 @@
 
 #include "Core.h"
 
-// #define INPUT_KEY_BUFFER_SIZE 8
+#include "Maths/Vectors.h"
 
 #pragma region typedefs
 
-typedef enum InputMode
-{
-    InputMode_Key,
-    InputMode_Text
-} InputMode;
+#define INPUT_STRING_FULL_BUFFER_SIZE 1024
+#define INPUT_STRING_WORD_BUFFER_SIZE 32
 
 typedef enum InputKeyState
 {
@@ -21,6 +18,7 @@ typedef enum InputKeyState
 typedef enum InputKeyCode
 {
     InputKeyCode_NULL = 0,
+    InputKeyCode_Backspace = 8,
     InputKeyCode_Tab = 9,
     InputKeyCode_Enter = 10,
     InputKeyCode_Escape = 27,
@@ -158,7 +156,7 @@ void InputManager_Terminate();
 /// @brief Poll the input manager for new input events. Should not be used by app.
 void InputManager_PollInputs();
 
-/// @brief Get whether a specific key is in a certain state.
+/// @brief Get whether a specific key is in a certain state. Input mode must be set to Key.
 /// @param keyToGet The key to get the state of.
 /// @param stateToCompare The state to compare against.
 /// @return True if the key is in the specified state, false otherwise.

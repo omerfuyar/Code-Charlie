@@ -60,13 +60,13 @@ typedef struct RendererTextAttribute RendererTextAttribute;
 /// @brief Window structure for rendering text in the terminal. Wrapper for ncurses window with some additions.
 typedef struct RendererWindow RendererWindow;
 
-#pragma endregion typedefs
-
 /// @brief Global pointer to the main renderer window.
 extern RendererWindow *RENDERER_MAIN_WINDOW;
 
 /// @brief Global pointer to the default text attribute.
 extern RendererTextAttribute *RENDERER_DEFAULT_TEXT_ATTRIBUTE;
+
+#pragma endregion typedefs
 
 /// @brief Initializes the renderer module. Should not be used by app.
 void RendererManager_Initialize();
@@ -135,34 +135,37 @@ void RendererWindow_SetCursorPosition(const RendererWindow *window, Vector2Int p
 /// @return The current cursor position as a Vector2Int.
 Vector2Int RendererWindow_GetCursorPosition(const RendererWindow *window);
 
-/// @brief Puts a character at a specific position in the renderer window.
+/// @brief Puts a character at a specific position in the renderer window. Overrides the content in position.
 /// @param window The renderer window.
 /// @param position The position to put the character. Relative to the window's position.
 /// @param attributeMask The text attribute to apply. If NULL, window default will be used.
-/// @param override Override the text that already in position.
 /// @param charToPut The character to put.
 /// @note Position origin is always top left corner
-void RendererWindow_PutCharToPosition(const RendererWindow *window, Vector2Int position, const RendererTextAttribute *attributeMask, bool override, char charToPut);
+void RendererWindow_PutCharToPosition(const RendererWindow *window, Vector2Int position, const RendererTextAttribute *attributeMask, char charToPut);
 
-/// @brief Puts a formatted string at a specific position in the renderer window.
+/// @brief Puts a formatted string at a specific position in the renderer window. Overrides the content in position.
 /// @param window The renderer window.
 /// @param position The position to put the string.
 /// @param attributeMask The text attribute to apply. If NULL, window default will be used.
 /// @param stringToPut The formatted string to put.
-/// @param override Override the text that already in position.
 /// @param ... Additional arguments for the formatted string.
 /// @note Position origin is always top left corner
-void RendererWindow_PutStringToPosition(const RendererWindow *window, Vector2Int position, const RendererTextAttribute *attributeMask, bool override, const string stringToPut, ...);
+void RendererWindow_PutStringToPosition(const RendererWindow *window, Vector2Int position, const RendererTextAttribute *attributeMask, const string stringToPut, ...);
 
-/// @brief Puts a formatted string at a specific position in the renderer window. Wraps the text if it exceeds the window width.
+/// @brief Puts a formatted string at a specific position in the renderer window. Wraps the text if it exceeds the window width. Overrides the content in position.
 /// @param window The renderer window.
 /// @param position The position to put the string.
 /// @param attributeMask The text attribute to apply. If NULL, window default will be used.
-/// @param override Override the text that already in position.
 /// @param stringToPut The formatted string to put.
 /// @param ... Additional arguments for the formatted string.
 /// @note Position origin is always top left corner
-void RendererWindow_PutStringToPositionWrap(const RendererWindow *window, Vector2Int position, const RendererTextAttribute *attributeMask, bool override, const string stringToPut, ...);
+void RendererWindow_PutStringToPositionWrap(const RendererWindow *window, Vector2Int position, const RendererTextAttribute *attributeMask, const string stringToPut, ...);
+
+/// @brief Gets a string from the input manager at the specified position.
+/// @param window The renderer window to get the string from.
+/// @param position The position to get the string from.
+/// @return The string at the specified position.
+stringHeap RendererManager_GetStringAtPositionWrap(const RendererWindow *window, Vector2Int position);
 
 /// @brief Gets the size of the renderer window.
 /// @param window The renderer window.

@@ -129,7 +129,6 @@ NetworkResponse *NetworkRequest_Request(NetworkRequest *request, NetworkResponse
         break;
 
     case NetworkRequestType_POST:
-    {
         for (size_t i = 0; i < request->headerCount; i++)
         {
             NetworkRequestHeader *header = &request->headers[i];
@@ -142,8 +141,7 @@ NetworkResponse *NetworkRequest_Request(NetworkRequest *request, NetworkResponse
         curl_easy_setopt(requestHandle, CURLOPT_HTTPHEADER, headers);
         curl_easy_setopt(requestHandle, CURLOPT_POSTFIELDS, request->data);
         curl_easy_setopt(requestHandle, CURLOPT_POSTFIELDSIZE, request->dataSize);
-    }
-    break;
+        break;
 
     default:
         free(response->body);
@@ -171,7 +169,7 @@ NetworkResponse *NetworkRequest_Request(NetworkRequest *request, NetworkResponse
     response->code = (NetworkResponseCode)curl_easy_perform(requestHandle);
     Timer_Stop(&timer);
     DebugInfo("Network response received. Time taken: %f ms, response code: %d", Timer_GetElapsedNanoseconds(&timer) / 1000000.0f, response->code);
-    DebugWarning("Response from URL : '%s'\nResponse body : %s", request->url, response->body);
+    DebugWarning("Response from URL : '%s'\nResponse body : '%s'", request->url, response->body);
 
     if (response->code != NetworkResponseCode_Ok)
     {

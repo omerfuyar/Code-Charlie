@@ -1,5 +1,7 @@
 #include "Modules/RenderManager.h"
 
+#include "Modules/InputManager.h"
+
 #if PLATFORM_WINDOWS
 #include <curses.h>
 #else
@@ -248,6 +250,7 @@ void RendererWindow_Clear(const RendererWindow *window)
     DebugAssert(window != NULL, "Null pointer passed as parameter. Renderer window cannot be NULL.");
 
     wclear(window->windowHandle);
+    box(window->windowHandle, '|', '-');
 
     DebugInfo("Renderer window '%s' cleared successfully.", window->title);
 }
@@ -266,7 +269,7 @@ void RendererWindow_SetCursorPosition(const RendererWindow *window, Vector2Int p
 
     wmove(window->windowHandle, position.y, position.x);
 
-    DebugInfo("Renderer window '%s': Cursor moved to position (%d, %d) successfully.", window->title, position.x, position.y);
+    // DebugInfo("Renderer window '%s': Cursor moved to position (%d, %d) successfully.", window->title, position.x, position.y);
 }
 
 Vector2Int RendererWindow_GetCursorPosition(const RendererWindow *window)
@@ -277,27 +280,20 @@ Vector2Int RendererWindow_GetCursorPosition(const RendererWindow *window)
     getyx(window->windowHandle, y, x);
     Vector2Int cursorPosition = NewVector2Int(x, y);
 
-    DebugInfo("Renderer window '%s': Cursor position retrieved successfully: (%d, %d).", window->title, cursorPosition.x, cursorPosition.y);
     return cursorPosition;
 }
 
-void RendererWindow_PutCharToPosition(const RendererWindow *window, Vector2Int position, const RendererTextAttribute *attribute, bool override, char charToPut)
+void RendererWindow_PutCharToPosition(const RendererWindow *window, Vector2Int position, const RendererTextAttribute *attribute, char charToPut)
 {
     DebugAssert(window != NULL, "Null pointer passed as parameter. Renderer window cannot be NULL.");
 
     RendererWindow_SetCursorPosition(window, position);
     RendererTextAttribute_Enable(attribute ? attribute : window->defaultAttribute);
-    if (override)
-    {
-        waddch(window->windowHandle, '\b');
-    }
     waddch(window->windowHandle, charToPut);
     RendererTextAttribute_Disable(attribute ? attribute : window->defaultAttribute);
-
-    DebugInfo("Window '%s': Character '%c' put to position (%d, %d) successfully.", window->title, charToPut, position.x, position.y);
 }
 
-void RendererWindow_PutStringToPosition(const RendererWindow *window, Vector2Int position, const RendererTextAttribute *attribute, bool override, const string stringToPut, ...)
+void RendererWindow_PutStringToPosition(const RendererWindow *window, Vector2Int position, const RendererTextAttribute *attribute, const string stringToPut, ...)
 {
     DebugAssert(window != NULL, "Null pointer passed as parameter. Renderer window cannot be NULL.");
 
@@ -305,30 +301,26 @@ void RendererWindow_PutStringToPosition(const RendererWindow *window, Vector2Int
     RendererTextAttribute_Enable(attribute ? attribute : window->defaultAttribute);
     va_list args;
     va_start(args, stringToPut);
-    if (override)
-    {
-        for (int i = 0; i < (int)strlen(stringToPut); i++)
-        {
-            waddch(window->windowHandle, '\b');
-        }
-    }
-    vw_printw(window->windowHandle, stringToPut, args);
+    wprintw(window->windowHandle, stringToPut, args);
     va_end(args);
     RendererTextAttribute_Disable(attribute ? attribute : window->defaultAttribute);
 
     DebugInfo("Window '%s': String '%s' put to position (%d, %d) successfully.", window->title, stringToPut, position.x, position.y);
 }
 
-void RendererWindow_PutStringToPositionWrap(const RendererWindow *window, Vector2Int position, const RendererTextAttribute *attribute, bool override, const string stringToPut, ...)
+void RendererWindow_PutStringToPositionWrap(const RendererWindow *window, Vector2Int position, const RendererTextAttribute *attribute, const string stringToPut, ...)
 {
     DebugAssert(window != NULL, "Null pointer passed as parameter. Renderer window cannot be NULL.");
 
     Vector2Int maxBounds = NewVector2Int(window->size.x - 2, window->size.y - 2);
 
-    stringHeap textCopy = StringDuplicate(stringToPut);
-    stringHeap word = strtok(textCopy, " ");
+    char buffer[4096];
+    va_list args;
+    va_start(args, stringToPut);
+    vsnprintf(buffer, sizeof(buffer), stringToPut, args);
+    va_end(args);
 
-    RendererWindow_SetCursorPosition(window, NewVector2Int(position.x, position.y));
+    stringStack word = strtok(buffer, " ");
 
     while (word != NULL)
     {
@@ -341,25 +333,115 @@ void RendererWindow_PutStringToPositionWrap(const RendererWindow *window, Vector
 
             if (cursorPos.y > maxBounds.y)
             {
-                break;
+                DebugError("Not enough vertical space.");
+                return;
             }
-
-            RendererWindow_SetCursorPosition(window, cursorPos);
         }
 
-        RendererWindow_PutStringToPosition(window, cursorPos, attribute, override, "%s ", word);
+        DebugInfo("word : %s ", word);
+        RendererWindow_PutStringToPosition(window, cursorPos, attribute, "%s ", word);
 
         word = strtok(NULL, " ");
     }
 
-    free(textCopy);
+    DebugInfo("Window '%s': Wrapped string put to position (%d, %d) successfully.", window->title, position.x, position.y);
+}
+
+void RendererWindow_DeleteRangeInPosition(const RendererWindow *window, Vector2Int position, size_t range)
+{
+    DebugAssert(window != NULL, "Null pointer passed as parameter. Renderer window cannot be NULL.");
+
+    for (size_t i = 0; i < range; i++)
+    {
+        RendererWindow_SetCursorPosition(window, position);
+        wdelch(window->windowHandle);
+        position.x++;
+    }
+}
+
+stringHeap RendererManager_GetStringAtPositionWrap(const RendererWindow *window, Vector2Int position)
+{
+    DebugAssert(window != NULL, "Null pointer passed as parameter. Renderer window cannot be NULL.");
+
+    RendererManager_SetCursorVisibility(RendererCursorVisibility_Visible);
+
+    char inputString[INPUT_STRING_FULL_BUFFER_SIZE] = {0};
+    size_t inputIndex = 0;
+
+    const Vector2Int maxBounds = NewVector2Int(window->size.x - 1, window->size.y - 1);
+    Vector2Int cursorPos = position;
+
+    stringHeap finalString;
+    int character;
+
+    RendererWindow_SetCursorPosition(window, cursorPos);
+
+    while ((character = wgetch(window->windowHandle)) != ERR)
+    {
+        if (inputIndex >= INPUT_STRING_FULL_BUFFER_SIZE - 2)
+        {
+            DebugError("Buffer overflow. Returning completed string.");
+            break;
+        }
+        else if (character == InputKeyCode_Enter || character == '\n') // enter
+        {
+            break;
+        }
+        else if ((character == InputKeyCode_Delete || character == '\b') && inputIndex > 0) // backspace
+        {
+            inputString[inputIndex] = '\0';
+            inputIndex--;
+
+            RendererWindow_PutCharToPosition(window, cursorPos, NULL, ' ');
+            cursorPos.x--;
+
+            if (cursorPos.x < 1)
+            {
+                cursorPos.x = maxBounds.x;
+                cursorPos.y--;
+
+                if (cursorPos.y < 1)
+                {
+                    DebugError("Not enough vertical space. Returning completed string.");
+                    break;
+                }
+            }
+        }
+        else if (character < InputKeyCode_Delete && character >= InputKeyCode_Space) // normal characters
+        {
+            inputString[inputIndex] = (char)character;
+            inputIndex++;
+
+            cursorPos.x++;
+
+            if (cursorPos.x > maxBounds.x)
+            {
+                cursorPos.y++;
+                cursorPos.x = 2;
+
+                if (cursorPos.y > maxBounds.y)
+                {
+                    DebugError("Not enough vertical space. Returning completed string.");
+                    break;
+                }
+            }
+
+            RendererWindow_PutCharToPosition(window, cursorPos, NULL, (char)character);
+        }
+    }
+
+    RendererManager_SetCursorVisibility(RendererCursorVisibility_Default);
+
+    inputString[inputIndex] = '\0';
+    finalString = StringDuplicate(inputString);
+    return finalString;
 }
 
 Vector2Int RendererWindow_GetWindowSize(const RendererWindow *window)
 {
     DebugAssert(window != NULL, "Null pointer passed as parameter. Renderer window cannot be NULL.");
 
-    DebugInfo("Renderer window '%s' size (%d, %d) retrieved successfully.", window->title, window->size.x, window->size.y);
+    // DebugInfo("Renderer window '%s' size (%d, %d) retrieved successfully.", window->title, window->size.x, window->size.y);
     return window->size;
 }
 
@@ -367,7 +449,7 @@ Vector2Int RendererWindow_GetWindowPosition(const RendererWindow *window)
 {
     DebugAssert(window != NULL, "Null pointer passed as parameter. Renderer window cannot be NULL.");
 
-    DebugInfo("Renderer window '%s' position retrieved successfully.", window->title);
+    // DebugInfo("Renderer window '%s' position retrieved successfully.", window->title);
     return window->relativePosition;
 }
 

@@ -9,6 +9,17 @@ Vector2Int terminalSize;
 RendererWindow *rightWindow;
 RendererWindow *leftTopWindow;
 RendererWindow *leftBottomWindow;
+AIChat *chat;
+stringHeap response;
+stringHeap query;
+
+void UpdateWindows()
+{
+    RendererWindow_UpdateContent(RENDERER_MAIN_WINDOW);
+    RendererWindow_UpdateContent(rightWindow);
+    RendererWindow_UpdateContent(leftTopWindow);
+    RendererWindow_UpdateContent(leftBottomWindow);
+}
 
 void App_Start()
 {
@@ -17,31 +28,38 @@ void App_Start()
     rightWindow = RendererWindow_Create("test right", NewVector2Int(terminalSize.x / 2, 0), NewVector2Int(terminalSize.x / 2, terminalSize.y), RENDERER_MAIN_WINDOW);
     leftTopWindow = RendererWindow_Create("test left top", NewVector2Int(0, 0), NewVector2Int(terminalSize.x / 2, terminalSize.y / 2), RENDERER_MAIN_WINDOW);
     leftBottomWindow = RendererWindow_Create("test left bottom", NewVector2Int(0, terminalSize.y / 2), NewVector2Int(terminalSize.x / 2, terminalSize.y / 2), RENDERER_MAIN_WINDOW);
-
-    RendererWindow_SetCursorPosition(leftTopWindow, NewVector2Int(1, 1));
-
-    RendererWindow_UpdateContent(RENDERER_MAIN_WINDOW);
-    RendererWindow_UpdateContent(rightWindow);
-    RendererWindow_UpdateContent(leftTopWindow);
-    RendererWindow_UpdateContent(leftBottomWindow);
 }
 
 void App_StartLate()
 {
     strcpy(OPEN_AI_API_KEY, Resource_GetEnvironmentObjectValue(NETWORK_MANAGER_ENV_FILE, "OPENAI_API_KEY"));
 
-    stringStack chatMessage = "Hello, AI! How are you today?";
     stringStack chatUrl = "https://api.openai.com/v1/chat/completions";
 
-    AIChat *chat = AIChat_Create("My Test Chat", "gpt-3.5-turbo", chatUrl, OPEN_AI_API_KEY, NULL);
+    chat = AIChat_Create("My Test Chat", "gpt-3.5-turbo", chatUrl, OPEN_AI_API_KEY, NULL);
 
-    stringHeap response = AIChat_SendAndReceive(chat, chatMessage);
-    DebugWarning("AI Response: %s", response);
-    RendererWindow_PutStringToPositionWrap(leftTopWindow, NewVector2Int(1, 1), NULL, false, "AI Response: %s", response);
+    RendererWindow_PutCharToPosition(leftTopWindow, NewVector2Int(1, 1), RENDERER_DEFAULT_TEXT_ATTRIBUTE, '>');
+    RendererWindow_PutCharToPosition(leftBottomWindow, NewVector2Int(1, 1), RENDERER_DEFAULT_TEXT_ATTRIBUTE, '>');
+
+    UpdateWindows();
 }
 
 void App_Update()
 {
+    // query = RendererManager_GetStringAtPositionWrap(leftTopWindow, NewVector2Int(2, 1));
+    //  response = AIChat_SendAndReceive(chat, query);
+    response = "hey there Im a fake AI";
+
+    RendererWindow_PutStringToPositionWrap(leftBottomWindow, NewVector2Int(2, 1), NULL, "AI Response: %s", response);
+    UpdateWindows();
+
+    // free(response);
+    // free(query);
+
+    // RendererWindow_Clear(leftTopWindow);
+    // RendererWindow_Clear(leftBottomWindow);
+    RendererWindow_PutCharToPosition(leftTopWindow, NewVector2Int(1, 1), RENDERER_DEFAULT_TEXT_ATTRIBUTE, '>');
+    RendererWindow_PutCharToPosition(leftBottomWindow, NewVector2Int(1, 1), RENDERER_DEFAULT_TEXT_ATTRIBUTE, '>');
 }
 
 void App_UpdateLate()
@@ -51,11 +69,6 @@ void App_UpdateLate()
         DebugInfo("'q' key pressed, stopping the application.");
         App_Stop(0);
     }
-
-    RendererWindow_UpdateContent(RENDERER_MAIN_WINDOW);
-    RendererWindow_UpdateContent(rightWindow);
-    RendererWindow_UpdateContent(leftTopWindow);
-    RendererWindow_UpdateContent(leftBottomWindow);
 }
 
 void App_Stop(int exitCode)

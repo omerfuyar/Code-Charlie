@@ -6,8 +6,6 @@
 #include <ncurses.h>
 #endif
 
-// todo add cross platform support
-
 #pragma region Source Only
 
 typedef struct InputKey
@@ -36,9 +34,9 @@ InputKey INPUT_KEY_STANDARDS[INPUT_KEY_STANDARD_SIZE] = {
     {InputKeyCode_NULL, InputKeyState_Released},             // 5
     {InputKeyCode_NULL, InputKeyState_Released},             // 6
     {InputKeyCode_NULL, InputKeyState_Released},             // 7
-    {InputKeyCode_Tab, InputKeyState_Released},              // 8
-    {InputKeyCode_Enter, InputKeyState_Released},            // 9
-    {InputKeyCode_NULL, InputKeyState_Released},             // 10
+    {InputKeyCode_Backspace, InputKeyState_Released},        // 8
+    {InputKeyCode_Tab, InputKeyState_Released},              // 9
+    {InputKeyCode_Enter, InputKeyState_Released},            // 10
     {InputKeyCode_NULL, InputKeyState_Released},             // 11
     {InputKeyCode_NULL, InputKeyState_Released},             // 12
     {InputKeyCode_NULL, InputKeyState_Released},             // 13
