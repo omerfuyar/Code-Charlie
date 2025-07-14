@@ -58,7 +58,7 @@ void RendererWindow_DestroyHandle(RendererWindow *window)
 void RendererWindow_CreateHandle(RendererWindow *window)
 {
     window->windowHandle = newwin(window->size.y, window->size.x, window->globalPosition.y, window->globalPosition.x);
-    DebugAssert(window->windowHandle, "Window handle creation failed for '%s'", window->title);
+    DebugAssert(window->windowHandle != NULL, "Window handle creation failed for '%s'", window->title);
 
     box(window->windowHandle, '|', '-');
 }
@@ -184,7 +184,9 @@ RendererWindow *RendererWindow_Create(const string title, Vector2Int position, V
     RendererWindow_SetParent(window, parentWindow);
     RendererWindow_SetDefaultAttribute(window, RENDERER_DEFAULT_TEXT_ATTRIBUTE);
     RendererWindow_CreateHandle(window);
+
     RendererWindow_UpdateAppearance(window);
+    RendererWindow_UpdateContent(window);
 
     DebugInfo("Renderer window '%s' created successfully.", window->title);
     return window;
@@ -214,6 +216,10 @@ void RendererWindow_UpdateContent(const RendererWindow *window)
 {
     DebugAssert(window != NULL, "Null pointer passed as parameter. Renderer window cannot be NULL.");
 
+    if (window->parent != NULL)
+    {
+        RendererWindow_UpdateContent(window->parent);
+    }
     wrefresh(window->windowHandle);
 
     DebugInfo("Renderer window '%s' content updated successfully.", window->title);
@@ -291,19 +297,26 @@ void RendererWindow_PutCharToPosition(const RendererWindow *window, Vector2Int p
     RendererTextAttribute_Enable(attribute ? attribute : window->defaultAttribute);
     waddch(window->windowHandle, charToPut);
     RendererTextAttribute_Disable(attribute ? attribute : window->defaultAttribute);
+
+    RendererWindow_UpdateContent(window);
 }
 
 void RendererWindow_PutStringToPosition(const RendererWindow *window, Vector2Int position, const RendererTextAttribute *attribute, const string stringToPut, ...)
 {
     DebugAssert(window != NULL, "Null pointer passed as parameter. Renderer window cannot be NULL.");
 
-    RendererWindow_SetCursorPosition(window, position);
-    RendererTextAttribute_Enable(attribute ? attribute : window->defaultAttribute);
+    char buffer[RENDERER_PRINT_STRING_BUFFER_SIZE];
     va_list args;
     va_start(args, stringToPut);
-    wprintw(window->windowHandle, stringToPut, args);
+    vsnprintf(buffer, sizeof(buffer), stringToPut, args);
     va_end(args);
+
+    RendererWindow_SetCursorPosition(window, position);
+    RendererTextAttribute_Enable(attribute ? attribute : window->defaultAttribute);
+    wprintw(window->windowHandle, "%s", buffer);
     RendererTextAttribute_Disable(attribute ? attribute : window->defaultAttribute);
+
+    RendererWindow_UpdateContent(window);
 
     DebugInfo("Window '%s': String '%s' put to position (%d, %d) successfully.", window->title, stringToPut, position.x, position.y);
 }
@@ -314,7 +327,7 @@ void RendererWindow_PutStringToPositionWrap(const RendererWindow *window, Vector
 
     Vector2Int maxBounds = NewVector2Int(window->size.x - 2, window->size.y - 2);
 
-    char buffer[4096];
+    char buffer[RENDERER_PRINT_STRING_BUFFER_SIZE];
     va_list args;
     va_start(args, stringToPut);
     vsnprintf(buffer, sizeof(buffer), stringToPut, args);
@@ -344,6 +357,8 @@ void RendererWindow_PutStringToPositionWrap(const RendererWindow *window, Vector
         word = strtok(NULL, " ");
     }
 
+    RendererWindow_UpdateContent(window);
+
     DebugInfo("Window '%s': Wrapped string put to position (%d, %d) successfully.", window->title, position.x, position.y);
 }
 
@@ -351,89 +366,190 @@ void RendererWindow_DeleteRangeInPosition(const RendererWindow *window, Vector2I
 {
     DebugAssert(window != NULL, "Null pointer passed as parameter. Renderer window cannot be NULL.");
 
+    RendererWindow_SetCursorPosition(window, position);
+    RendererTextAttribute_Enable(window->defaultAttribute);
     for (size_t i = 0; i < range; i++)
     {
-        RendererWindow_SetCursorPosition(window, position);
-        wdelch(window->windowHandle);
-        position.x++;
+        waddch(window->windowHandle, ' ');
     }
+    RendererTextAttribute_Disable(window->defaultAttribute);
+
+    RendererWindow_UpdateContent(window);
 }
 
-stringHeap RendererManager_GetStringAtPositionWrap(const RendererWindow *window, Vector2Int position)
+stringHeap RendererManager_GetStringAtPosition(const RendererWindow *window, Vector2Int position, int *endKey)
 {
     DebugAssert(window != NULL, "Null pointer passed as parameter. Renderer window cannot be NULL.");
 
-    RendererManager_SetCursorVisibility(RendererCursorVisibility_Visible);
+    stringHeap finalString = NULL;
 
-    char inputString[INPUT_STRING_FULL_BUFFER_SIZE] = {0};
+    char inputString[INPUT_STRING_WORD_BUFFER_SIZE] = {0};
+    inputString[0] = '\0';
     size_t inputIndex = 0;
 
-    const Vector2Int maxBounds = NewVector2Int(window->size.x - 1, window->size.y - 1);
     Vector2Int cursorPos = position;
 
-    stringHeap finalString;
     int character;
 
     RendererWindow_SetCursorPosition(window, cursorPos);
 
     while ((character = wgetch(window->windowHandle)) != ERR)
     {
-        if (inputIndex >= INPUT_STRING_FULL_BUFFER_SIZE - 2)
+        if (inputIndex >= INPUT_STRING_WORD_BUFFER_SIZE - 2 || inputIndex < 0) // error
         {
-            DebugError("Buffer overflow. Returning completed string.");
+            DebugError("Index error. Returning uncompleted string.");
+            *endKey = InputKeyCode_Kolpa;
             break;
         }
         else if (character == InputKeyCode_Enter || character == '\n') // enter
         {
+            *endKey = InputKeyCode_Enter;
             break;
         }
-        else if ((character == InputKeyCode_Delete || character == '\b') && inputIndex > 0) // backspace
+        else if (character == InputKeyCode_Space || character == ' ') // space
         {
-            inputString[inputIndex] = '\0';
-            inputIndex--;
-
-            RendererWindow_PutCharToPosition(window, cursorPos, NULL, ' ');
-            cursorPos.x--;
-
-            if (cursorPos.x < 1)
-            {
-                cursorPos.x = maxBounds.x;
-                cursorPos.y--;
-
-                if (cursorPos.y < 1)
-                {
-                    DebugError("Not enough vertical space. Returning completed string.");
-                    break;
-                }
-            }
+            RendererWindow_PutCharToPosition(window, cursorPos, NULL, (char)character);
+            inputString[inputIndex] = ' ';
+            inputIndex++;
+            cursorPos.x++;
+            *endKey = InputKeyCode_Space;
+            break;
         }
-        else if (character < InputKeyCode_Delete && character >= InputKeyCode_Space) // normal characters
+        else if (character == InputKeyCode_Delete || character == '\b' || character == InputKeyCode_Backspace) // backspace
         {
+            *endKey = InputKeyCode_Backspace;
+            break;
+        }
+        else if (character == InputKeyCode_Kolpa || character < 0) // invalid character
+        {
+            DebugWarning("Invalid character received: %d. Ignoring.", character);
+            continue;
+        }
+        else if (character < InputKeyCode_Delete && character > InputKeyCode_Space) // normal characters
+        {
+            RendererWindow_PutCharToPosition(window, cursorPos, NULL, (char)character);
             inputString[inputIndex] = (char)character;
             inputIndex++;
-
             cursorPos.x++;
+        }
+    }
 
-            if (cursorPos.x > maxBounds.x)
+    inputString[inputIndex] = '\0';
+    finalString = StringDuplicate(inputString);
+    DebugWarning("Final string: '%s', endKey: %ld", finalString, *endKey);
+    return finalString;
+}
+
+stringHeap RendererManager_GetStringAtPositionWrap(const RendererWindow *window, Vector2Int position)
+{
+    DebugAssert(window != NULL, "Null pointer passed as parameter. Renderer window cannot be NULL.");
+
+    stringHeap finalString = NULL;
+
+    char inputString[INPUT_STRING_FULL_BUFFER_SIZE] = {0};
+    inputString[0] = '\0';
+    size_t inputIndex = 0;
+
+    const Vector2Int maxBounds = NewVector2Int(window->size.x - 2, window->size.y - 2);
+    Vector2Int cursorPos = position;
+    size_t wordLength = 0;
+
+    stringHeap word = NULL;
+    int endKey = InputKeyCode_Kolpa;
+
+    RendererManager_SetCursorVisibility(RendererCursorVisibility_Visible);
+
+    do
+    {
+        word = RendererManager_GetStringAtPosition(window, cursorPos, &endKey);
+        wordLength = strlen(word);
+
+        RendererWindow_DeleteRangeInPosition(window, cursorPos, wordLength);
+
+        if (endKey == InputKeyCode_Space || endKey == InputKeyCode_Enter)
+        {
+            if (inputIndex + wordLength >= INPUT_STRING_FULL_BUFFER_SIZE - 1)
+            {
+                DebugError("Input string buffer overflow. Returning uncompleted string.");
+                free(word);
+                break;
+            }
+
+            strcat(inputString, word);
+            inputIndex += wordLength;
+
+            if (cursorPos.x + (int)wordLength > maxBounds.x)
             {
                 cursorPos.y++;
                 cursorPos.x = 2;
 
                 if (cursorPos.y > maxBounds.y)
                 {
-                    DebugError("Not enough vertical space. Returning completed string.");
+                    DebugError("Not enough vertical space. Returning uncompleted string.");
+                    free(word);
                     break;
                 }
             }
 
-            RendererWindow_PutCharToPosition(window, cursorPos, NULL, (char)character);
+            RendererWindow_PutStringToPosition(window, cursorPos, NULL, word);
+            cursorPos.x += wordLength;
         }
-    }
+        else if (endKey == InputKeyCode_Backspace)
+        {
+            if (inputIndex + wordLength == 0)
+            {
+                free(word);
+                continue;
+            }
+            else if (inputIndex + wordLength >= INPUT_STRING_FULL_BUFFER_SIZE - 1 && inputIndex < 0)
+            {
+                DebugError("Input string buffer overflow. Returning uncompleted string.");
+                free(word);
+                break;
+            }
+
+            strcat(inputString, word);
+            inputIndex += wordLength - 1;
+            inputString[inputIndex] = '\0';
+
+            if (cursorPos.x + wordLength < 2)
+            {
+                cursorPos.x = maxBounds.x;
+                cursorPos.y--;
+
+                if (cursorPos.y < 2)
+                {
+                    DebugError("Not enough vertical space. Returning uncompleted string.");
+                    free(word);
+                    break;
+                }
+
+                RendererWindow_PutStringToPosition(window, cursorPos, NULL, word);
+            }
+            else
+            {
+                RendererWindow_PutStringToPosition(window, cursorPos, NULL, word);
+                cursorPos.x += wordLength - 1;
+            }
+
+            RendererWindow_DeleteRangeInPosition(window, cursorPos, 1);
+        }
+        else
+        {
+            DebugWarning("Unrecognized end key: %d. Continuing.", endKey);
+            free(word);
+            continue;
+        }
+
+        free(word);
+    } while (endKey == InputKeyCode_Space || endKey == InputKeyCode_Backspace);
 
     RendererManager_SetCursorVisibility(RendererCursorVisibility_Default);
 
     inputString[inputIndex] = '\0';
     finalString = StringDuplicate(inputString);
+
+    DebugWarning("Final input string: '%s'", finalString);
     return finalString;
 }
 

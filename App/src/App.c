@@ -25,9 +25,9 @@ void App_Start()
 {
     terminalSize = RendererWindow_GetWindowSize(RENDERER_MAIN_WINDOW);
 
-    rightWindow = RendererWindow_Create("test right", NewVector2Int(terminalSize.x / 2, 0), NewVector2Int(terminalSize.x / 2, terminalSize.y), RENDERER_MAIN_WINDOW);
-    leftTopWindow = RendererWindow_Create("test left top", NewVector2Int(0, 0), NewVector2Int(terminalSize.x / 2, terminalSize.y / 2), RENDERER_MAIN_WINDOW);
-    leftBottomWindow = RendererWindow_Create("test left bottom", NewVector2Int(0, terminalSize.y / 2), NewVector2Int(terminalSize.x / 2, terminalSize.y / 2), RENDERER_MAIN_WINDOW);
+    rightWindow = RendererWindow_Create("test right", NewVector2Int(terminalSize.x * 3 / 4, 0), NewVector2Int(terminalSize.x / 4, terminalSize.y), RENDERER_MAIN_WINDOW);
+    leftTopWindow = RendererWindow_Create("test left top", NewVector2Int(0, 0), NewVector2Int(terminalSize.x * 3 / 4, terminalSize.y / 2), RENDERER_MAIN_WINDOW);
+    leftBottomWindow = RendererWindow_Create("test left bottom", NewVector2Int(0, terminalSize.y / 2), NewVector2Int(terminalSize.x * 3 / 4, terminalSize.y / 2), RENDERER_MAIN_WINDOW);
 }
 
 void App_StartLate()
@@ -38,27 +38,26 @@ void App_StartLate()
 
     chat = AIChat_Create("My Test Chat", "gpt-3.5-turbo", chatUrl, OPEN_AI_API_KEY, NULL);
 
-    RendererWindow_PutCharToPosition(leftTopWindow, NewVector2Int(1, 1), RENDERER_DEFAULT_TEXT_ATTRIBUTE, '>');
+    RendererWindow_PutCharToPosition(rightWindow, NewVector2Int(1, 1), RENDERER_DEFAULT_TEXT_ATTRIBUTE, '>');
     RendererWindow_PutCharToPosition(leftBottomWindow, NewVector2Int(1, 1), RENDERER_DEFAULT_TEXT_ATTRIBUTE, '>');
-
-    UpdateWindows();
 }
 
 void App_Update()
 {
-    // query = RendererManager_GetStringAtPositionWrap(leftTopWindow, NewVector2Int(2, 1));
-    //  response = AIChat_SendAndReceive(chat, query);
-    response = "hey there Im a fake AI";
+    query = RendererManager_GetStringAtPositionWrap(rightWindow, NewVector2Int(2, 1));
+    // response = AIChat_SendAndReceive(chat, query);
+    response = "hey there, Im a fake AI assistant";
 
     RendererWindow_PutStringToPositionWrap(leftBottomWindow, NewVector2Int(2, 1), NULL, "AI Response: %s", response);
     UpdateWindows();
 
+    free(query);
     // free(response);
-    // free(query);
 
-    // RendererWindow_Clear(leftTopWindow);
-    // RendererWindow_Clear(leftBottomWindow);
-    RendererWindow_PutCharToPosition(leftTopWindow, NewVector2Int(1, 1), RENDERER_DEFAULT_TEXT_ATTRIBUTE, '>');
+    RendererWindow_Clear(rightWindow);
+    RendererWindow_Clear(leftTopWindow);
+    RendererWindow_Clear(leftBottomWindow);
+    RendererWindow_PutCharToPosition(rightWindow, NewVector2Int(1, 1), RENDERER_DEFAULT_TEXT_ATTRIBUTE, '>');
     RendererWindow_PutCharToPosition(leftBottomWindow, NewVector2Int(1, 1), RENDERER_DEFAULT_TEXT_ATTRIBUTE, '>');
 }
 

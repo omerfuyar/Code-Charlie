@@ -58,14 +58,12 @@ void Core_Run(Core_VoidToVoid start, Core_VoidToVoid lateStart, Core_VoidToVoid 
         loopNanoseconds = (loopTimer.endTime.seconds - loopTimer.startTime.seconds) * 1000000000L + (loopTimer.endTime.nanoseconds - loopTimer.startTime.nanoseconds);
         sleepMilliseconds = (TARGET_SLEEP_NANOSECONDS - loopNanoseconds) / 1000000L;
 
-        DebugInfo("Loop time: %ld nanoseconds", loopNanoseconds);
-
         if (sleepMilliseconds > 0)
         {
             Core_SleepMilliseconds(sleepMilliseconds);
         }
 
-        DebugInfo("'============================== Slept for %f milliseconds =============================='", (TARGET_SLEEP_NANOSECONDS - loopNanoseconds) / 1000000.0f);
+        DebugInfo("'============================== Loop time: %ld nanoseconds. Slept for %f milliseconds =============================='", loopNanoseconds, (TARGET_SLEEP_NANOSECONDS - loopNanoseconds) / 1000000.0f);
     }
 }
 

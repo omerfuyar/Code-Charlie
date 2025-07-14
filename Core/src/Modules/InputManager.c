@@ -26,38 +26,38 @@ typedef struct InputKey
 #define INPUT_KEY_FUNCTION_OFFSET 265
 
 InputKey INPUT_KEY_STANDARDS[INPUT_KEY_STANDARD_SIZE] = {
-    {InputKeyCode_NULL, InputKeyState_Released},             // 0
-    {InputKeyCode_NULL, InputKeyState_Released},             // 1
-    {InputKeyCode_NULL, InputKeyState_Released},             // 2
-    {InputKeyCode_NULL, InputKeyState_Released},             // 3
-    {InputKeyCode_NULL, InputKeyState_Released},             // 4
-    {InputKeyCode_NULL, InputKeyState_Released},             // 5
-    {InputKeyCode_NULL, InputKeyState_Released},             // 6
-    {InputKeyCode_NULL, InputKeyState_Released},             // 7
+    {InputKeyCode_Kolpa, InputKeyState_Released},            // 0
+    {InputKeyCode_Kolpa, InputKeyState_Released},            // 1
+    {InputKeyCode_Kolpa, InputKeyState_Released},            // 2
+    {InputKeyCode_Kolpa, InputKeyState_Released},            // 3
+    {InputKeyCode_Kolpa, InputKeyState_Released},            // 4
+    {InputKeyCode_Kolpa, InputKeyState_Released},            // 5
+    {InputKeyCode_Kolpa, InputKeyState_Released},            // 6
+    {InputKeyCode_Kolpa, InputKeyState_Released},            // 7
     {InputKeyCode_Backspace, InputKeyState_Released},        // 8
     {InputKeyCode_Tab, InputKeyState_Released},              // 9
     {InputKeyCode_Enter, InputKeyState_Released},            // 10
-    {InputKeyCode_NULL, InputKeyState_Released},             // 11
-    {InputKeyCode_NULL, InputKeyState_Released},             // 12
-    {InputKeyCode_NULL, InputKeyState_Released},             // 13
-    {InputKeyCode_NULL, InputKeyState_Released},             // 14
-    {InputKeyCode_NULL, InputKeyState_Released},             // 15
-    {InputKeyCode_NULL, InputKeyState_Released},             // 16
-    {InputKeyCode_NULL, InputKeyState_Released},             // 17
-    {InputKeyCode_NULL, InputKeyState_Released},             // 18
-    {InputKeyCode_NULL, InputKeyState_Released},             // 19
-    {InputKeyCode_NULL, InputKeyState_Released},             // 20
-    {InputKeyCode_NULL, InputKeyState_Released},             // 21
-    {InputKeyCode_NULL, InputKeyState_Released},             // 22
-    {InputKeyCode_NULL, InputKeyState_Released},             // 23
-    {InputKeyCode_NULL, InputKeyState_Released},             // 24
-    {InputKeyCode_NULL, InputKeyState_Released},             // 25
-    {InputKeyCode_NULL, InputKeyState_Released},             // 26
+    {InputKeyCode_Kolpa, InputKeyState_Released},            // 11
+    {InputKeyCode_Kolpa, InputKeyState_Released},            // 12
+    {InputKeyCode_Kolpa, InputKeyState_Released},            // 13
+    {InputKeyCode_Kolpa, InputKeyState_Released},            // 14
+    {InputKeyCode_Kolpa, InputKeyState_Released},            // 15
+    {InputKeyCode_Kolpa, InputKeyState_Released},            // 16
+    {InputKeyCode_Kolpa, InputKeyState_Released},            // 17
+    {InputKeyCode_Kolpa, InputKeyState_Released},            // 18
+    {InputKeyCode_Kolpa, InputKeyState_Released},            // 19
+    {InputKeyCode_Kolpa, InputKeyState_Released},            // 20
+    {InputKeyCode_Kolpa, InputKeyState_Released},            // 21
+    {InputKeyCode_Kolpa, InputKeyState_Released},            // 22
+    {InputKeyCode_Kolpa, InputKeyState_Released},            // 23
+    {InputKeyCode_Kolpa, InputKeyState_Released},            // 24
+    {InputKeyCode_Kolpa, InputKeyState_Released},            // 25
+    {InputKeyCode_Kolpa, InputKeyState_Released},            // 26
     {InputKeyCode_Escape, InputKeyState_Released},           // 27
-    {InputKeyCode_NULL, InputKeyState_Released},             // 28
-    {InputKeyCode_NULL, InputKeyState_Released},             // 29
-    {InputKeyCode_NULL, InputKeyState_Released},             // 30
-    {InputKeyCode_NULL, InputKeyState_Released},             // 31
+    {InputKeyCode_Kolpa, InputKeyState_Released},            // 28
+    {InputKeyCode_Kolpa, InputKeyState_Released},            // 29
+    {InputKeyCode_Kolpa, InputKeyState_Released},            // 30
+    {InputKeyCode_Kolpa, InputKeyState_Released},            // 31
     {InputKeyCode_Space, InputKeyState_Released},            // 32
     {InputKeyCode_Exclamation, InputKeyState_Released},      // 33
     {InputKeyCode_QuoteDouble, InputKeyState_Released},      // 34

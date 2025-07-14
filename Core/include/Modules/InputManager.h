@@ -17,7 +17,7 @@ typedef enum InputKeyState
 
 typedef enum InputKeyCode
 {
-    InputKeyCode_NULL = 0,
+    InputKeyCode_Kolpa = 0,
     InputKeyCode_Backspace = 8,
     InputKeyCode_Tab = 9,
     InputKeyCode_Enter = 10,

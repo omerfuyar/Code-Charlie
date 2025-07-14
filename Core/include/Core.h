@@ -103,7 +103,7 @@ void Core_DebugLog(const char *header, const char *file, int line, const char *f
 
 #pragma region Debug
 
-#define DEBUG_INFO_ENABLED true
+#define DEBUG_INFO_ENABLED false
 #define DEBUG_WARNING_ENABLED true
 #define DEBUG_ERROR_ENABLED true
 #define DEBUG_ASSERT_ENABLED true

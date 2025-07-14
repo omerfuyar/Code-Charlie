@@ -6,6 +6,8 @@
 
 #pragma region typedefs
 
+#define RENDERER_PRINT_STRING_BUFFER_SIZE 2048
+
 /// @brief Representing text attributes to be used in the terminal.
 /// @note Values can be combined using bitwise OR operations.
 typedef enum RendererTextAttributeMask
@@ -161,7 +163,20 @@ void RendererWindow_PutStringToPosition(const RendererWindow *window, Vector2Int
 /// @note Position origin is always top left corner
 void RendererWindow_PutStringToPositionWrap(const RendererWindow *window, Vector2Int position, const RendererTextAttribute *attributeMask, const string stringToPut, ...);
 
-/// @brief Gets a string from the input manager at the specified position.
+/// @brief Deletes a range of characters in the renderer window. Not using curses library functions.
+/// @param window The renderer window.
+/// @param position The position to delete characters from.
+/// @param range The number of characters to delete.
+void RendererWindow_DeleteRangeInPosition(const RendererWindow *window, Vector2Int position, size_t range);
+
+/// @brief Gets a string from the input manager at the specified position. Stops getting input when get space character.
+/// @param window The renderer window to get the string from.
+/// @param position The position to get the string from.
+/// @param endKey The key ended the input sequence. Enter, Space, Backspace or Error type. Should be used with InputKeyCode enum or characters themselves.
+/// @return The string entered by the user.
+stringHeap RendererManager_GetStringAtPosition(const RendererWindow *window, Vector2Int position, int *endKey);
+
+/// @brief Gets a string from the input manager at the specified position. Wraps the text if it exceeds the window width. Stops getting input when get enter or escape.
 /// @param window The renderer window to get the string from.
 /// @param position The position to get the string from.
 /// @return The string at the specified position.
