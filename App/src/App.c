@@ -4,6 +4,12 @@
 #include "AI/AIManager.h"
 #include "Utils/ResourceManager.h"
 
+#if PLATFORM_WINDOWS
+#define NETWORK_MANAGER_ENV_FILE "C:\\Users\\omruyr\\Documents\\Programming\\Code-Charlie\\.env"
+#else
+#define NETWORK_MANAGER_ENV_FILE "/home/omruyr/Projects/Code-Charlie/.env"
+#endif
+
 char OPEN_AI_API_KEY[256];
 Vector2Int terminalSize;
 RendererWindow *rightWindow;
