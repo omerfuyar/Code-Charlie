@@ -4,6 +4,8 @@
 
 #pragma region typedefs
 
+#define AI_MANAGER_MAX_QUERY_LENGTH 1024
+
 typedef struct AIChat AIChat;
 
 #pragma endregion typedefs

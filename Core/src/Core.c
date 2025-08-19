@@ -51,8 +51,6 @@ void Core_Run(Core_VoidToVoid start, Core_VoidToVoid lateStart, Core_VoidToVoid 
         UPDATE_LATE();
         DebugInfo("'Late update' function called.");
 
-        // RendererWindow_UpdateContent(RENDERER_MAIN_WINDOW);
-
         Timer_Stop(&loopTimer);
 
         loopNanoseconds = (loopTimer.endTime.seconds - loopTimer.startTime.seconds) * 1000000000L + (loopTimer.endTime.nanoseconds - loopTimer.startTime.nanoseconds);

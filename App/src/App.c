@@ -19,14 +19,6 @@ AIChat *chat;
 stringHeap response;
 stringHeap query;
 
-void UpdateWindows()
-{
-    RendererWindow_UpdateContent(RENDERER_MAIN_WINDOW);
-    RendererWindow_UpdateContent(rightWindow);
-    RendererWindow_UpdateContent(leftTopWindow);
-    RendererWindow_UpdateContent(leftBottomWindow);
-}
-
 void App_Start()
 {
     terminalSize = RendererWindow_GetWindowSize(RENDERER_MAIN_WINDOW);
@@ -51,20 +43,20 @@ void App_StartLate()
 void App_Update()
 {
     query = RendererManager_GetStringAtPositionWrap(rightWindow, NewVector2Int(2, 1));
-    // response = AIChat_SendAndReceive(chat, query);
-    response = "hey there, Im a fake AI assistant";
+    response = AIChat_SendAndReceive(chat, query);
 
-    RendererWindow_PutStringToPositionWrap(leftBottomWindow, NewVector2Int(2, 1), NULL, "AI Response: %s", response);
-    UpdateWindows();
-
-    free(query);
-    // free(response);
+    // response = "hey there, Im a fake AI assistant";
 
     RendererWindow_Clear(rightWindow);
-    RendererWindow_Clear(leftTopWindow);
-    RendererWindow_Clear(leftBottomWindow);
     RendererWindow_PutCharToPosition(rightWindow, NewVector2Int(1, 1), RENDERER_DEFAULT_TEXT_ATTRIBUTE, '>');
+
+    RendererWindow_Clear(leftBottomWindow);
     RendererWindow_PutCharToPosition(leftBottomWindow, NewVector2Int(1, 1), RENDERER_DEFAULT_TEXT_ATTRIBUTE, '>');
+
+    RendererWindow_PutStringToPositionWrap(leftBottomWindow, NewVector2Int(2, 1), NULL, "AI Response: %s", response);
+
+    free(query);
+    free(response);
 }
 
 void App_UpdateLate()

@@ -71,7 +71,7 @@ stringHeap AIChat_SendAndReceive(const AIChat *chat, const string message)
     DebugAssert(chat != NULL, "Null pointer passed as parameter. Chat cannot be NULL.");
     DebugAssert(message != NULL, "Null pointer passed as parameter. Message cannot be NULL.");
 
-    char query[1024];
+    char query[AI_MANAGER_MAX_QUERY_LENGTH];
     snprintf(query, sizeof(query), "{\"model\": \"%s\",\"messages\": [{\"role\": \"user\", \"content\": \"%s\"}]}", chat->model, message);
 
     char bearerToken[256];

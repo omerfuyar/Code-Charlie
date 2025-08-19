@@ -257,6 +257,7 @@ void RendererWindow_Clear(const RendererWindow *window)
 
     wclear(window->windowHandle);
     box(window->windowHandle, '|', '-');
+    RendererWindow_UpdateContent(window);
 
     DebugInfo("Renderer window '%s' cleared successfully.", window->title);
 }
